@@ -23,11 +23,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".LoginActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-            android:exported="true">
-        </activity>
+<!--        <activity-->
+<!--            android:name=".LoginActivity"-->
+<!--            android:theme="@style/Theme.AppCompat.Light.NoActionBar"-->
+<!--            android:exported="true"-->
+<!--        </activity>-->
     </application>
 
 </manifest>
