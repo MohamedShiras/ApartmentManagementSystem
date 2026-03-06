@@ -1,10 +1,795 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#F0F6FB"
     tools:context=".FeedActivity">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Top App Bar -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF"
+        app:elevation="0dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="72dp"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp">
+
+            <!-- App Logo / Building Icon -->
+            <ImageView
+                android:id="@+id/topBarLogo"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:src="@drawable/apartment_logo"
+                android:scaleType="centerCrop"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <!-- Community Name -->
+            <TextView
+                android:id="@+id/communityName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:text="Sunrise Residences"
+                android:textColor="#214177"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/topBarLogo"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <!-- Notification Bell -->
+            <ImageView
+                android:id="@+id/notificationIcon"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:padding="8dp"
+                android:src="@drawable/ic_notifications"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="#3667A6" />
+
+            <!-- Bottom divider -->
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:background="#BDD8F1"
+                android:alpha="0.6"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!-- Main Scrollable Content -->
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingBottom="90dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingTop="16dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp">
+
+            <!-- Welcome Banner -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/welcomeBanner"
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="#3667A6">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:id="@+id/welcomeGreeting"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="Good Morning 👋"
+                        android:textColor="#BDD8F1"
+                        android:textSize="13sp"
+                        app:layout_constraintEnd_toStartOf="@id/weatherIcon"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/welcomeName"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="Welcome back, Alex"
+                        android:textColor="#FFFFFF"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toStartOf="@id/weatherIcon"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/welcomeGreeting" />
+
+                    <TextView
+                        android:id="@+id/unitLabel"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="Unit 4B · Block C"
+                        android:textColor="#82A6CB"
+                        android:textSize="13sp"
+                        app:layout_constraintEnd_toStartOf="@id/weatherIcon"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/welcomeName" />
+
+                    <ImageView
+                        android:id="@+id/weatherIcon"
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:src="@drawable/ic_weather_sunny"
+                        android:alpha="0.8"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:tint="#BDD8F1" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Quick Action Pills -->
+            <HorizontalScrollView
+                android:id="@+id/quickActionsScroll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <!-- Pay Rent Pill -->
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/pillPayRent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="10dp"
+                        app:cardCornerRadius="20dp"
+                        app:cardElevation="0dp"
+                        app:cardBackgroundColor="#214177">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:paddingStart="16dp"
+                            android:paddingEnd="16dp"
+                            android:text="💳  Pay Rent"
+                            android:textColor="#FFFFFF"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+
+                    </androidx.cardview.widget.CardView>
+
+                    <!-- Maintenance Pill -->
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/pillMaintenance"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="10dp"
+                        app:cardCornerRadius="20dp"
+                        app:cardElevation="0dp"
+                        app:cardBackgroundColor="#FFFFFF">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:paddingStart="16dp"
+                            android:paddingEnd="16dp"
+                            android:text="🔧  Maintenance"
+                            android:textColor="#3667A6"
+                            android:textSize="13sp" />
+
+                    </androidx.cardview.widget.CardView>
+
+                    <!-- Visitors Pill -->
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/pillVisitors"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="10dp"
+                        app:cardCornerRadius="20dp"
+                        app:cardElevation="0dp"
+                        app:cardBackgroundColor="#FFFFFF">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:paddingStart="16dp"
+                            android:paddingEnd="16dp"
+                            android:text="🚗  Visitors"
+                            android:textColor="#3667A6"
+                            android:textSize="13sp" />
+
+                    </androidx.cardview.widget.CardView>
+
+                    <!-- Amenities Pill -->
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/pillAmenities"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        app:cardCornerRadius="20dp"
+                        app:cardElevation="0dp"
+                        app:cardBackgroundColor="#FFFFFF">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:paddingStart="16dp"
+                            android:paddingEnd="16dp"
+                            android:text="🏊  Amenities"
+                            android:textColor="#3667A6"
+                            android:textSize="13sp" />
+
+                    </androidx.cardview.widget.CardView>
+
+                </LinearLayout>
+
+            </HorizontalScrollView>
+
+            <!-- Section Header: Latest Posts -->
+            <TextView
+                android:id="@+id/feedSectionHeader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:text="Latest in the Community"
+                android:textColor="#214177"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <!-- Feed Post Card 1 - Announcement Type -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/feedCard1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="#FFFFFF">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <!-- Post Header Row -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="10dp">
+
+                        <!-- Badge / Avatar -->
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            app:cardCornerRadius="12dp"
+                            app:cardElevation="0dp"
+                            app:cardBackgroundColor="#BDD8F1">
+
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/ic_announcement"
+                                app:tint="#214177" />
+
+                        </androidx.cardview.widget.CardView>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:layout_marginStart="12dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Management"
+                                android:textColor="#1E293B"
+                                android:textSize="14sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="2 hours ago"
+                                android:textColor="#94A3B8"
+                                android:textSize="12sp" />
+
+                        </LinearLayout>
+
+                        <!-- Tag Chip -->
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="wrap_content"
+                            android:layout_height="24dp"
+                            app:cardCornerRadius="12dp"
+                            app:cardElevation="0dp"
+                            app:cardBackgroundColor="#BDD8F1">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:paddingStart="10dp"
+                                android:paddingEnd="10dp"
+                                android:text="📢 Notice"
+                                android:textColor="#214177"
+                                android:textSize="11sp"
+                                android:textStyle="bold" />
+
+                        </androidx.cardview.widget.CardView>
+
+                    </LinearLayout>
+
+                    <!-- Post Content -->
+                    <TextView
+                        android:id="@+id/feedPost1Title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Water supply maintenance on Saturday"
+                        android:textColor="#1E293B"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="4dp" />
+
+                    <TextView
+                        android:id="@+id/feedPost1Body"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Water supply will be interrupted from 9 AM to 1 PM this Saturday for routine maintenance. Please store water accordingly."
+                        android:textColor="#64748B"
+                        android:textSize="14sp"
+                        android:lineSpacingExtra="3dp"
+                        android:layout_marginBottom="12dp" />
+
+                    <!-- Divider -->
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#F1F5F9"
+                        android:layout_marginBottom="10dp" />
+
+                    <!-- Reaction Row -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <ImageView
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:src="@drawable/ic_thumb_up"
+                            android:layout_marginEnd="4dp"
+                            app:tint="#82A6CB" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="24 Likes"
+                            android:textColor="#82A6CB"
+                            android:textSize="13sp"
+                            android:layout_marginEnd="16dp" />
+
+                        <ImageView
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:src="@drawable/ic_comment"
+                            android:layout_marginEnd="4dp"
+                            app:tint="#82A6CB" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="8 Comments"
+                            android:textColor="#82A6CB"
+                            android:textSize="13sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="See more"
+                            android:textColor="#3667A6"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Feed Post Card 2 - Community Chat Type -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/feedCard2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="#FFFFFF">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <!-- Post Header Row -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="10dp">
+
+                        <!-- Resident Avatar -->
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            app:cardCornerRadius="20dp"
+                            app:cardElevation="0dp"
+                            app:cardBackgroundColor="#82A6CB">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:text="SR"
+                                android:textColor="#FFFFFF"
+                                android:textSize="14sp"
+                                android:textStyle="bold" />
+
+                        </androidx.cardview.widget.CardView>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:layout_marginStart="12dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Sarah R. · Unit 2A"
+                                android:textColor="#1E293B"
+                                android:textSize="14sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Yesterday"
+                                android:textColor="#94A3B8"
+                                android:textSize="12sp" />
+
+                        </LinearLayout>
+
+                        <!-- Tag Chip -->
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="wrap_content"
+                            android:layout_height="24dp"
+                            app:cardCornerRadius="12dp"
+                            app:cardElevation="0dp"
+                            app:cardBackgroundColor="#EFF6FF">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:paddingStart="10dp"
+                                android:paddingEnd="10dp"
+                                android:text="💬 Chat"
+                                android:textColor="#3667A6"
+                                android:textSize="11sp"
+                                android:textStyle="bold" />
+
+                        </androidx.cardview.widget.CardView>
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/feedPost2Body"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Anyone interested in a weekend BBQ at the rooftop garden this Sunday? Let's make it a community thing! 🎉"
+                        android:textColor="#1E293B"
+                        android:textSize="14sp"
+                        android:lineSpacingExtra="3dp"
+                        android:layout_marginBottom="12dp" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#F1F5F9"
+                        android:layout_marginBottom="10dp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <ImageView
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:src="@drawable/ic_thumb_up"
+                            android:layout_marginEnd="4dp"
+                            app:tint="#82A6CB" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="41 Likes"
+                            android:textColor="#82A6CB"
+                            android:textSize="13sp"
+                            android:layout_marginEnd="16dp" />
+
+                        <ImageView
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:src="@drawable/ic_comment"
+                            android:layout_marginEnd="4dp"
+                            app:tint="#82A6CB" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="19 Comments"
+                            android:textColor="#82A6CB"
+                            android:textSize="13sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="See more"
+                            android:textColor="#3667A6"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Feed Post Card 3 - Services Type -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/feedCard3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="#FFFFFF">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="10dp">
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            app:cardCornerRadius="12dp"
+                            app:cardElevation="0dp"
+                            app:cardBackgroundColor="#DBEAFE">
+
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/ic_build"
+                                app:tint="#3667A6" />
+
+                        </androidx.cardview.widget.CardView>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:layout_marginStart="12dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Services Desk"
+                                android:textColor="#1E293B"
+                                android:textSize="14sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="3 days ago"
+                                android:textColor="#94A3B8"
+                                android:textSize="12sp" />
+
+                        </LinearLayout>
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="wrap_content"
+                            android:layout_height="24dp"
+                            app:cardCornerRadius="12dp"
+                            app:cardElevation="0dp"
+                            app:cardBackgroundColor="#DBEAFE">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:paddingStart="10dp"
+                                android:paddingEnd="10dp"
+                                android:text="🔧 Service"
+                                android:textColor="#214177"
+                                android:textSize="11sp"
+                                android:textStyle="bold" />
+
+                        </androidx.cardview.widget.CardView>
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/feedPost3Title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Elevator servicing complete — Block A &amp; B"
+                        android:textColor="#1E293B"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="4dp" />
+
+                    <TextView
+                        android:id="@+id/feedPost3Body"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Both elevators in Block A and B have been serviced and are now fully operational. Thank you for your patience."
+                        android:textColor="#64748B"
+                        android:textSize="14sp"
+                        android:lineSpacingExtra="3dp"
+                        android:layout_marginBottom="12dp" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#F1F5F9"
+                        android:layout_marginBottom="10dp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <ImageView
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:src="@drawable/ic_thumb_up"
+                            android:layout_marginEnd="4dp"
+                            app:tint="#82A6CB" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="58 Likes"
+                            android:textColor="#82A6CB"
+                            android:textSize="13sp"
+                            android:layout_marginEnd="16dp" />
+
+                        <ImageView
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:src="@drawable/ic_comment"
+                            android:layout_marginEnd="4dp"
+                            app:tint="#82A6CB" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="5 Comments"
+                            android:textColor="#82A6CB"
+                            android:textSize="13sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="See more"
+                            android:textColor="#3667A6"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Floating Create Post Button -->
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/createPostFab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="80dp"
+        android:text="Post"
+        android:textColor="#FFFFFF"
+        app:icon="@drawable/ic_add"
+        app:iconTint="#FFFFFF"
+        app:backgroundTint="#3667A6"
+        app:elevation="4dp" />
+
+    <!-- Bottom Navigation Bar -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavBar"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:layout_gravity="bottom"
+        android:background="#FFFFFF"
+        app:elevation="12dp"
+        app:itemIconTint="@color/nav_item_color"
+        app:itemTextColor="@color/nav_item_color"
+        app:labelVisibilityMode="labeled"
+        app:menu="@menu/bottom_nav_menu"
+        android:layout_marginBottom="0dp"
+        app:paddingBottomSystemWindowInsets="true"/>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

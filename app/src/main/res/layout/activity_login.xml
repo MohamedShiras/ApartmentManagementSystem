@@ -5,18 +5,18 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5"
+    android:background="#FFFF"
     tools:context=".LoginActivity">
 
     <!-- Illustration Container -->
     <androidx.cardview.widget.CardView
         android:id="@+id/illustrationCard"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
         android:layout_marginTop="80dp"
         app:cardCornerRadius="20dp"
         app:cardElevation="0dp"
-        app:cardBackgroundColor="#E8EEF2"
+        app:cardBackgroundColor="#FFFF"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -25,29 +25,33 @@
             android:id="@+id/illustrationImage"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="30dp"
-            android:src="@android:drawable/ic_lock_idle_lock"
-            android:background="#E8EEF2"
             android:contentDescription="Login Illustration"
-            android:scaleType="fitCenter" />
+            android:padding="0dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/apartment_logo" />
 
     </androidx.cardview.widget.CardView>
 
     <!-- Login Title -->
+
+    <!-- Subtitle -->
+
     <TextView
         android:id="@+id/loginTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="4dp"
         android:text="Login"
         android:textColor="#1E293B"
         android:textSize="32sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.096"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/illustrationCard" />
 
-    <!-- Subtitle -->
+    <!-- Username Input Container -->
+
     <TextView
         android:id="@+id/loginSubtitle"
         android:layout_width="wrap_content"
@@ -57,10 +61,10 @@
         android:textColor="#64748B"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.129"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/loginTitle" />
 
-    <!-- Username Input Container -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/usernameLayout"
         android:layout_width="0dp"
@@ -70,13 +74,14 @@
         android:layout_marginTop="40dp"
         android:hint="Username"
         app:boxBackgroundColor="#FFFFFF"
-        app:boxBackgroundMode="filled"
+        app:boxBackgroundMode="outline"
         app:boxCornerRadiusBottomEnd="12dp"
         app:boxCornerRadiusBottomStart="12dp"
         app:boxCornerRadiusTopEnd="12dp"
         app:boxCornerRadiusTopStart="12dp"
-        app:boxStrokeWidth="0dp"
-        app:boxStrokeWidthFocused="0dp"
+        app:boxStrokeWidth="1.5dp"
+        app:boxStrokeWidthFocused="2dp"
+        app:boxStrokeColor="#BDD8F1"
         app:hintTextColor="#94A3B8"
         app:startIconDrawable="@drawable/ic_user"
         app:startIconTint="#94A3B8"
@@ -89,9 +94,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="text"
+            android:padding="16dp"
             android:textColor="#1E293B"
-            android:textSize="16sp"
-            android:padding="16dp" />
+            android:textSize="16sp" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -105,13 +110,14 @@
         android:layout_marginTop="16dp"
         android:hint="Password"
         app:boxBackgroundColor="#FFFFFF"
-        app:boxBackgroundMode="filled"
+        app:boxBackgroundMode="outline"
         app:boxCornerRadiusBottomEnd="12dp"
         app:boxCornerRadiusBottomStart="12dp"
         app:boxCornerRadiusTopEnd="12dp"
         app:boxCornerRadiusTopStart="12dp"
-        app:boxStrokeWidth="0dp"
-        app:boxStrokeWidthFocused="0dp"
+        app:boxStrokeWidth="1.5dp"
+        app:boxStrokeWidthFocused="2dp"
+        app:boxStrokeColor="#BDD8F1"
         app:hintTextColor="#94A3B8"
         app:startIconDrawable="@drawable/ic_lock"
         app:startIconTint="#94A3B8"
