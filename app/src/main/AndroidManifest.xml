@@ -12,6 +12,18 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ApartmentManagementSystem">
         <activity
+            android:name=".ChatActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ServicesActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AnnouncementActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ProfileActivity"
+            android:exported="false" />
+        <activity
             android:name=".FeedActivity"
             android:exported="false" />
         <activity
@@ -23,11 +35,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-<!--        <activity-->
-<!--            android:name=".LoginActivity"-->
-<!--            android:theme="@style/Theme.AppCompat.Light.NoActionBar"-->
-<!--            android:exported="true"-->
-<!--        </activity>-->
     </application>
 
 </manifest>

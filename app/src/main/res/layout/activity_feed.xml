@@ -9,6 +9,7 @@
     android:background="#F0F6FB"
     tools:context=".FeedActivity">
 
+
     <!-- Top App Bar -->
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
@@ -787,6 +788,8 @@
         app:itemIconTint="@color/nav_item_color"
         app:itemTextColor="@color/nav_item_color"
         app:labelVisibilityMode="labeled"
-        app:menu="@menu/bottom_nav_menu" />
+        app:menu="@menu/bottom_nav_menu"
+        android:layout_marginBottom="0dp"
+        app:paddingBottomSystemWindowInsets="true"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
