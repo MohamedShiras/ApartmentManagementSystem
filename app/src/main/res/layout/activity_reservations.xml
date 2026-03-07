@@ -59,6 +59,7 @@
 
                 <!-- Calendar icon -->
                 <ImageView
+                    android:id="@+id/btnReservationHistory"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:padding="8dp"

@@ -1,5 +1,6 @@
 package com.example.apartmentmanagementsystem;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -26,6 +27,11 @@ public class ReservationsActivity extends AppCompatActivity {
         );
 
         setContentView(R.layout.activity_reservations);
+        ImageView calendarIcon = findViewById(R.id.btnReservationHistory);
+        calendarIcon.setOnClickListener(v -> {
+            Intent intent = new Intent(this, ReservationHistoryActivity.class);
+            startActivity(intent);
+        });
         ImageView btnBack = findViewById(R.id.btnBack);
         btnBack.setOnClickListener(v -> onBackPressed());
         // Toolbar back button

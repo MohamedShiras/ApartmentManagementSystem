@@ -19,13 +19,16 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ApartmentManagementSystem">
         <activity
+            android:name=".ReservationHistoryActivity"
+            android:exported="false" />
+        <activity
             android:name=".ReservationsActivity"
             android:exported="false"
-            android:theme="@style/Theme.MaterialComponents.NoActionBar"/>
+            android:theme="@style/Theme.MaterialComponents.NoActionBar" />
         <activity
             android:name=".Noticeadapter"
             android:exported="false"
-            tools:ignore="Instantiatable"/>
+            tools:ignore="Instantiatable" />
         <activity
             android:name=".Notice"
             android:exported="false"
