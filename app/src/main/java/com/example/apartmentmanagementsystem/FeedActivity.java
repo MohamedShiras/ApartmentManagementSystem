@@ -21,6 +21,14 @@ public class FeedActivity extends AppCompatActivity {
 
         setupBottomNavigation();
         setupPostButton();
+        setupQuickActions();
+    }
+
+    private void setupQuickActions() {
+        CardView pillMaintenance = findViewById(R.id.pillMaintenance);
+        pillMaintenance.setOnClickListener(v -> {
+            startActivity(new Intent(this, ComplaintActivity.class));
+        });
     }
 
     private void setupPostButton() {
@@ -42,7 +50,7 @@ public class FeedActivity extends AppCompatActivity {
         navFeed.setOnClickListener(v -> {});
 
         navNotices.setOnClickListener(v -> {
-            startActivity(new Intent(this, AnnouncementActivity.class));
+            startActivity(new Intent(this, NoticesActivity.class));
             overridePendingTransition(0, 0);
             finish();
         });
