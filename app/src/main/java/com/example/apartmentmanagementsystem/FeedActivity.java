@@ -25,15 +25,17 @@ public class FeedActivity extends AppCompatActivity {
     }
 
     private void setupQuickActions() {
-        CardView pillMaintenance = findViewById(R.id.serviceComplaint);
-        pillMaintenance.setOnClickListener(v -> {
+        CardView serviceComplaint = findViewById(R.id.serviceComplaint);
+        serviceComplaint.setOnClickListener(v -> {
             startActivity(new Intent(this, ComplaintActivity.class));
         });
 
-        CardView pillReservation = findViewById(R.id.serviceReservation);
-        pillReservation.setOnClickListener(v -> {
-            startActivity(new Intent(this, ReservationsActivity.class));
-        });
+        CardView serviceMaintenance = findViewById(R.id.serviceMaintenance);
+        if (serviceMaintenance != null) {
+            serviceMaintenance.setOnClickListener(v -> {
+                startActivity(new Intent(this, MaintenanceActivity.class));
+            });
+        }
     }
 
     private void setupPostButton() {

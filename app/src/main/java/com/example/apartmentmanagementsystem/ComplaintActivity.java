@@ -2,6 +2,7 @@ package com.example.apartmentmanagementsystem;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -21,7 +22,7 @@ public class ComplaintActivity extends AppCompatActivity {
     private ComplaintAdapter adapter;
     private List<Complaint> allComplaints;
     private List<Complaint> filteredComplaints;
-    private TextView textActiveCount, textResolvedCount, textListHeader;
+    private TextView textActiveCount, textResolvedCount, textPendingCount, textListHeader;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +39,9 @@ public class ComplaintActivity extends AppCompatActivity {
     }
 
     private void initViews() {
-        ImageButton btnBack = findViewById(R.id.btnBack);
+
+        textPendingCount = findViewById(R.id.textPendingCount);
+        View btnBack = findViewById(R.id.btnBack);
         btnBack.setOnClickListener(v -> finish());
 
         textActiveCount = findViewById(R.id.textActiveCount);
@@ -48,7 +51,9 @@ public class ComplaintActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerViewComplaints);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        ExtendedFloatingActionButton fabFileComplaint = findViewById(R.id.fabFileComplaint);
+        // 2. Fixed: Changed ExtendedFloatingActionButton to CardView/View
+        // to match your activity_complaint.xml
+        View fabFileComplaint = findViewById(R.id.fabFileComplaint);
         fabFileComplaint.setOnClickListener(v -> {
             startActivity(new Intent(ComplaintActivity.this, FileComplaintActivity.class));
         });
@@ -112,14 +117,19 @@ public class ComplaintActivity extends AppCompatActivity {
     private void updateSummary() {
         int active = 0;
         int resolved = 0;
+        int pending = 0;
         for (Complaint c : allComplaints) {
             if ("Resolved".equalsIgnoreCase(c.getStatus())) {
                 resolved++;
+            } else if ("Pending".equalsIgnoreCase(c.getStatus())) {
+                pending++;
+                active++; // Usually pending is considered active
             } else {
                 active++;
             }
         }
-        textActiveCount.setText(active + " Total");
-        textResolvedCount.setText(resolved + " Total");
+        textActiveCount.setText(String.valueOf(active));
+        textResolvedCount.setText(String.valueOf(resolved));
+        textPendingCount.setText(String.valueOf(pending));
     }
 }

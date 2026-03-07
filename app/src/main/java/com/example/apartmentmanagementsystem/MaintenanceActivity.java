@@ -12,44 +12,33 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-public class ServicesActivity extends AppCompatActivity {
+public class MaintenanceActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_services);
+        setContentView(R.layout.activity_maintenance);
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.activity_services), (v, insets) -> {
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.activity_maintenance), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
-
-
         });
-        setupQuickActions();
+
+        // Back button → FeedActivity
+        CardView btnBack = findViewById(R.id.btnBack);
+        btnBack.setOnClickListener(v -> {
+            startActivity(new Intent(this, FeedActivity.class));
+            overridePendingTransition(0, 0);
+            finish();
+        });
+
         setupBottomNavigation();
-    }
-
-    private void setupQuickActions() {
-        // 2. USE THE CORRECT ID: cardMaintenance (matches activity_services.xml)
-        CardView cardComplaint = findViewById(R.id.cardComplaint);
-        if (cardComplaint != null) {
-            cardComplaint.setOnClickListener(v -> {
-                startActivity(new Intent(this, ComplaintActivity.class));
-            });
-        }
-
-        CardView cardMaintenance = findViewById(R.id.cardMaintenance);
-        if (cardMaintenance != null) {
-            cardMaintenance.setOnClickListener(v -> {
-                startActivity(new Intent(this, MaintenanceActivity.class));
-            });
-        }
     }
 
     private void setupBottomNavigation() {
@@ -59,8 +48,11 @@ public class ServicesActivity extends AppCompatActivity {
         LinearLayout navServices = findViewById(R.id.nav_btn_services);
         LinearLayout navProfile = findViewById(R.id.nav_btn_profile);
 
-        // Feed is current page — do nothing on tap
-        navServices.setOnClickListener(v -> {});
+        navFeed.setOnClickListener(v -> {
+            startActivity(new Intent(this, FeedActivity.class));
+            overridePendingTransition(0, 0);
+            finish();
+        });
 
         navNotices.setOnClickListener(v -> {
             startActivity(new Intent(this, NoticesActivity.class));
@@ -74,8 +66,8 @@ public class ServicesActivity extends AppCompatActivity {
             finish();
         });
 
-        navFeed.setOnClickListener(v -> {
-            startActivity(new Intent(this, FeedActivity.class));
+        navServices.setOnClickListener(v -> {
+            startActivity(new Intent(this, ServicesActivity.class));
             overridePendingTransition(0, 0);
             finish();
         });
