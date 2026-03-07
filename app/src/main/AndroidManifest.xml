@@ -51,6 +51,18 @@
             android:name=".PostActivity"
             android:exported="false" />
 
+        <activity
+            android:name=".ComplaintActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".FileComplaintActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ComplaintDetailActivity"
+            android:exported="false" />
+
     </application>
 
 </manifest>
