@@ -25,7 +25,7 @@ public class FeedActivity extends AppCompatActivity {
     }
 
     private void setupQuickActions() {
-        CardView pillMaintenance = findViewById(R.id.pillMaintenance);
+        CardView pillMaintenance = findViewById(R.id.serviceComplaint);
         pillMaintenance.setOnClickListener(v -> {
             startActivity(new Intent(this, ComplaintActivity.class));
         });

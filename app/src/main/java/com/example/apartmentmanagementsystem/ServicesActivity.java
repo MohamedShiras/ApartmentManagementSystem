@@ -1,6 +1,9 @@
 package com.example.apartmentmanagementsystem;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,6 +25,44 @@ public class ServicesActivity extends AppCompatActivity {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
+
+
+        });
+        setupBottomNavigation();
+    }
+
+    private void setupBottomNavigation() {
+        FrameLayout navFeed = findViewById(R.id.nav_btn_feed);
+        LinearLayout navNotices = findViewById(R.id.nav_btn_notices);
+        LinearLayout navChat = findViewById(R.id.nav_btn_chat);
+        LinearLayout navServices = findViewById(R.id.nav_btn_services);
+        LinearLayout navProfile = findViewById(R.id.nav_btn_profile);
+
+        // Feed is current page — do nothing on tap
+        navFeed.setOnClickListener(v -> {});
+
+        navNotices.setOnClickListener(v -> {
+            startActivity(new Intent(this, NoticesActivity.class));
+            overridePendingTransition(0, 0);
+            finish();
+        });
+
+        navChat.setOnClickListener(v -> {
+            startActivity(new Intent(this, ChatActivity.class));
+            overridePendingTransition(0, 0);
+            finish();
+        });
+
+        navServices.setOnClickListener(v -> {
+            startActivity(new Intent(this, ServicesActivity.class));
+            overridePendingTransition(0, 0);
+            finish();
+        });
+
+        navProfile.setOnClickListener(v -> {
+            startActivity(new Intent(this, ProfileActivity.class));
+            overridePendingTransition(0, 0);
+            finish();
         });
     }
 }
