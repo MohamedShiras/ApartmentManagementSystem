@@ -25,8 +25,17 @@
             android:name=".Noticeadapter"
             android:exported="false" />
         <activity
+            android:name=".ReservationsActivity"
+            android:exported="false"
+            android:theme="@style/Theme.MaterialComponents.NoActionBar" />
+        <activity
+            android:name=".Noticeadapter"
+            android:exported="false"
+            tools:ignore="Instantiatable" />
+        <activity
             android:name=".Notice"
-            android:exported="false" />
+            android:exported="false"
+            tools:ignore="Instantiatable" />
         <activity
             android:name=".NoticesActivity"
             android:exported="false" />
