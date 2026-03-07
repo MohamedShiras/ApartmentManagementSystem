@@ -29,7 +29,6 @@ public class LoginActivity extends AppCompatActivity {
     private TextInputEditText usernameInput, passwordInput;
     private SwitchCompat rememberMeSwitch;
     private MaterialButton signInButton;
-    private TextView signUpText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +41,6 @@ public class LoginActivity extends AppCompatActivity {
 
         initializeViews();
         setupClickListeners();
-        setupSignUpText();
         checkRememberedUser();
     }
 
@@ -53,7 +51,6 @@ public class LoginActivity extends AppCompatActivity {
         passwordInput = findViewById(R.id.passwordInput);
         rememberMeSwitch = findViewById(R.id.rememberMeSwitch);
         signInButton = findViewById(R.id.signInButton);
-        signUpText = findViewById(R.id.signUpText);
     }
 
     private void setupClickListeners() {
@@ -146,34 +143,5 @@ public class LoginActivity extends AppCompatActivity {
             // Optional: Auto-login
             // performLogin(savedUsername, savedPassword, true);
         }
-    }
-
-    private void setupSignUpText() {
-        String text = "Don't have account? Sign Up";
-        SpannableString spannableString = new SpannableString(text);
-
-        ClickableSpan clickableSpan = new ClickableSpan() {
-            @Override
-            public void onClick(View widget) {
-                // Since there's no signup, you can either:
-                // 1. Show a toast
-                Toast.makeText(LoginActivity.this, "Registration coming soon!", Toast.LENGTH_SHORT).show();
-
-                // 2. Or remove this text from the layout if not needed
-            }
-
-            @Override
-            public void updateDrawState(TextPaint ds) {
-                super.updateDrawState(ds);
-                ds.setColor(0xFF2C3E50); // Dark blue-gray color
-                ds.setUnderlineText(false);
-            }
-        };
-
-        // Make "Sign Up" clickable (starts at position 20)
-        spannableString.setSpan(clickableSpan, 20, 27, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-        signUpText.setText(spannableString);
-        signUpText.setMovementMethod(LinkMovementMethod.getInstance());
     }
 }

@@ -5,18 +5,18 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFF"
+    android:background="#F8FAFC"
     tools:context=".LoginActivity">
 
     <!-- Illustration Container -->
     <androidx.cardview.widget.CardView
         android:id="@+id/illustrationCard"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_marginTop="80dp"
-        app:cardCornerRadius="20dp"
+        android:layout_width="160dp"
+        android:layout_height="160dp"
+        android:layout_marginTop="60dp"
+        app:cardCornerRadius="30dp"
         app:cardElevation="0dp"
-        app:cardBackgroundColor="#FFFF"
+        app:cardBackgroundColor="#FFFFFF"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -26,45 +26,40 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:contentDescription="Login Illustration"
-            android:padding="0dp"
-            android:scaleType="centerCrop"
+            android:padding="24dp"
+            android:scaleType="fitCenter"
             android:src="@drawable/apartment_logo" />
 
     </androidx.cardview.widget.CardView>
 
     <!-- Login Title -->
-
-    <!-- Subtitle -->
-
     <TextView
         android:id="@+id/loginTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:text="Login"
+        android:layout_marginTop="40dp"
+        android:layout_marginStart="32dp"
+        android:text="Welcome Back"
         android:textColor="#1E293B"
         android:textSize="32sp"
         android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.096"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/illustrationCard" />
 
-    <!-- Username Input Container -->
-
+    <!-- Subtitle -->
     <TextView
         android:id="@+id/loginSubtitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
+        android:layout_marginStart="32dp"
         android:text="Please sign in to continue."
         android:textColor="#64748B"
-        android:textSize="14sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.129"
+        android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/loginTitle" />
 
+    <!-- Username Input Container -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/usernameLayout"
         android:layout_width="0dp"
@@ -75,13 +70,13 @@
         android:hint="Username"
         app:boxBackgroundColor="#FFFFFF"
         app:boxBackgroundMode="outline"
-        app:boxCornerRadiusBottomEnd="12dp"
-        app:boxCornerRadiusBottomStart="12dp"
-        app:boxCornerRadiusTopEnd="12dp"
-        app:boxCornerRadiusTopStart="12dp"
-        app:boxStrokeWidth="1.5dp"
+        app:boxCornerRadiusBottomEnd="16dp"
+        app:boxCornerRadiusBottomStart="16dp"
+        app:boxCornerRadiusTopEnd="16dp"
+        app:boxCornerRadiusTopStart="16dp"
+        app:boxStrokeWidth="1dp"
         app:boxStrokeWidthFocused="2dp"
-        app:boxStrokeColor="#BDD8F1"
+        app:boxStrokeColor="#E2E8F0"
         app:hintTextColor="#94A3B8"
         app:startIconDrawable="@drawable/ic_user"
         app:startIconTint="#94A3B8"
@@ -94,7 +89,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="text"
-            android:padding="16dp"
+            android:padding="18dp"
             android:textColor="#1E293B"
             android:textSize="16sp" />
 
@@ -111,13 +106,13 @@
         android:hint="Password"
         app:boxBackgroundColor="#FFFFFF"
         app:boxBackgroundMode="outline"
-        app:boxCornerRadiusBottomEnd="12dp"
-        app:boxCornerRadiusBottomStart="12dp"
-        app:boxCornerRadiusTopEnd="12dp"
-        app:boxCornerRadiusTopStart="12dp"
-        app:boxStrokeWidth="1.5dp"
+        app:boxCornerRadiusBottomEnd="16dp"
+        app:boxCornerRadiusBottomStart="16dp"
+        app:boxCornerRadiusTopEnd="16dp"
+        app:boxCornerRadiusTopStart="16dp"
+        app:boxStrokeWidth="1dp"
         app:boxStrokeWidthFocused="2dp"
-        app:boxStrokeColor="#BDD8F1"
+        app:boxStrokeColor="#E2E8F0"
         app:hintTextColor="#94A3B8"
         app:startIconDrawable="@drawable/ic_lock"
         app:startIconTint="#94A3B8"
@@ -134,7 +129,7 @@
             android:inputType="textPassword"
             android:textColor="#1E293B"
             android:textSize="16sp"
-            android:padding="16dp" />
+            android:padding="18dp" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -145,7 +140,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="20dp"
         android:orientation="horizontal"
         android:gravity="center_vertical"
         app:layout_constraintEnd_toEndOf="parent"
@@ -157,14 +152,16 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Remember me nexttime"
+            android:text="Remember me next time"
             android:textColor="#64748B"
-            android:textSize="13sp" />
+            android:textSize="14sp" />
 
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/rememberMeSwitch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            app:thumbTint="#214177"
+            app:trackTint="#CBD5E1"
             android:checked="false" />
 
     </LinearLayout>
@@ -176,30 +173,19 @@
         android:layout_height="56dp"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="40dp"
         android:text="Sign In"
         android:textColor="#FFFFFF"
         android:textSize="16sp"
+        android:textStyle="bold"
         android:textAllCaps="false"
-        app:backgroundTint="#2C3E50"
+        app:backgroundTint="#214177"
         app:cornerRadius="28dp"
-        app:elevation="0dp"
+        app:elevation="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/rememberMeContainer" />
 
-    <!-- Sign Up Text -->
-    <TextView
-        android:id="@+id/signUpText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:textColor="#64748B"
-        android:textSize="14sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/signInButton">
 
-    </TextView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
