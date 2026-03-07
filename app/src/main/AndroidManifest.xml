@@ -2,7 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
@@ -17,40 +18,42 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ApartmentManagementSystem">
-
+        <activity
+            android:name=".Noticeadapter"
+            android:exported="false" />
+        <activity
+            android:name=".Notice"
+            android:exported="false" />
+        <activity
+            android:name=".NoticesActivity"
+            android:exported="false" />
         <activity
             android:name=".LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".FeedActivity"
             android:exported="false" />
-
         <activity
             android:name=".ProfileActivity"
             android:exported="false" />
-
         <activity
             android:name=".ChatActivity"
             android:exported="false" />
-
         <activity
             android:name=".AnnouncementActivity"
             android:exported="false" />
-
         <activity
             android:name=".ServicesActivity"
             android:exported="false" />
-
         <activity
             android:name=".PostActivity"
             android:exported="false" />
-
     </application>
 
 </manifest>
