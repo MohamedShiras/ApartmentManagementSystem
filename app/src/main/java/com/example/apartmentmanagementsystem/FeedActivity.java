@@ -2,12 +2,10 @@ package com.example.apartmentmanagementsystem;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+import androidx.cardview.widget.CardView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -17,8 +15,21 @@ public class FeedActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feed);
-        this.getSupportActionBar().hide();
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide();
+        }
         setupBottomNavigation();
+        setupMaintenanceClick();
+    }
+
+    private void setupMaintenanceClick() {
+        CardView maintenancePill = findViewById(R.id.pillMaintenance);
+        maintenancePill.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(FeedActivity.this, ComplaintDashboardActivity.class));
+            }
+        });
     }
 
     private void setupBottomNavigation() {
