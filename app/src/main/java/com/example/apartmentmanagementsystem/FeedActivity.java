@@ -21,6 +21,14 @@ public class FeedActivity extends AppCompatActivity {
 
         setupBottomNavigation();
         setupPostButton();
+        setupQuickActions();
+    }
+
+    private void setupQuickActions() {
+        CardView pillMaintenance = findViewById(R.id.pillMaintenance);
+        pillMaintenance.setOnClickListener(v -> {
+            startActivity(new Intent(this, ComplaintActivity.class));
+        });
     }
 
     private void setupPostButton() {
