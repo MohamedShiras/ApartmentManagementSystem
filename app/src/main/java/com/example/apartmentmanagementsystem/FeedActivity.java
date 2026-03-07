@@ -6,6 +6,7 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 
 public class FeedActivity extends AppCompatActivity {
 
@@ -19,6 +20,15 @@ public class FeedActivity extends AppCompatActivity {
         }
 
         setupBottomNavigation();
+        setupPostButton();
+    }
+
+    private void setupPostButton() {
+        CardView btnPost = findViewById(R.id.btnPost);
+        btnPost.setOnClickListener(v -> {
+            startActivity(new Intent(this, PostActivity.class));
+            overridePendingTransition(0, 0);
+        });
     }
 
     private void setupBottomNavigation() {
