@@ -51,7 +51,7 @@
             android:id="@+id/imgUserAvatar"
             android:layout_width="38dp"
             android:layout_height="38dp"
-            android:background="#0D47A1"
+            android:background="#3667A6"
             app:shapeAppearance="@style/ShapeAppearance.Material3.Corner.Full" />
 
         <TextView
@@ -97,7 +97,7 @@
           android:id="@+id/btnPost"
           android:layout_width="wrap_content"
           android:layout_height="44dp"
-          android:backgroundTint="#0D47A1"
+          android:backgroundTint="#3667A6"
           android:paddingStart="18dp"
           android:paddingEnd="18dp"
           android:text="Post"
@@ -210,7 +210,7 @@
                   android:layout_width="43dp"
                   android:layout_height="30dp"
                   android:src="@drawable/ic_photo"
-                  app:tint="#0D47A1" />
+                  app:tint="#3667A6" />
 
               <com.google.android.material.button.MaterialButton
                   android:id="@+id/btnAddMore"
@@ -226,7 +226,7 @@
                   app:iconSize="30dp"
                   app:strokeColor="#ffffff"
                   app:strokeWidth="1.5dp"
-                  app:iconTint="#0D47A1" />
+                  app:iconTint="#3667A6" />
 
 
             </LinearLayout>
