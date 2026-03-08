@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_complaint"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F4F7FC"
@@ -28,7 +28,6 @@
             android:paddingStart="20dp"
             android:paddingEnd="16dp">
 
-            <!-- Back button -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/btnBack"
                 android:layout_width="40dp"
@@ -49,7 +48,6 @@
                     app:tint="#214177" />
             </androidx.cardview.widget.CardView>
 
-            <!-- Title -->
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -59,13 +57,12 @@
                 android:textStyle="bold"
                 android:gravity="center"
                 app:layout_constraintStart_toEndOf="@id/btnBack"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" />
 
-
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <!-- Tab strip -->
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabLayoutStatus"
             android:layout_width="match_parent"
@@ -83,17 +80,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="All" />
-
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Pending" />
-
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="In Progress" />
-
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -133,14 +127,11 @@
                 app:cardCornerRadius="28dp"
                 app:cardElevation="0dp"
                 app:cardBackgroundColor="#214177">
-
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:padding="22dp">
-
-                    <!-- Badge pill -->
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="26dp"
@@ -163,124 +154,53 @@
                             android:textSize="11sp"
                             android:textStyle="bold" />
                     </LinearLayout>
-
-                    <!-- Stats row -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
-
-                        <!-- Active Cases -->
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Active Cases"
-                                android:textColor="#82A6CB"
-                                android:textSize="12sp"
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
+                            android:layout_weight="1" android:orientation="vertical">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="Active Cases" android:textColor="#82A6CB" android:textSize="12sp"
                                 android:layout_marginBottom="4dp" />
-                            <TextView
-                                android:id="@+id/textActiveCount"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="3"
-                                android:textColor="#FFFFFF"
-                                android:textSize="28sp"
-                                android:textStyle="bold" />
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Total"
-                                android:textColor="#82A6CB"
-                                android:textSize="11sp" />
+                            <TextView android:id="@+id/textActiveCount" android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" android:text="3"
+                                android:textColor="#FFFFFF" android:textSize="28sp" android:textStyle="bold" />
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="Total" android:textColor="#82A6CB" android:textSize="11sp" />
                         </LinearLayout>
-
-                        <!-- Divider -->
-                        <View
-                            android:layout_width="1dp"
-                            android:layout_height="match_parent"
-                            android:layout_marginStart="16dp"
-                            android:layout_marginEnd="16dp"
-                            android:layout_marginTop="4dp"
-                            android:layout_marginBottom="4dp"
+                        <View android:layout_width="1dp" android:layout_height="match_parent"
+                            android:layout_marginStart="16dp" android:layout_marginEnd="16dp"
+                            android:layout_marginTop="4dp" android:layout_marginBottom="4dp"
                             android:background="#3667A6" />
-
-                        <!-- Resolved -->
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Resolved"
-                                android:textColor="#82A6CB"
-                                android:textSize="12sp"
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
+                            android:layout_weight="1" android:orientation="vertical">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="Resolved" android:textColor="#82A6CB" android:textSize="12sp"
                                 android:layout_marginBottom="4dp" />
-                            <TextView
-                                android:id="@+id/textResolvedCount"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="12"
-                                android:textColor="#FFFFFF"
-                                android:textSize="28sp"
-                                android:textStyle="bold" />
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Total"
-                                android:textColor="#82A6CB"
-                                android:textSize="11sp" />
+                            <TextView android:id="@+id/textResolvedCount" android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" android:text="12"
+                                android:textColor="#FFFFFF" android:textSize="28sp" android:textStyle="bold" />
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="Total" android:textColor="#82A6CB" android:textSize="11sp" />
                         </LinearLayout>
-
-                        <!-- Divider -->
-                        <View
-                            android:layout_width="1dp"
-                            android:layout_height="match_parent"
-                            android:layout_marginStart="16dp"
-                            android:layout_marginEnd="16dp"
-                            android:layout_marginTop="4dp"
-                            android:layout_marginBottom="4dp"
+                        <View android:layout_width="1dp" android:layout_height="match_parent"
+                            android:layout_marginStart="16dp" android:layout_marginEnd="16dp"
+                            android:layout_marginTop="4dp" android:layout_marginBottom="4dp"
                             android:background="#3667A6" />
-
-                        <!-- Pending -->
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Pending"
-                                android:textColor="#82A6CB"
-                                android:textSize="12sp"
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
+                            android:layout_weight="1" android:orientation="vertical">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="Pending" android:textColor="#82A6CB" android:textSize="12sp"
                                 android:layout_marginBottom="4dp" />
-                            <TextView
-                                android:id="@+id/textPendingCount"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="1"
-                                android:textColor="#FFFFFF"
-                                android:textSize="28sp"
-                                android:textStyle="bold" />
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Total"
-                                android:textColor="#82A6CB"
-                                android:textSize="11sp" />
+                            <TextView android:id="@+id/textPendingCount" android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" android:text="1"
+                                android:textColor="#FFFFFF" android:textSize="28sp" android:textStyle="bold" />
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="Total" android:textColor="#82A6CB" android:textSize="11sp" />
                         </LinearLayout>
-
                     </LinearLayout>
-
                 </LinearLayout>
-
             </androidx.cardview.widget.CardView>
 
             <!-- ══ SECTION HEADER ══ -->
@@ -310,7 +230,7 @@
                     android:textStyle="bold" />
             </LinearLayout>
 
-            <!-- ── COMPLAINT 1 — Noise · Under Review ── -->
+            <!-- ── COMPLAINT 1 ── -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/complaintItem1"
                 android:layout_width="match_parent"
@@ -325,8 +245,6 @@
                 app:cardBackgroundColor="#FFFFFF">
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                     android:orientation="vertical" android:padding="16dp">
-
-                    <!-- Header row -->
                     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                         android:orientation="horizontal" android:gravity="center_vertical"
                         android:layout_marginBottom="12dp">
@@ -352,8 +270,6 @@
                                 android:textSize="10sp" android:textStyle="bold" />
                         </androidx.cardview.widget.CardView>
                     </LinearLayout>
-
-                    <!-- Inline status card -->
                     <androidx.cardview.widget.CardView android:layout_width="match_parent" android:layout_height="wrap_content"
                         android:layout_marginBottom="12dp" app:cardCornerRadius="14dp" app:cardElevation="0dp"
                         app:cardBackgroundColor="#F8FAFC">
@@ -378,7 +294,6 @@
                             </androidx.cardview.widget.CardView>
                         </LinearLayout>
                     </androidx.cardview.widget.CardView>
-
                     <View android:layout_width="match_parent" android:layout_height="1dp"
                         android:background="#F1F5F9" android:layout_marginBottom="10dp" />
                     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
@@ -391,14 +306,22 @@
                         <ImageView android:layout_width="16dp" android:layout_height="16dp"
                             android:src="@drawable/ic_comment" android:layout_marginEnd="4dp" app:tint="#82A6CB" />
                         <TextView android:layout_width="0dp" android:layout_height="wrap_content"
-                            android:layout_weight="1" android:text="6 comments" android:textColor="#82A6CB" android:textSize="12sp" />
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                            android:text="View Details" android:textColor="#3667A6" android:textSize="12sp" android:textStyle="bold" />
+                            android:layout_weight="1" android:text="6 comments"
+                            android:textColor="#82A6CB" android:textSize="12sp" />
+                        <TextView
+                            android:id="@+id/viewDetailsComplaint"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="View Details"
+                            android:clickable="true"
+                            android:textColor="#3667A6"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
                     </LinearLayout>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-            <!-- ── COMPLAINT 2 — Parking · In Progress ── -->
+            <!-- ── COMPLAINT 2 ── -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/complaintItem2"
                 android:layout_width="match_parent"
@@ -413,7 +336,6 @@
                 app:cardBackgroundColor="#FFFFFF">
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                     android:orientation="vertical" android:padding="16dp">
-
                     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                         android:orientation="horizontal" android:gravity="center_vertical"
                         android:layout_marginBottom="12dp">
@@ -439,7 +361,6 @@
                                 android:textSize="10sp" android:textStyle="bold" />
                         </androidx.cardview.widget.CardView>
                     </LinearLayout>
-
                     <androidx.cardview.widget.CardView android:layout_width="match_parent" android:layout_height="wrap_content"
                         android:layout_marginBottom="12dp" app:cardCornerRadius="14dp" app:cardElevation="0dp"
                         app:cardBackgroundColor="#F8FAFC">
@@ -464,7 +385,6 @@
                             </androidx.cardview.widget.CardView>
                         </LinearLayout>
                     </androidx.cardview.widget.CardView>
-
                     <View android:layout_width="match_parent" android:layout_height="1dp"
                         android:background="#F1F5F9" android:layout_marginBottom="10dp" />
                     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
@@ -477,14 +397,22 @@
                         <ImageView android:layout_width="16dp" android:layout_height="16dp"
                             android:src="@drawable/ic_comment" android:layout_marginEnd="4dp" app:tint="#82A6CB" />
                         <TextView android:layout_width="0dp" android:layout_height="wrap_content"
-                            android:layout_weight="1" android:text="3 comments" android:textColor="#82A6CB" android:textSize="12sp" />
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                            android:text="View Details" android:textColor="#3667A6" android:textSize="12sp" android:textStyle="bold" />
+                            android:layout_weight="1" android:text="3 comments"
+                            android:textColor="#82A6CB" android:textSize="12sp" />
+                        <TextView
+                            android:id="@+id/viewDetailsComplaint2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="View Details"
+                            android:clickable="true"
+                            android:textColor="#3667A6"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
                     </LinearLayout>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-            <!-- ── COMPLAINT 3 — Littering · Pending ── -->
+            <!-- ── COMPLAINT 3 ── -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/complaintItem3"
                 android:layout_width="match_parent"
@@ -499,7 +427,6 @@
                 app:cardBackgroundColor="#FFFFFF">
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                     android:orientation="vertical" android:padding="16dp">
-
                     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                         android:orientation="horizontal" android:gravity="center_vertical"
                         android:layout_marginBottom="12dp">
@@ -525,7 +452,6 @@
                                 android:textSize="10sp" android:textStyle="bold" />
                         </androidx.cardview.widget.CardView>
                     </LinearLayout>
-
                     <androidx.cardview.widget.CardView android:layout_width="match_parent" android:layout_height="wrap_content"
                         android:layout_marginBottom="12dp" app:cardCornerRadius="14dp" app:cardElevation="0dp"
                         app:cardBackgroundColor="#F8FAFC">
@@ -550,7 +476,6 @@
                             </androidx.cardview.widget.CardView>
                         </LinearLayout>
                     </androidx.cardview.widget.CardView>
-
                     <View android:layout_width="match_parent" android:layout_height="1dp"
                         android:background="#F1F5F9" android:layout_marginBottom="10dp" />
                     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
@@ -563,14 +488,22 @@
                         <ImageView android:layout_width="16dp" android:layout_height="16dp"
                             android:src="@drawable/ic_comment" android:layout_marginEnd="4dp" app:tint="#82A6CB" />
                         <TextView android:layout_width="0dp" android:layout_height="wrap_content"
-                            android:layout_weight="1" android:text="1 comment" android:textColor="#82A6CB" android:textSize="12sp" />
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                            android:text="View Details" android:textColor="#3667A6" android:textSize="12sp" android:textStyle="bold" />
+                            android:layout_weight="1" android:text="1 comment"
+                            android:textColor="#82A6CB" android:textSize="12sp" />
+                        <TextView
+                            android:id="@+id/viewDetailsComplaint3"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="View Details"
+                            android:clickable="true"
+                            android:textColor="#3667A6"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
                     </LinearLayout>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-            <!-- ── COMPLAINT 4 — Lift · Resolved ── -->
+            <!-- ── COMPLAINT 4 ── -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/complaintItem4"
                 android:layout_width="match_parent"
@@ -585,7 +518,6 @@
                 app:cardBackgroundColor="#FFFFFF">
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                     android:orientation="vertical" android:padding="16dp">
-
                     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                         android:orientation="horizontal" android:gravity="center_vertical"
                         android:layout_marginBottom="12dp">
@@ -593,8 +525,7 @@
                             app:cardCornerRadius="13dp" app:cardElevation="0dp" app:cardBackgroundColor="#EEF4FB">
                             <ImageView android:layout_width="22dp" android:layout_height="22dp"
                                 android:layout_gravity="center"
-                                android:src="@drawable/ic_announcement"
-                                app:tint="#214177" />
+                                android:src="@drawable/ic_announcement" app:tint="#214177" />
                         </androidx.cardview.widget.CardView>
                         <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
                             android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="12dp">
@@ -612,7 +543,6 @@
                                 android:textSize="10sp" android:textStyle="bold" />
                         </androidx.cardview.widget.CardView>
                     </LinearLayout>
-
                     <androidx.cardview.widget.CardView android:layout_width="match_parent" android:layout_height="wrap_content"
                         android:layout_marginBottom="12dp" app:cardCornerRadius="14dp" app:cardElevation="0dp"
                         app:cardBackgroundColor="#F8FAFC">
@@ -637,7 +567,6 @@
                             </androidx.cardview.widget.CardView>
                         </LinearLayout>
                     </androidx.cardview.widget.CardView>
-
                     <View android:layout_width="match_parent" android:layout_height="1dp"
                         android:background="#F1F5F9" android:layout_marginBottom="10dp" />
                     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
@@ -648,7 +577,8 @@
                             android:layout_weight="1" android:text="Resolved" android:textColor="#16A34A"
                             android:textSize="12sp" android:textStyle="bold" />
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                            android:text="View Summary" android:textColor="#3667A6" android:textSize="12sp" android:textStyle="bold" />
+                            android:text="View Summary" android:textColor="#3667A6"
+                            android:textSize="12sp" android:textStyle="bold" />
                     </LinearLayout>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
@@ -667,7 +597,7 @@
 
     </androidx.core.widget.NestedScrollView>
 
-    <!-- ══ POST BUTTON — File New Complaint ══ -->
+    <!-- ══ NEW COMPLAINT BUTTON ══ -->
     <androidx.cardview.widget.CardView
         android:id="@+id/fabFileComplaint"
         android:layout_width="wrap_content"
@@ -692,7 +622,7 @@
                 android:src="@drawable/ic_add" android:layout_marginEnd="6dp" app:tint="#FFFFFF" />
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                 android:text="New Complaint" android:textColor="#FFFFFF" android:textSize="13sp"
-                android:textStyle="bold" android:letterSpacing="0.03" />
+                android:textStyle="bold" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 

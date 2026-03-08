@@ -28,7 +28,6 @@
             android:paddingStart="20dp"
             android:paddingEnd="16dp">
 
-            <!-- Back button -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/btnBack"
                 android:layout_width="40dp"
@@ -49,7 +48,6 @@
                     app:tint="#214177" />
             </androidx.cardview.widget.CardView>
 
-            <!-- Title -->
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -63,7 +61,6 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" />
 
-            <!-- Notification bell -->
             <FrameLayout
                 android:id="@+id/notificationBtn"
                 android:layout_width="40dp"
@@ -135,14 +132,13 @@
                     android:orientation="vertical"
                     android:padding="20dp">
 
-                    <!-- Header row: avatar + name + badge -->
+                    <!-- Avatar + name + badge -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:gravity="center_vertical"
                         android:layout_marginBottom="16dp">
-
                         <androidx.cardview.widget.CardView
                             android:layout_width="40dp"
                             android:layout_height="40dp"
@@ -158,7 +154,6 @@
                                 android:textSize="13sp"
                                 android:textStyle="bold" />
                         </androidx.cardview.widget.CardView>
-
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -180,7 +175,6 @@
                                 android:textColor="#94A3B8"
                                 android:textSize="11sp" />
                         </LinearLayout>
-
                         <androidx.cardview.widget.CardView
                             android:layout_width="wrap_content"
                             android:layout_height="22dp"
@@ -198,7 +192,6 @@
                                 android:textSize="10sp"
                                 android:textStyle="bold" />
                         </androidx.cardview.widget.CardView>
-
                     </LinearLayout>
 
                     <!-- Inline status card -->
@@ -284,7 +277,6 @@
                         android:background="#F1F5F9"
                         android:layout_marginBottom="16dp" />
 
-                    <!-- Description -->
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -298,7 +290,7 @@
                         android:id="@+id/detailDescription"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="The tenant in the unit above plays loud music past midnight regularly. Despite verbal requests to stop, the behaviour continues and is affecting sleep and daily routine."
+                        android:text="The tenant in the unit above plays loud music past midnight regularly."
                         android:textColor="#64748B"
                         android:textSize="13sp"
                         android:lineSpacingExtra="4dp" />
