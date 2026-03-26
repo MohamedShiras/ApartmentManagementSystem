@@ -3,25 +3,17 @@ package com.example.apartmentmanagementsystem;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.text.SpannableString;
-import android.text.Spanned;
-import android.text.TextPaint;
-import android.text.method.LinkMovementMethod;
-import android.text.style.ClickableSpan;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -29,6 +21,8 @@ public class LoginActivity extends AppCompatActivity {
     private TextInputEditText usernameInput, passwordInput;
     private SwitchCompat rememberMeSwitch;
     private MaterialButton signInButton;
+
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,18 +33,31 @@ public class LoginActivity extends AppCompatActivity {
             getSupportActionBar().hide();
         }
 
+        // Initialize Firebase Auth
+        mAuth = FirebaseAuth.getInstance();
+
         initializeViews();
-        setupClickListeners();
         checkRememberedUser();
+        setupClickListeners();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // If user is already signed in, go straight to Feed
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) {
+            goToFeed();
+        }
     }
 
     private void initializeViews() {
-        usernameLayout = findViewById(R.id.usernameLayout);
-        passwordLayout = findViewById(R.id.passwordLayout);
-        usernameInput = findViewById(R.id.usernameInput);
-        passwordInput = findViewById(R.id.passwordInput);
+        usernameLayout  = findViewById(R.id.usernameLayout);
+        passwordLayout  = findViewById(R.id.passwordLayout);
+        usernameInput   = findViewById(R.id.usernameInput);
+        passwordInput   = findViewById(R.id.passwordInput);
         rememberMeSwitch = findViewById(R.id.rememberMeSwitch);
-        signInButton = findViewById(R.id.signInButton);
+        signInButton    = findViewById(R.id.signInButton);
     }
 
     private void setupClickListeners() {
@@ -58,8 +65,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void handleSignIn() {
-        // Get input values
-        String username = usernameInput.getText().toString().trim();
+        String email    = usernameInput.getText().toString().trim();
         String password = passwordInput.getText().toString().trim();
         boolean rememberMe = rememberMeSwitch.isChecked();
 
@@ -67,9 +73,15 @@ public class LoginActivity extends AppCompatActivity {
         usernameLayout.setError(null);
         passwordLayout.setError(null);
 
-        // Validate inputs
-        if (username.isEmpty()) {
-            usernameLayout.setError("Username is required");
+        // Validate
+        if (email.isEmpty()) {
+            usernameLayout.setError("Email is required");
+            usernameInput.requestFocus();
+            return;
+        }
+
+        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            usernameLayout.setError("Enter a valid email address");
             usernameInput.requestFocus();
             return;
         }
@@ -86,35 +98,67 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-        // Perform login
-        performLogin(username, password, rememberMe);
+        // Disable button to prevent double-tap
+        signInButton.setEnabled(false);
+        signInButton.setText("Signing in...");
+
+        // Firebase sign in
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, task -> {
+                    signInButton.setEnabled(true);
+                    signInButton.setText("Sign In");
+
+                    if (task.isSuccessful()) {
+                        // Save remember me preference
+                        if (rememberMe) {
+                            saveCredentials(email, password);
+                        } else {
+                            clearCredentials();
+                        }
+
+                        FirebaseUser user = mAuth.getCurrentUser();
+                        String displayName = (user != null && user.getDisplayName() != null)
+                                ? user.getDisplayName()
+                                : email;
+
+                        Toast.makeText(this, "Welcome, " + displayName + "!", Toast.LENGTH_SHORT).show();
+                        goToFeed();
+
+                    } else {
+                        // Login failed — show specific error
+                        String errorMsg = "Login failed. Check your email and password.";
+                        if (task.getException() != null) {
+                            String exMsg = task.getException().getMessage();
+                            if (exMsg != null) {
+                                if (exMsg.contains("password")) {
+                                    errorMsg = "Incorrect password.";
+                                    passwordLayout.setError(errorMsg);
+                                } else if (exMsg.contains("no user") || exMsg.contains("identifier")) {
+                                    errorMsg = "No account found with this email.";
+                                    usernameLayout.setError(errorMsg);
+                                } else if (exMsg.contains("network")) {
+                                    errorMsg = "Network error. Check your connection.";
+                                    Toast.makeText(this, errorMsg, Toast.LENGTH_LONG).show();
+                                } else {
+                                    Toast.makeText(this, errorMsg, Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        }
+                    }
+                });
     }
 
-    private void performLogin(String username, String password, boolean rememberMe) {
-        // TODO: Add your authentication logic here (Firebase, API, etc.)
-        // For now, accepting any valid input
-
-        // Save credentials if Remember Me is checked
-        if (rememberMe) {
-            saveCredentials(username, password);
-        } else {
-            clearCredentials();
-        }
-
-        // Show success message
-        Toast.makeText(this, "Welcome, " + username + "!", Toast.LENGTH_SHORT).show();
-
-        // Navigate to FeedActivity
+    private void goToFeed() {
         Intent intent = new Intent(LoginActivity.this, FeedActivity.class);
-        intent.putExtra("username", username);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
-        finish(); // Close LoginActivity so user can't go back to it
+        finish();
     }
 
-    private void saveCredentials(String username, String password) {
+    private void saveCredentials(String email, String password) {
         SharedPreferences prefs = getSharedPreferences("LoginPrefs", MODE_PRIVATE);
         prefs.edit()
-                .putString("username", username)
+                .putString("email", email)
                 .putString("password", password)
                 .putBoolean("rememberMe", true)
                 .apply();
@@ -122,9 +166,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void clearCredentials() {
         SharedPreferences prefs = getSharedPreferences("LoginPrefs", MODE_PRIVATE);
-        prefs.edit()
-                .clear()
-                .apply();
+        prefs.edit().clear().apply();
     }
 
     private void checkRememberedUser() {
@@ -132,16 +174,11 @@ public class LoginActivity extends AppCompatActivity {
         boolean rememberMe = prefs.getBoolean("rememberMe", false);
 
         if (rememberMe) {
-            String savedUsername = prefs.getString("username", "");
+            String savedEmail    = prefs.getString("email", "");
             String savedPassword = prefs.getString("password", "");
-
-            // Pre-fill the fields
-            usernameInput.setText(savedUsername);
+            usernameInput.setText(savedEmail);
             passwordInput.setText(savedPassword);
             rememberMeSwitch.setChecked(true);
-
-            // Optional: Auto-login
-            // performLogin(savedUsername, savedPassword, true);
         }
     }
 }
