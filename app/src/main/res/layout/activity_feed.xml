@@ -115,17 +115,19 @@
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="26dp"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
+                        android:layout_marginBottom="12dp"
                         android:background="#2A5090"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
                         android:paddingStart="10dp"
-                        android:paddingEnd="12dp"
-                        android:layout_marginBottom="12dp">
+                        android:paddingEnd="12dp">
+
                         <View
                             android:layout_width="6dp"
                             android:layout_height="6dp"
-                            android:background="#22C55E"
-                            android:layout_marginEnd="6dp" />
+                            android:layout_marginEnd="6dp"
+                            android:background="#22C55E" />
+
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -139,26 +141,26 @@
                         android:id="@+id/heroTitle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginBottom="4dp"
                         android:text="Rent Due in 3 Days"
                         android:textColor="#FFFFFF"
                         android:textSize="22sp"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="4dp" />
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/heroSub"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginBottom="18dp"
                         android:text="LKR 45,000 due on 01 April"
                         android:textColor="#82A6CB"
-                        android:textSize="12sp"
-                        android:layout_marginBottom="18dp" />
+                        android:textSize="12sp" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="end">
+                        android:gravity="end"
+                        android:orientation="horizontal">
 
                         <androidx.cardview.widget.CardView
                             android:id="@+id/heroBtn"
@@ -166,22 +168,25 @@
                             android:layout_height="38dp"
                             android:clickable="true"
                             android:focusable="true"
+                            app:cardBackgroundColor="#FFFFFF"
                             app:cardCornerRadius="19dp"
-                            app:cardElevation="0dp"
-                            app:cardBackgroundColor="#FFFFFF">
+                            app:cardElevation="0dp">
+
                             <LinearLayout
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
-                                android:orientation="horizontal"
                                 android:gravity="center_vertical"
+                                android:orientation="horizontal"
                                 android:paddingStart="16dp"
                                 android:paddingEnd="18dp">
+
                                 <ImageView
                                     android:layout_width="14dp"
                                     android:layout_height="14dp"
-                                    android:src="@drawable/ic_payment"
                                     android:layout_marginEnd="6dp"
+                                    android:src="@drawable/ic_payment"
                                     app:tint="#214177" />
+
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
