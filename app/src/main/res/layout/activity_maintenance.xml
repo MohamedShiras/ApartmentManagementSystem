@@ -402,8 +402,14 @@
                     android:textSize="15sp"
                     android:textStyle="bold" />
                 <TextView
+                    android:id="@+id/tvViewMore"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackgroundBorderless"
+                    android:paddingHorizontal="4dp"
+                    android:paddingVertical="2dp"
                     android:text="See all →"
                     android:textColor="#3667A6"
                     android:textSize="12sp"

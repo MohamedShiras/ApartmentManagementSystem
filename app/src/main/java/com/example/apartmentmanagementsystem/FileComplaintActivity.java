@@ -54,8 +54,8 @@ public class FileComplaintActivity extends AppCompatActivity {
             return;
         }
 
-        // Logic to save the complaint would go here
-        Toast.makeText(this, "Complaint submitted successfully", Toast.LENGTH_SHORT).show();
+        // Logic to save the maintenance issue would go here
+        Toast.makeText(this, "Maintenance issue created successfully", Toast.LENGTH_SHORT).show();
         finish();
     }
 }

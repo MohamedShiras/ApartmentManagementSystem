@@ -3,22 +3,12 @@ package com.example.apartmentmanagementsystem;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.text.SpannableString;
-import android.text.Spanned;
-import android.text.TextPaint;
-import android.text.method.LinkMovementMethod;
-import android.text.style.ClickableSpan;
-import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
+import com.example.apartmentmanagementsystem.admin.ui.AdminDashboardActivity;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -29,6 +19,7 @@ public class LoginActivity extends AppCompatActivity {
     private TextInputEditText usernameInput, passwordInput;
     private SwitchCompat rememberMeSwitch;
     private MaterialButton signInButton;
+    private boolean isSigningIn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,9 +49,17 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void handleSignIn() {
-        // Get input values
-        String username = usernameInput.getText().toString().trim();
-        String password = passwordInput.getText().toString().trim();
+        if (isSigningIn) {
+            return;
+        }
+
+        // Get input values safely
+        String username = usernameInput.getText() != null
+                ? usernameInput.getText().toString().trim()
+                : "";
+        String password = passwordInput.getText() != null
+                ? passwordInput.getText().toString().trim()
+                : "";
         boolean rememberMe = rememberMeSwitch.isChecked();
 
         // Reset errors
@@ -87,6 +86,8 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         // Perform login
+        isSigningIn = true;
+        signInButton.setEnabled(false);
         performLogin(username, password, rememberMe);
     }
 
@@ -104,8 +105,12 @@ public class LoginActivity extends AppCompatActivity {
         // Show success message
         Toast.makeText(this, "Welcome, " + username + "!", Toast.LENGTH_SHORT).show();
 
-        // Navigate to FeedActivity
-        Intent intent = new Intent(LoginActivity.this, FeedActivity.class);
+        // Temporary role routing: admin user opens admin console.
+        Class<?> targetScreen = "admin".equalsIgnoreCase(username)
+                ? AdminDashboardActivity.class
+                : FeedActivity.class;
+
+        Intent intent = new Intent(LoginActivity.this, targetScreen);
         intent.putExtra("username", username);
         startActivity(intent);
         finish(); // Close LoginActivity so user can't go back to it
@@ -142,6 +147,15 @@ public class LoginActivity extends AppCompatActivity {
 
             // Optional: Auto-login
             // performLogin(savedUsername, savedPassword, true);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        isSigningIn = false;
+        if (signInButton != null) {
+            signInButton.setEnabled(true);
         }
     }
 }

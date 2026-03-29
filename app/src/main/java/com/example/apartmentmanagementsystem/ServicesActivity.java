@@ -66,31 +66,14 @@ public class ServicesActivity extends AppCompatActivity {
         LinearLayout navServices = findViewById(R.id.nav_btn_services);
         LinearLayout navProfile = findViewById(R.id.nav_btn_profile);
 
-        // Feed is current page — do nothing on tap
-        navServices.setOnClickListener(v -> {});
+        navServices.setOnClickListener(v -> ActivityNavigationHelper.navigate(this, ServicesActivity.class, false));
 
-        navNotices.setOnClickListener(v -> {
-            startActivity(new Intent(this, NoticesActivity.class));
-            overridePendingTransition(0, 0);
-            finish();
-        });
+        navNotices.setOnClickListener(v -> ActivityNavigationHelper.navigate(this, NoticesActivity.class, true));
 
-        navChat.setOnClickListener(v -> {
-            startActivity(new Intent(this, ChatActivity.class));
-            overridePendingTransition(0, 0);
-            finish();
-        });
+        navChat.setOnClickListener(v -> ActivityNavigationHelper.navigate(this, ChatActivity.class, true));
 
-        navFeed.setOnClickListener(v -> {
-            startActivity(new Intent(this, FeedActivity.class));
-            overridePendingTransition(0, 0);
-            finish();
-        });
+        navFeed.setOnClickListener(v -> ActivityNavigationHelper.navigate(this, FeedActivity.class, true));
 
-        navProfile.setOnClickListener(v -> {
-            startActivity(new Intent(this, ProfileActivity.class));
-            overridePendingTransition(0, 0);
-            finish();
-        });
+        navProfile.setOnClickListener(v -> ActivityNavigationHelper.navigate(this, ProfileActivity.class, true));
     }
 }

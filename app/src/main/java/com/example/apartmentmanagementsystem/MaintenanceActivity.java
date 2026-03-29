@@ -2,17 +2,19 @@ package com.example.apartmentmanagementsystem;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 public class MaintenanceActivity extends AppCompatActivity {
+
+    public static final String EXTRA_SERVICE_TITLE = "extra_service_title";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,15 +32,36 @@ public class MaintenanceActivity extends AppCompatActivity {
             return insets;
         });
 
-        // Back button → FeedActivity
-        CardView btnBack = findViewById(R.id.btnBack);
-        btnBack.setOnClickListener(v -> {
-            startActivity(new Intent(this, FeedActivity.class));
-            overridePendingTransition(0, 0);
-            finish();
-        });
+        // Back button -> FeedActivity
+        View btnBack = findViewById(R.id.btnBack);
+        btnBack.setOnClickListener(v -> ActivityNavigationHelper.navigate(this, FeedActivity.class, true));
 
+        setupServiceNavigation();
+        setupViewMoreNavigation();
         setupBottomNavigation();
+    }
+
+    private void setupViewMoreNavigation() {
+        View tvViewMore = findViewById(R.id.tvViewMore);
+        tvViewMore.setOnClickListener(v -> {
+            Intent intent = new Intent(this, MaintenanceNavigationActivity.class);
+            startActivity(intent);
+        });
+    }
+
+    private void setupServiceNavigation() {
+        findViewById(R.id.servicePlumbing).setOnClickListener(v -> openServiceOptions("Plumbing Maintenance"));
+        findViewById(R.id.serviceElectric).setOnClickListener(v -> openServiceOptions("Electric Maintenance"));
+        findViewById(R.id.serviceGas).setOnClickListener(v -> openServiceOptions("Gas Maintenance"));
+        findViewById(R.id.serviceAC).setOnClickListener(v -> openServiceOptions("AC Maintenance"));
+        findViewById(R.id.serviceCarpentry).setOnClickListener(v -> openServiceOptions("Carpentry Maintenance"));
+        findViewById(R.id.serviceCleaning).setOnClickListener(v -> openServiceOptions("Cleaning Maintenance"));
+    }
+
+    private void openServiceOptions(String serviceTitle) {
+        Intent intent = new Intent(this, MaintenanceOptionActivity.class);
+        intent.putExtra(EXTRA_SERVICE_TITLE, serviceTitle);
+        startActivity(intent);
     }
 
     private void setupBottomNavigation() {
@@ -48,34 +71,14 @@ public class MaintenanceActivity extends AppCompatActivity {
         LinearLayout navServices = findViewById(R.id.nav_btn_services);
         LinearLayout navProfile = findViewById(R.id.nav_btn_profile);
 
-        navFeed.setOnClickListener(v -> {
-            startActivity(new Intent(this, FeedActivity.class));
-            overridePendingTransition(0, 0);
-            finish();
-        });
+        navFeed.setOnClickListener(v -> ActivityNavigationHelper.navigate(this, FeedActivity.class, true));
 
-        navNotices.setOnClickListener(v -> {
-            startActivity(new Intent(this, NoticesActivity.class));
-            overridePendingTransition(0, 0);
-            finish();
-        });
+        navNotices.setOnClickListener(v -> ActivityNavigationHelper.navigate(this, NoticesActivity.class, true));
 
-        navChat.setOnClickListener(v -> {
-            startActivity(new Intent(this, ChatActivity.class));
-            overridePendingTransition(0, 0);
-            finish();
-        });
+        navChat.setOnClickListener(v -> ActivityNavigationHelper.navigate(this, ChatActivity.class, true));
 
-        navServices.setOnClickListener(v -> {
-            startActivity(new Intent(this, ServicesActivity.class));
-            overridePendingTransition(0, 0);
-            finish();
-        });
+        navServices.setOnClickListener(v -> ActivityNavigationHelper.navigate(this, ServicesActivity.class, true));
 
-        navProfile.setOnClickListener(v -> {
-            startActivity(new Intent(this, ProfileActivity.class));
-            overridePendingTransition(0, 0);
-            finish();
-        });
+        navProfile.setOnClickListener(v -> ActivityNavigationHelper.navigate(this, ProfileActivity.class, true));
     }
 }

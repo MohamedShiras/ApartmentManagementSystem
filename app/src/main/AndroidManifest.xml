@@ -18,8 +18,17 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ApartmentManagementSystem">
+        <activity
+            android:name=".CreateMaintenanceIssueActivity"
+            android:exported="false" />
         <activity android:name=".ReservationHistoryActivity"
             android:exported="false"/>
+        <activity
+            android:name=".MaintenanceStatusTrackingActivity"
+            android:exported="false" />
+        <activity
+            android:name=".MaintenanceOptionActivity"
+            android:exported="false" />
         <activity
             android:name=".MaintenanceActivity"
             android:exported="false" />
@@ -27,14 +36,6 @@
             android:name=".ReservationsActivity"
             android:exported="false"
             android:theme="@style/Theme.MaterialComponents.NoActionBar" />
-        <activity
-            android:name=".Noticeadapter"
-            android:exported="false"
-            tools:ignore="Instantiatable" />
-        <activity
-            android:name=".Notice"
-            android:exported="false"
-            tools:ignore="Instantiatable" />
         <activity
             android:name=".NoticesActivity"
             android:exported="false" />
@@ -73,6 +74,33 @@
             android:exported="false" />
         <activity
             android:name=".ComplaintDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".MaintenanceNavigationActivity"
+            android:exported="false" />
+        <activity
+            android:name=".admin.ui.AdminItemAnnouncementCardActivity"
+            android:exported="false" />
+        <activity
+            android:name=".admin.ui.AdminItemAnnouncementEditActivity"
+            android:exported="false" />
+        <activity
+            android:name=".admin.ui.AdminItemAnnouncementActivity"
+            android:exported="false" />
+        <activity
+            android:name=".admin.ui.AdminRecordDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".admin.ui.AdminCreateAnnouncementActivity"
+            android:exported="false" />
+        <activity
+            android:name=".admin.ui.AdminAnnouncementActivity"
+            android:exported="false" />
+        <activity
+            android:name=".admin.ui.AdminUserRecordsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".admin.ui.AdminDashboardActivity"
             android:exported="false" />
     </application>
 

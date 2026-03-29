@@ -1,3 +1,18 @@
 <resources>
     <string name="app_name">ApartmentManagementSystem</string>
+    <string name="maintenance_title">Maintenance</string>
+    <string name="notifications">Notifications</string>
+    <string name="profile">Profile</string>
+    <string name="elevator_management">Elevator Management</string>
+    <string name="generator_management">Generator Management</string>
+    <string name="electric_management">Electric Management</string>
+    <string name="elevator_image_desc">Elevator image</string>
+    <string name="generator_image_desc">Generator image</string>
+    <string name="electricity_image_desc">Electricity image</string>
+    <string name="good_morning">Good Morning 👋</string>
+    <string name="resident_name">Alex Lawson</string>
+    <string name="greeting_name">Good Morning Alex Larson</string>
+    <string name="maintenance_issue_create">Maintenance Issue Create</string>
+    <string name="maintenance_issue_create_card">Create\nMaintenance Issue</string>
+    <string name="submit_maintenance_issue">Submit Maintenance Issue</string>
 </resources>
