@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.apartmentmanagementsystem"
-        minSdk = 35
+        minSdk = 28
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
@@ -43,4 +43,6 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
     implementation(platform("com.google.firebase:firebase-bom:34.11.0"))
     implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-database")
+    implementation("com.github.bumptech.glide:glide:4.16.0")
 }

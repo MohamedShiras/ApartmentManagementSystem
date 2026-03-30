@@ -18,6 +18,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ApartmentManagementSystem">
+        <activity
+            android:name=".AdminEditReservationActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AdminReservationMaintenanceActivity"
+            android:exported="false" />
         <activity android:name=".ReservationHistoryActivity"
             android:exported="false"/>
         <activity
@@ -73,6 +79,9 @@
             android:exported="false" />
         <activity
             android:name=".ComplaintDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AdminDashboardActivity"
             android:exported="false" />
     </application>
 

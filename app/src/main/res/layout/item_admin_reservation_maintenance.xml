@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="12dp"
+    app:cardBackgroundColor="#1E3A6E"
+    app:cardCornerRadius="18dp"
+    app:cardElevation="8dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="145dp">
+
+            <ImageView
+                android:id="@+id/ivBookedReservationImage"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="Booked reservation image"
+                android:scaleType="centerCrop"
+                android:src="@drawable/img_pool"
+                tools:src="@drawable/img_restaurant" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/gradient_image_overlay" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top"
+                android:gravity="end"
+                android:orientation="horizontal"
+                android:padding="10dp">
+
+                <TextView
+                    android:id="@+id/tvBookingStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_badge_confirmed"
+                    android:paddingStart="8dp"
+                    android:paddingTop="4dp"
+                    android:paddingEnd="8dp"
+                    android:paddingBottom="4dp"
+                    android:text="Confirmed"
+                    android:textColor="#2ECC71"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    tools:background="@drawable/bg_badge_pending"
+                    tools:text="Pending"
+                    tools:textColor="#F39C12" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="14dp">
+
+                <TextView
+                    android:id="@+id/tvServiceName"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Swimming Pool"
+                    android:textColor="#FFFFFF"
+                    android:textSize="17sp"
+                    android:textStyle="bold"
+                    tools:text="Restaurant" />
+
+            </LinearLayout>
+
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="14dp"
+            android:paddingTop="12dp"
+            android:paddingEnd="14dp"
+            android:paddingBottom="8dp">
+
+            <TextView
+                android:id="@+id/tvBookedByUser"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Booked by: John Mathew"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                tools:text="Booked by: Sarah Lim" />
+
+            <TextView
+                android:id="@+id/tvBookingDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Family pool lane booking with 4 guests."
+                android:textColor="#BFD4EF"
+                android:textSize="12sp"
+                tools:text="Window-side dining reservation for 3 guests." />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:contentDescription="Date"
+                    android:src="@drawable/ic_calendar"
+                    app:tint="#82A6CB" />
+
+                <TextView
+                    android:id="@+id/tvBookedDateTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:text="Apr 20, 2026 | 02:00 PM - 04:00 PM"
+                    android:textColor="#82A6CB"
+                    android:textSize="12sp"
+                    tools:text="Apr 22, 2026 | 07:00 PM - 09:00 PM" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:orientation="horizontal"
+            android:paddingStart="14dp"
+            android:paddingTop="4dp"
+            android:paddingEnd="14dp"
+            android:paddingBottom="14dp">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnEditBookedReservation"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:minWidth="0dp"
+                android:text="Edit"
+                android:textAllCaps="false"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp"
+                app:cornerRadius="16dp"
+                app:icon="@drawable/ic_edit"
+                app:iconPadding="6dp"
+                app:iconTint="#FFFFFF"
+                app:strokeColor="#82A6CB"
+                app:strokeWidth="1dp" />
+
+            <Space
+                android:layout_width="8dp"
+                android:layout_height="1dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnDeleteBookedReservation"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:minWidth="0dp"
+                android:text="Delete"
+                android:textAllCaps="false"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp"
+                app:backgroundTint="#FF5A5F"
+                app:cornerRadius="16dp"
+                app:elevation="0dp"
+                app:icon="@drawable/ic_close"
+                app:iconPadding="6dp"
+                app:iconTint="#FFFFFF" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>
+
