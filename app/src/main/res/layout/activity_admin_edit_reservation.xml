@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F0F6FB">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/adminEditReservationToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
+            app:navigationIcon="@drawable/ic_arrow_back"
+            app:navigationIconTint="#214177"
+            app:title="Edit Reservation"
+            app:titleTextColor="#214177" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:cardBackgroundColor="#FFFFFF"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="8dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- Image Section with Gradient Overlay -->
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="220dp">
+
+                    <ImageView
+                        android:id="@+id/editReservationImage"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="#DCE7F3"
+                        android:contentDescription="@string/reservation_image"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/ic_pool"
+                        tools:src="@drawable/ic_pool" />
+
+                    <!-- Gradient Overlay -->
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="100dp"
+                        android:layout_gravity="bottom"
+                        android:background="@drawable/gradient_image_overlay" />
+                </FrameLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="18dp">
+
+                    <!-- Service Title -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/service_name"
+                        android:textColor="#1F3555"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="10dp" />
+                    <EditText
+                        android:id="@+id/editReservationServiceInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@android:drawable/edit_text"
+                        android:hint="Service"
+                        android:padding="10dp"
+                        android:textColor="#1F3555" />
+
+                    <!-- Description -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/description_label"
+                        android:textColor="#6A7D99"
+                        android:textSize="12sp"
+                        android:layout_marginTop="10dp" />
+                    <EditText
+                        android:id="@+id/editReservationDescriptionInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@android:drawable/edit_text"
+                        android:hint="Description"
+                        android:minLines="3"
+                        android:padding="10dp"
+                        android:textColor="#1F3555" />
+
+                    <!-- Date -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/date_label"
+                        android:textColor="#6A7D99"
+                        android:textSize="12sp"
+                        android:layout_marginTop="10dp" />
+                    <EditText
+                        android:id="@+id/editReservationDateInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@android:drawable/edit_text"
+                        android:hint="Date"
+                        android:padding="10dp"
+                        android:textColor="#1F3555" />
+
+                    <!-- Time -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/time_label"
+                        android:textColor="#6A7D99"
+                        android:textSize="12sp"
+                        android:layout_marginTop="10dp" />
+                    <EditText
+                        android:id="@+id/editReservationTimeInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@android:drawable/edit_text"
+                        android:hint="Time"
+                        android:padding="10dp"
+                        android:textColor="#1F3555" />
+
+                    <!-- Duration -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/duration_label"
+                        android:textColor="#6A7D99"
+                        android:textSize="12sp"
+                        android:layout_marginTop="10dp" />
+                    <EditText
+                        android:id="@+id/editReservationDurationInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@android:drawable/edit_text"
+                        android:hint="Duration"
+                        android:padding="10dp"
+                        android:textColor="#1F3555" />
+
+                    <!-- Image URL -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Image URL"
+                        android:textColor="#6A7D99"
+                        android:textSize="12sp"
+                        android:layout_marginTop="10dp" />
+                    <EditText
+                        android:id="@+id/editReservationImageUrlInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@android:drawable/edit_text"
+                        android:hint="Image URL"
+                        android:inputType="textUri"
+                        android:padding="10dp"
+                        android:textColor="#1F3555" />
+
+                    <!-- Status -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/status_label"
+                        android:textColor="#6A7D99"
+                        android:textSize="12sp"
+                        android:layout_marginTop="10dp" />
+                    <EditText
+                        android:id="@+id/editReservationStatusInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@android:drawable/edit_text"
+                        android:hint="Status"
+                        android:padding="10dp"
+                        android:textColor="#1F3555" />
+
+                    <!-- Booked By -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/booked_by_label"
+                        android:textColor="#6A7D99"
+                        android:textSize="12sp"
+                        android:layout_marginTop="10dp" />
+                    <EditText
+                        android:id="@+id/editReservationBookedByInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@android:drawable/edit_text"
+                        android:hint="Booked By"
+                        android:padding="10dp"
+                        android:textColor="#1F3555" />
+
+                    <!-- Divider -->
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#E5EAEF"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginBottom="14dp" />
+
+                    <!-- Action Buttons -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center"
+                        android:layout_marginBottom="8dp">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/editReservationSaveButton"
+                            android:layout_width="0dp"
+                            android:layout_height="48dp"
+                            android:layout_weight="1"
+                            android:text="Save Changes"
+                            android:textAllCaps="false"
+                            app:backgroundTint="#2A5090"
+                            app:cornerRadius="12dp" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/editReservationCancelButton"
+                            android:layout_width="0dp"
+                            android:layout_height="48dp"
+                            android:layout_weight="1"
+                            android:text="Cancel"
+                            android:textAllCaps="false"
+                            app:backgroundTint="#E74C3C"
+                            app:cornerRadius="12dp"
+                            android:layout_marginStart="12dp" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>
