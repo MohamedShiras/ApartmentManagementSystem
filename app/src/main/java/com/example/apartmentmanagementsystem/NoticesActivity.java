@@ -5,14 +5,31 @@ import android.os.Bundle;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 
 public class NoticesActivity extends AppCompatActivity {
 
@@ -22,7 +39,8 @@ public class NoticesActivity extends AppCompatActivity {
     private TextView tvNoticeCount;
 
     // Bottom nav
-    private LinearLayout navNotices, navChat, navFeed, navServices, navProfile;
+    private LinearLayout navNotices, navChat, navServices, navProfile;
+    private FrameLayout navFeed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,15 +53,42 @@ public class NoticesActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_notices);
 
+        // Handle Window Insets for System Navigation adaptation
+        CoordinatorLayout root = findViewById(R.id.main);
+        if (root != null) {
+            ViewCompat.setOnApplyWindowInsetsListener(root, (v, insets) -> {
+                Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+                // Padding top for status bar, bottom is handled by the nav container logic
+                v.setPadding(bars.left, bars.top, bars.right, 0);
+                return insets;
+            });
+        }
+
+        RelativeLayout bottomNav = findViewById(R.id.bottom_nav_container);
+        if (bottomNav != null) {
+            ViewCompat.setOnApplyWindowInsetsListener(bottomNav, (v, insets) -> {
+                Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+                CoordinatorLayout.LayoutParams lp = (CoordinatorLayout.LayoutParams) v.getLayoutParams();
+                // Set bottom margin to match system navigation bar height
+                lp.bottomMargin = bars.bottom;
+                v.setLayoutParams(lp);
+                return insets;
+            });
+        }
+
         initViews();
-        loadDummyNotices();
         setupBottomNavigation();
+
+        // Fetch data from Supabase
+        loadNoticesFromSupabase();
     }
 
     private void initViews() {
         recyclerNotices = findViewById(R.id.recyclerNotices);
         tvNoticeCount = findViewById(R.id.tvNoticeCount);
 
+        // Note: activity_notices header doesn't have a back button in current layout, 
+        // but keeping this for safety or if layout changes.
         ImageView btnBack = findViewById(R.id.btnBack);
         if (btnBack != null) {
             btnBack.setOnClickListener(v -> finish());
@@ -56,53 +101,84 @@ public class NoticesActivity extends AppCompatActivity {
         recyclerNotices.setAdapter(noticeAdapter);
     }
 
-    private void loadDummyNotices() {
-        // 4 dummy notices — replace with Firebase fetch later
-        noticeList.add(new Notice(
-                "1",
-                "Water supply maintenance on Saturday",
-                "Water supply will be interrupted from 9 AM to 1 PM this Saturday for routine maintenance. Please store water accordingly.",
-                "Management",
-                "2 hours ago",
-                "🔔 Notice",
-                24, 8
-        ));
+    private void loadNoticesFromSupabase() {
+        String token = getSharedPreferences("LoginPrefs", MODE_PRIVATE)
+                .getString("access_token", null);
 
-        noticeList.add(new Notice(
-                "2",
-                "Parking lot painting — Block B closed",
-                "The Block B parking lot will be closed on Monday and Tuesday for repainting. Please use the overflow parking near Gate 2 during this period.",
-                "Management",
-                "Yesterday",
-                "🚗 Parking",
-                15, 3
-        ));
+        if (token == null) {
+            Toast.makeText(this, "Session expired. Please log in again.", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-        noticeList.add(new Notice(
-                "3",
-                "Elevator inspection — Tower A",
-                "The elevator in Tower A will be under scheduled maintenance from 10 AM to 4 PM on Wednesday. Please use the staircase or the Tower B elevator during this time.",
-                "Management",
-                "2 days ago",
-                "⚠️ Urgent",
-                31, 12
-        ));
+        new Thread(() -> {
+            try {
+                String queryUrl = SupabaseClient.SUPABASE_URL
+                        + "/rest/v1/notices"
+                        + "?select=*"
+                        + "&order=created_at.desc";
 
-        noticeList.add(new Notice(
-                "4",
-                "Community hall booking — Advance reservation open",
-                "Residents can now book the community hall in advance for events in December. A minimum of 3 days notice is required. Contact the admin office to reserve your slot.",
-                "Management",
-                "3 days ago",
-                "🏢 Facility",
-                9, 5
-        ));
+                HttpURLConnection conn = (HttpURLConnection) new URL(queryUrl).openConnection();
+                conn.setRequestMethod("GET");
+                conn.setRequestProperty("apikey", SupabaseClient.SUPABASE_ANON_KEY);
+                conn.setRequestProperty("Authorization", "Bearer " + token);
+                conn.setRequestProperty("Content-Type", "application/json");
 
-        noticeAdapter.notifyDataSetChanged();
-        updateNoticeCount();
+                int responseCode = conn.getResponseCode();
+                if (responseCode != 200) {
+                    runOnUiThread(() -> Toast.makeText(NoticesActivity.this, "Failed to fetch notices", Toast.LENGTH_SHORT).show());
+                    conn.disconnect();
+                    return;
+                }
+
+                BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                StringBuilder sb = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line);
+                }
+                reader.close();
+                conn.disconnect();
+
+                JSONArray jsonArray = new JSONArray(sb.toString());
+                List<Notice> fetchedNotices = new ArrayList<>();
+
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    try {
+                        JSONObject obj = jsonArray.getJSONObject(i);
+
+                        String id = obj.optString("id", String.valueOf(i));
+                        String title = obj.optString("title", "No Title");
+                        String body = obj.optString("body", "");
+                        String sender = obj.optString("sender", "Management");
+                        String createdAt = obj.optString("created_at", "");
+                        String badge = obj.optString("badge_label", "🔔 Notice");
+                        int likes = obj.optInt("likes_count", 0);
+                        int comments = obj.optInt("comments_count", 0);
+
+                        String timeAgo = formatRelativeTime(createdAt);
+
+                        Notice notice = new Notice(id, title, body, sender, timeAgo, badge, likes, comments);
+                        fetchedNotices.add(notice);
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                runOnUiThread(() -> {
+                    noticeList.clear();
+                    noticeList.addAll(fetchedNotices);
+                    noticeAdapter.notifyDataSetChanged();
+                    updateNoticeCount();
+                });
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                runOnUiThread(() -> Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+            }
+        }).start();
     }
 
-    // Call this method when admin sends a new notice (from Firebase listener)
     public void onNewNoticeReceived(String id, String title, String body, String timeAgo, String badge) {
         Notice newNotice = new Notice(id, title, body, "Management", timeAgo, badge, 0, 0);
         noticeAdapter.addNotice(newNotice);
@@ -115,23 +191,36 @@ public class NoticesActivity extends AppCompatActivity {
         tvNoticeCount.setText(count + " active notice" + (count != 1 ? "s" : ""));
     }
 
-    private void setupBottomNavigation() {
-        FrameLayout navFeed = findViewById(R.id.nav_btn_feed);
-        LinearLayout navNotices = findViewById(R.id.nav_btn_notices);
-        LinearLayout navChat = findViewById(R.id.nav_btn_chat);
-        LinearLayout navServices = findViewById(R.id.nav_btn_services);
-        LinearLayout navProfile = findViewById(R.id.nav_btn_profile);
+    private String formatRelativeTime(String isoTime) {
+        if (isoTime == null || isoTime.isEmpty()) return "Just now";
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
+            sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+            Date postDate = sdf.parse(isoTime.substring(0, 19));
+            if (postDate == null) return "Just now";
 
-        // Feed is current page — do nothing on tap
+            long diff = (System.currentTimeMillis() - postDate.getTime()) / 1000;
+            if (diff < 60)           return "Just now";
+            if (diff < 3600)         return (diff / 60) + " min ago";
+            if (diff < 86400)        return (diff / 3600) + " hours ago";
+            if (diff < 172800)       return "Yesterday";
+            return (diff / 86400) + " days ago";
+        } catch (Exception e) {
+            return "Recently";
+        }
+    }
+
+    private void setupBottomNavigation() {
+        navFeed = findViewById(R.id.nav_btn_feed);
+        navNotices = findViewById(R.id.nav_btn_notices);
+        navChat = findViewById(R.id.nav_btn_chat);
+        navServices = findViewById(R.id.nav_btn_services);
+        navProfile = findViewById(R.id.nav_btn_profile);
+
+        navNotices.setOnClickListener(v -> {});
 
         navFeed.setOnClickListener(v -> {
             startActivity(new Intent(this, FeedActivity.class));
-            overridePendingTransition(0, 0);
-            finish();
-        });
-
-        navNotices.setOnClickListener(v -> {
-            startActivity(new Intent(this, NoticesActivity.class));
             overridePendingTransition(0, 0);
             finish();
         });
