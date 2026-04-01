@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -9,15 +9,13 @@
     android:background="#F4F7FC"
     tools:context=".FeedActivity">
 
+    <!-- TOP APP BAR -->
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#FFFFFF"
-        app:elevation="0dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:elevation="0dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -40,14 +38,15 @@
                     android:layout_height="44dp"
                     app:cardCornerRadius="14dp"
                     app:cardElevation="0dp"
-                    app:cardBackgroundColor="#FFFFFF">
-
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/apartment_logo" />
-
+                    app:cardBackgroundColor="#214177">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="AL"
+                        android:textColor="#BDD8F1"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
                 </androidx.cardview.widget.CardView>
 
                 <LinearLayout
@@ -56,15 +55,17 @@
                     android:orientation="vertical"
                     android:layout_marginStart="10dp">
                     <TextView
+                        android:id="@+id/greetingText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Good Morning 👋"
+                        android:text=""
                         android:textColor="#94A3B8"
                         android:textSize="11sp" />
                     <TextView
+                        android:id="@+id/userNameText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Alex Lawson"
+                        android:text=""
                         android:textColor="#214177"
                         android:textSize="15sp"
                         android:textStyle="bold" />
@@ -72,26 +73,58 @@
 
             </LinearLayout>
 
+            <FrameLayout
+                android:id="@+id/notificationBtn"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent">
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    app:cardCornerRadius="14dp"
+                    app:cardElevation="0dp"
+                    app:cardBackgroundColor="#EEF4FB">
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_notifications"
+                        app:tint="#3667A6" />
+                </androidx.cardview.widget.CardView>
+
+                <View
+                    android:layout_width="9dp"
+                    android:layout_height="9dp"
+                    android:layout_gravity="top|end"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:background="#EF4444"
+                    android:elevation="2dp" />
+
+            </FrameLayout>
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </com.google.android.material.appbar.AppBarLayout>
 
+    <!-- MAIN SCROLL -->
     <androidx.core.widget.NestedScrollView
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="match_parent"
         android:clipToPadding="false"
         android:paddingBottom="90dp"
-        app:layout_constraintTop_toBottomOf="@id/appBarLayout"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <!-- ══ HERO CARD — vertical LinearLayout, Pay Now right-aligned ══ -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/heroCard"
                 android:layout_width="match_parent"
@@ -112,22 +145,21 @@
                     android:orientation="vertical"
                     android:padding="22dp">
 
+                    <!-- Badge row -->
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="26dp"
-                        android:layout_marginBottom="12dp"
-                        android:background="#2A5090"
-                        android:gravity="center_vertical"
                         android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:background="#2A5090"
                         android:paddingStart="10dp"
-                        android:paddingEnd="12dp">
-
+                        android:paddingEnd="12dp"
+                        android:layout_marginBottom="12dp">
                         <View
                             android:layout_width="6dp"
                             android:layout_height="6dp"
-                            android:layout_marginEnd="6dp"
-                            android:background="#22C55E" />
-
+                            android:background="#22C55E"
+                            android:layout_marginEnd="6dp" />
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -141,26 +173,27 @@
                         android:id="@+id/heroTitle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="4dp"
                         android:text="Rent Due in 3 Days"
                         android:textColor="#FFFFFF"
                         android:textSize="22sp"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        android:layout_marginBottom="4dp" />
 
                     <TextView
                         android:id="@+id/heroSub"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="18dp"
                         android:text="LKR 45,000 due on 01 April"
                         android:textColor="#82A6CB"
-                        android:textSize="12sp" />
+                        android:textSize="12sp"
+                        android:layout_marginBottom="18dp" />
 
+                    <!-- Pay Now — right aligned -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="end"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:gravity="end">
 
                         <androidx.cardview.widget.CardView
                             android:id="@+id/heroBtn"
@@ -168,25 +201,22 @@
                             android:layout_height="38dp"
                             android:clickable="true"
                             android:focusable="true"
-                            app:cardBackgroundColor="#FFFFFF"
                             app:cardCornerRadius="19dp"
-                            app:cardElevation="0dp">
-
+                            app:cardElevation="0dp"
+                            app:cardBackgroundColor="#FFFFFF">
                             <LinearLayout
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
-                                android:gravity="center_vertical"
                                 android:orientation="horizontal"
+                                android:gravity="center_vertical"
                                 android:paddingStart="16dp"
                                 android:paddingEnd="18dp">
-
                                 <ImageView
                                     android:layout_width="14dp"
                                     android:layout_height="14dp"
-                                    android:layout_marginEnd="6dp"
                                     android:src="@drawable/ic_payment"
+                                    android:layout_marginEnd="6dp"
                                     app:tint="#214177" />
-
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
@@ -203,6 +233,7 @@
 
             </androidx.cardview.widget.CardView>
 
+            <!-- ══ QUICK SERVICES — smaller 110×100dp cards ══ -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -241,10 +272,11 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
+                    <!-- Reservation -->
                     <androidx.cardview.widget.CardView
                         android:id="@+id/serviceReservation"
                         android:layout_width="110dp"
-                        android:layout_height="100dp"
+                        android:layout_height="110dp"
                         android:layout_marginEnd="10dp"
                         android:clickable="true"
                         android:focusable="true"
@@ -274,10 +306,11 @@
                         </LinearLayout>
                     </androidx.cardview.widget.CardView>
 
+                    <!-- Maintenance -->
                     <androidx.cardview.widget.CardView
                         android:id="@+id/serviceMaintenance"
                         android:layout_width="110dp"
-                        android:layout_height="100dp"
+                        android:layout_height="110dp"
                         android:layout_marginEnd="10dp"
                         android:clickable="true"
                         android:focusable="true"
@@ -307,10 +340,11 @@
                         </LinearLayout>
                     </androidx.cardview.widget.CardView>
 
+                    <!-- Complaint -->
                     <androidx.cardview.widget.CardView
                         android:id="@+id/serviceComplaint"
                         android:layout_width="110dp"
-                        android:layout_height="100dp"
+                        android:layout_height="110dp"
                         android:layout_marginEnd="10dp"
                         android:clickable="true"
                         android:focusable="true"
@@ -340,10 +374,11 @@
                         </LinearLayout>
                     </androidx.cardview.widget.CardView>
 
+                    <!-- Visitors -->
                     <androidx.cardview.widget.CardView
                         android:id="@+id/serviceVisitors"
                         android:layout_width="110dp"
-                        android:layout_height="100dp"
+                        android:layout_height="110dp"
                         android:clickable="true"
                         android:focusable="true"
                         app:cardCornerRadius="18dp"
@@ -376,6 +411,7 @@
 
             </HorizontalScrollView>
 
+            <!-- ══ COMMUNITY FEED HEADER ══ -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -401,8 +437,17 @@
                     android:textStyle="bold" />
             </LinearLayout>
 
+            <!-- ── DYNAMIC FEED CONTAINER — populated by FeedActivity.java ── -->
+            <LinearLayout
+                android:id="@+id/feedDynamicContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+
+            <!-- ── FEED 1 — Announcement ── -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/feedAnnouncement1"
+                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -460,6 +505,7 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
+            <!-- ── FEED 2 — Maintenance Service ── -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/feedService1"
                 android:layout_width="match_parent"
@@ -529,6 +575,7 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
+            <!-- ── FEED 3 — Community Event ── -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/feedCommunity1"
                 android:layout_width="match_parent"
@@ -589,6 +636,7 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
+            <!-- ── FEED 4 — Reservation Service ── -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/feedService2"
                 android:layout_width="match_parent"
@@ -658,6 +706,7 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
+            <!-- ── FEED 5 — Complaint Service ── -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/feedService3"
                 android:layout_width="match_parent"
@@ -732,6 +781,7 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
+            <!-- ── FEED 6 — Elevator Update ── -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/feedAnnouncement2"
                 android:layout_width="match_parent"
@@ -795,14 +845,14 @@
 
     </androidx.core.widget.NestedScrollView>
 
+    <!-- POST BUTTON -->
     <androidx.cardview.widget.CardView
         android:id="@+id/btnPost"
         android:layout_width="wrap_content"
         android:layout_height="52dp"
-        app:layout_constraintBottom_toTopOf="@id/bottom_nav_container"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_gravity="bottom|end"
         android:layout_marginEnd="20dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="120dp"
         android:clickable="true"
         android:focusable="true"
         app:cardCornerRadius="26dp"
@@ -823,13 +873,12 @@
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
+    <!-- BOTTOM NAVIGATION -->
     <RelativeLayout
         android:id="@+id/bottom_nav_container"
         android:layout_width="match_parent"
         android:layout_height="80dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        android:layout_gravity="bottom">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -897,6 +946,4 @@
 
     </RelativeLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
-
-
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
