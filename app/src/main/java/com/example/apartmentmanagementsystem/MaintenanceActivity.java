@@ -2,20 +2,16 @@ package com.example.apartmentmanagementsystem;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.*;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
@@ -29,136 +25,163 @@ import com.google.android.material.textfield.TextInputEditText;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-import java.util.TimeZone;
 
 public class MaintenanceActivity extends AppCompatActivity {
 
-    private static final String SVC_PLUMBING  = "Plumbing";
-    private static final String SVC_ELECTRIC  = "Electrician";
-    private static final String SVC_GAS       = "Gas";
-    private static final String SVC_AC        = "Air Conditioning";
-    private static final String SVC_CARPENTRY = "Carpentry";
-    private static final String SVC_CLEANING  = "Cleaning";
-
-    private String currentApartmentNumber = "";
     private LinearLayout requestsContainer;
     private ProgressBar requestsLoading;
     private CardView emptyRequestsCard;
+
+    private String currentApartmentNumber = "";
+    private String userId = "";
+    private String token = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maintenance);
 
-        if (getSupportActionBar() != null) getSupportActionBar().hide();
+        if (getSupportActionBar() != null)
+            getSupportActionBar().hide();
 
         ViewCompat.setOnApplyWindowInsetsListener(
-                findViewById(R.id.activity_maintenance), (v, insets) -> {
-                    Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-                    v.setPadding(bars.left, bars.top, bars.right, bars.bottom);
+                findViewById(R.id.activity_maintenance),
+                (v, insets) -> {
+                    Insets bars = insets.getInsets(
+                            WindowInsetsCompat.Type.systemBars());
+                    v.setPadding(bars.left, bars.top,
+                            bars.right, bars.bottom);
                     return insets;
                 });
 
-        requestsContainer  = findViewById(R.id.requestsDynamicContainer);
-        requestsLoading    = findViewById(R.id.requestsLoading);
-        emptyRequestsCard  = findViewById(R.id.emptyRequestsCard);
+        requestsContainer = findViewById(R.id.requestsDynamicContainer);
+        requestsLoading = findViewById(R.id.requestsLoading);
+        emptyRequestsCard = findViewById(R.id.emptyRequestsCard);
 
-        setupBackButton();
-        setupServiceCards();
-        setupBottomNavigation();
+        loadSession();
+    }
+
+    // =========================================================
+    // SESSION
+    // =========================================================
+    private void loadSession() {
+
+        SharedPreferences prefs =
+                getSharedPreferences("LoginPrefs", MODE_PRIVATE);
+
+        token = prefs.getString("access_token", null);
+        userId = prefs.getString("user_id", null);
+
+        if (token == null || userId == null) {
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
+            return;
+        }
+
         loadApartmentNumber();
     }
 
-    // ── Load apartment number then fetch requests ───────────────────────────
+    // =========================================================
+    // LOAD APARTMENT NUMBER (CORRECT USER)
+    // =========================================================
     private void loadApartmentNumber() {
-        String token = getSharedPreferences("LoginPrefs", MODE_PRIVATE)
-                .getString("access_token", null);
-        if (token == null) return;
 
         new Thread(() -> {
             try {
-                HttpURLConnection conn = (HttpURLConnection)
-                        new URL(SupabaseClient.SUPABASE_URL
-                                + "/rest/v1/users?select=apartment_number&limit=1")
-                                .openConnection();
-                conn.setRequestProperty("apikey", SupabaseClient.SUPABASE_ANON_KEY);
-                conn.setRequestProperty("Authorization", "Bearer " + token);
 
-                BufferedReader reader = new BufferedReader(
-                        new InputStreamReader(conn.getInputStream()));
+                String url =
+                        SupabaseClient.SUPABASE_URL +
+                                "/rest/v1/users" +
+                                "?id=eq." + userId +
+                                "&select=apartment_number";
+
+                HttpURLConnection conn =
+                        (HttpURLConnection) new URL(url).openConnection();
+
+                conn.setRequestProperty("apikey",
+                        SupabaseClient.SUPABASE_ANON_KEY);
+                conn.setRequestProperty("Authorization",
+                        "Bearer " + token);
+
+                BufferedReader reader =
+                        new BufferedReader(
+                                new InputStreamReader(
+                                        conn.getInputStream()));
+
                 StringBuilder sb = new StringBuilder();
                 String line;
-                while ((line = reader.readLine()) != null) sb.append(line);
+
+                while ((line = reader.readLine()) != null)
+                    sb.append(line);
+
                 reader.close();
                 conn.disconnect();
 
                 JSONArray arr = new JSONArray(sb.toString());
-                if (arr.length() > 0) {
-                    currentApartmentNumber = arr.getJSONObject(0)
-                            .optString("apartment_number", "");
-                }
-            } catch (Exception ignored) {}
 
-            // Fetch requests after getting apartment number
+                if (arr.length() > 0) {
+                    currentApartmentNumber =
+                            arr.getJSONObject(0)
+                                    .optString("apartment_number", "");
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
             runOnUiThread(this::loadMyRequests);
+
         }).start();
     }
 
-    // ── Load my requests from Supabase ──────────────────────────────────────
+    // =========================================================
+    // LOAD ONLY MY REQUESTS
+    // =========================================================
     private void loadMyRequests() {
-        String token = getSharedPreferences("LoginPrefs", MODE_PRIVATE)
-                .getString("access_token", null);
-        if (token == null) {
-            requestsLoading.setVisibility(View.GONE);
-            emptyRequestsCard.setVisibility(View.VISIBLE);
-            return;
-        }
+
+        requestsLoading.setVisibility(View.VISIBLE);
 
         new Thread(() -> {
             try {
-                String queryUrl = SupabaseClient.SUPABASE_URL
-                        + "/rest/v1/maintenance_requests"
-                        + "?select=*"
-                        + "&order=created_at.desc"
-                        + "&limit=10";
 
-                HttpURLConnection conn = (HttpURLConnection)
-                        new URL(queryUrl).openConnection();
+                String queryUrl =
+                        SupabaseClient.SUPABASE_URL +
+                                "/rest/v1/maintenance_requests" +
+                                "?user_id=eq." + userId +
+                                "&order=created_at.desc";
+
+                HttpURLConnection conn =
+                        (HttpURLConnection) new URL(queryUrl).openConnection();
+
                 conn.setRequestMethod("GET");
-                conn.setRequestProperty("apikey", SupabaseClient.SUPABASE_ANON_KEY);
-                conn.setRequestProperty("Authorization", "Bearer " + token);
-                conn.setRequestProperty("Content-Type", "application/json");
+                conn.setRequestProperty("apikey",
+                        SupabaseClient.SUPABASE_ANON_KEY);
+                conn.setRequestProperty("Authorization",
+                        "Bearer " + token);
 
-                int code = conn.getResponseCode();
-                if (code != 200) {
-                    conn.disconnect();
-                    runOnUiThread(() -> {
-                        requestsLoading.setVisibility(View.GONE);
-                        emptyRequestsCard.setVisibility(View.VISIBLE);
-                    });
-                    return;
-                }
+                BufferedReader reader =
+                        new BufferedReader(
+                                new InputStreamReader(
+                                        conn.getInputStream()));
 
-                BufferedReader reader = new BufferedReader(
-                        new InputStreamReader(conn.getInputStream()));
                 StringBuilder sb = new StringBuilder();
                 String line;
-                while ((line = reader.readLine()) != null) sb.append(line);
+
+                while ((line = reader.readLine()) != null)
+                    sb.append(line);
+
                 reader.close();
                 conn.disconnect();
 
-                JSONArray requests = new JSONArray(sb.toString());
+                JSONArray requests =
+                        new JSONArray(sb.toString());
 
                 runOnUiThread(() -> {
+
                     requestsLoading.setVisibility(View.GONE);
                     requestsContainer.removeAllViews();
 
@@ -168,542 +191,161 @@ public class MaintenanceActivity extends AppCompatActivity {
                     }
 
                     emptyRequestsCard.setVisibility(View.GONE);
+
                     for (int i = 0; i < requests.length(); i++) {
-                        try {
-                            buildRequestCard(requests.getJSONObject(i));
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                        buildSimpleCard(requests.optJSONObject(i));
                     }
                 });
 
             } catch (Exception e) {
+
                 runOnUiThread(() -> {
                     requestsLoading.setVisibility(View.GONE);
                     emptyRequestsCard.setVisibility(View.VISIBLE);
                 });
             }
+
         }).start();
     }
 
-    // ── Build a request card dynamically ────────────────────────────────────
-    private void buildRequestCard(JSONObject req) throws Exception {
-        String serviceType   = req.optString("service_type",   "Maintenance");
-        String title         = req.optString("title",          "—");
-        String description   = req.optString("description",    "");
-        String status        = req.optString("status",         "Under Review");
-        String requestNumber = req.optString("request_number", "MNT-XXXX");
-        String priority      = req.optString("priority",       "Normal");
-        String createdAt     = req.optString("created_at",     "");
-        String apartmentNum  = req.optString("apartment_number", currentApartmentNumber);
+    // =========================================================
+    // SIMPLE REQUEST CARD
+    // =========================================================
+    private void buildSimpleCard(JSONObject req) {
 
-        int dp4  = dp(4);
-        int dp8  = dp(8);
-        int dp10 = dp(10);
-        int dp12 = dp(12);
-        int dp14 = dp(14);
-        int dp16 = dp(16);
+        try {
 
-        // ── Outer card ──
-        CardView card = new CardView(this);
-        LinearLayout.LayoutParams cardParams = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        cardParams.setMargins(dp16, 0, dp16, dp12);
-        card.setLayoutParams(cardParams);
-        card.setRadius(dp(20));
-        card.setCardElevation(0);
-        card.setCardBackgroundColor(Color.WHITE);
-        card.setClickable(true);
-        card.setFocusable(true);
+            String title = req.optString("title");
+            String status = req.optString("status");
+            String desc = req.optString("description");
 
-        // ── Inner vertical layout ──
-        LinearLayout inner = new LinearLayout(this);
-        inner.setLayoutParams(new ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        inner.setOrientation(LinearLayout.VERTICAL);
-        inner.setPadding(dp16, dp16, dp16, dp16);
+            CardView card = new CardView(this);
+            card.setRadius(20);
+            card.setCardBackgroundColor(Color.WHITE);
 
-        // ── Header row: icon + service/name + badge ──
-        LinearLayout headerRow = new LinearLayout(this);
-        LinearLayout.LayoutParams hrParams = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        hrParams.setMargins(0, 0, 0, dp12);
-        headerRow.setLayoutParams(hrParams);
-        headerRow.setOrientation(LinearLayout.HORIZONTAL);
-        headerRow.setGravity(Gravity.CENTER_VERTICAL);
+            LinearLayout.LayoutParams params =
+                    new LinearLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.WRAP_CONTENT);
 
-        // Service icon card
-        CardView iconCard = new CardView(this);
-        iconCard.setLayoutParams(new LinearLayout.LayoutParams(dp(40), dp(40)));
-        iconCard.setRadius(dp(13));
-        iconCard.setCardElevation(0);
-        iconCard.setCardBackgroundColor(serviceIconBg(serviceType));
+            params.setMargins(32, 0, 32, 24);
+            card.setLayoutParams(params);
 
-        TextView iconTv = new TextView(this);
-        iconTv.setLayoutParams(new FrameLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER));
-        iconTv.setText(serviceEmoji(serviceType));
-        iconTv.setTextSize(16);
-        iconCard.addView(iconTv);
-        headerRow.addView(iconCard);
+            LinearLayout layout = new LinearLayout(this);
+            layout.setOrientation(LinearLayout.VERTICAL);
+            layout.setPadding(32, 32, 32, 32);
 
-        // Name + time column
-        LinearLayout nameCol = new LinearLayout(this);
-        LinearLayout.LayoutParams nameColParams = new LinearLayout.LayoutParams(
-                0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
-        nameColParams.setMarginStart(dp12);
-        nameCol.setLayoutParams(nameColParams);
-        nameCol.setOrientation(LinearLayout.VERTICAL);
+            TextView tvTitle = new TextView(this);
+            tvTitle.setText(title);
+            tvTitle.setTextSize(16);
+            tvTitle.setTextColor(Color.BLACK);
 
-        TextView nameTv = new TextView(this);
-        nameTv.setLayoutParams(new ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        nameTv.setText(serviceType + " · Unit " + apartmentNum);
-        nameTv.setTextColor(Color.parseColor("#1E293B"));
-        nameTv.setTextSize(13);
-        nameTv.setTypeface(null, android.graphics.Typeface.BOLD);
-        nameCol.addView(nameTv);
+            TextView tvDesc = new TextView(this);
+            tvDesc.setText(desc);
+            tvDesc.setTextColor(Color.GRAY);
 
-        TextView timeTv = new TextView(this);
-        timeTv.setLayoutParams(new ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        timeTv.setText(formatRelativeTime(createdAt)
-                + (priority.equals("Normal") ? "" : " · " + priority));
-        timeTv.setTextColor(Color.parseColor("#94A3B8"));
-        timeTv.setTextSize(11);
-        nameCol.addView(timeTv);
-        headerRow.addView(nameCol);
+            TextView tvStatus = new TextView(this);
+            tvStatus.setText(status);
+            tvStatus.setTextColor(Color.parseColor("#3667A6"));
 
-        // Maintenance type badge
-        CardView badgeCard = new CardView(this);
-        badgeCard.setLayoutParams(new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT, dp(22)));
-        badgeCard.setRadius(dp(11));
-        badgeCard.setCardElevation(0);
-        badgeCard.setCardBackgroundColor(Color.parseColor("#FEF3C7"));
+            layout.addView(tvTitle);
+            layout.addView(tvDesc);
+            layout.addView(tvStatus);
 
-        TextView badgeTv = new TextView(this);
-        badgeTv.setLayoutParams(new FrameLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER));
-        badgeTv.setPadding(dp10, 0, dp10, 0);
-        badgeTv.setText("🔧 Maintenance");
-        badgeTv.setTextColor(Color.parseColor("#D97706"));
-        badgeTv.setTextSize(10);
-        badgeTv.setTypeface(null, android.graphics.Typeface.BOLD);
-        badgeCard.addView(badgeTv);
-        headerRow.addView(badgeCard);
+            card.addView(layout);
+            requestsContainer.addView(card);
 
-        inner.addView(headerRow);
-
-        // ── Inline status card ──
-        CardView statusCard = new CardView(this);
-        LinearLayout.LayoutParams scParams = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        scParams.setMargins(0, 0, 0, dp12);
-        statusCard.setLayoutParams(scParams);
-        statusCard.setRadius(dp14);
-        statusCard.setCardElevation(0);
-        statusCard.setCardBackgroundColor(Color.parseColor("#F8FAFC"));
-
-        LinearLayout scInner = new LinearLayout(this);
-        scInner.setLayoutParams(new ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        scInner.setOrientation(LinearLayout.HORIZONTAL);
-        scInner.setGravity(Gravity.CENTER_VERTICAL);
-        scInner.setPadding(dp12, dp12, dp12, dp12);
-
-        LinearLayout scTextCol = new LinearLayout(this);
-        scTextCol.setLayoutParams(new LinearLayout.LayoutParams(
-                0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
-        scTextCol.setOrientation(LinearLayout.VERTICAL);
-
-        TextView scTitle = new TextView(this);
-        LinearLayout.LayoutParams scTitleParams = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        scTitleParams.setMargins(0, 0, 0, dp(2));
-        scTitle.setLayoutParams(scTitleParams);
-        scTitle.setText(title);
-        scTitle.setTextColor(Color.parseColor("#1E293B"));
-        scTitle.setTextSize(13);
-        scTitle.setTypeface(null, android.graphics.Typeface.BOLD);
-        scTextCol.addView(scTitle);
-
-        TextView scReqId = new TextView(this);
-        scReqId.setLayoutParams(new ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        scReqId.setText("Request #" + requestNumber);
-        scReqId.setTextColor(Color.parseColor("#94A3B8"));
-        scReqId.setTextSize(11);
-        scTextCol.addView(scReqId);
-        scInner.addView(scTextCol);
-
-        // Status badge
-        CardView statusBadge = new CardView(this);
-        statusBadge.setLayoutParams(new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT, dp(24)));
-        statusBadge.setRadius(dp12);
-        statusBadge.setCardElevation(0);
-        statusBadge.setCardBackgroundColor(statusBgColor(status));
-
-        TextView statusTv = new TextView(this);
-        statusTv.setLayoutParams(new FrameLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER));
-        statusTv.setPadding(dp10, 0, dp10, 0);
-        statusTv.setText(status);
-        statusTv.setTextColor(statusTextColor(status));
-        statusTv.setTextSize(10);
-        statusTv.setTypeface(null, android.graphics.Typeface.BOLD);
-        statusBadge.addView(statusTv);
-        scInner.addView(statusBadge);
-
-        statusCard.addView(scInner);
-        inner.addView(statusCard);
-
-        // ── Divider ──
-        View divider = new View(this);
-        LinearLayout.LayoutParams divParams = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, dp(1));
-        divParams.setMargins(0, 0, 0, dp10);
-        divider.setLayoutParams(divParams);
-        divider.setBackgroundColor(Color.parseColor("#F1F5F9"));
-        inner.addView(divider);
-
-        // ── Footer ──
-        LinearLayout footer = new LinearLayout(this);
-        footer.setLayoutParams(new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        footer.setOrientation(LinearLayout.HORIZONTAL);
-        footer.setGravity(Gravity.CENTER_VERTICAL);
-
-        TextView descTv = new TextView(this);
-        descTv.setLayoutParams(new LinearLayout.LayoutParams(
-                0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
-        descTv.setText(description.isEmpty() ? "No description" : description);
-        descTv.setTextColor(Color.parseColor("#94A3B8"));
-        descTv.setTextSize(11);
-        descTv.setMaxLines(1);
-        descTv.setEllipsize(android.text.TextUtils.TruncateAt.END);
-        footer.addView(descTv);
-
-        TextView trackTv = new TextView(this);
-        trackTv.setLayoutParams(new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        trackTv.setText("Track Request");
-        trackTv.setTextColor(Color.parseColor("#3667A6"));
-        trackTv.setTextSize(12);
-        trackTv.setTypeface(null, android.graphics.Typeface.BOLD);
-        footer.addView(trackTv);
-
-        inner.addView(footer);
-        card.addView(inner);
-        requestsContainer.addView(card);
+        } catch (Exception ignored) {}
     }
 
-    // ── Service dialogs ─────────────────────────────────────────────────────
-    private void setupServiceCards() {
-        CardView plumbing  = findViewById(R.id.servicePlumbing);
-        CardView electric  = findViewById(R.id.serviceElectric);
-        CardView gas       = findViewById(R.id.serviceGas);
-        CardView ac        = findViewById(R.id.serviceAC);
-        CardView carpentry = findViewById(R.id.serviceCarpentry);
-        CardView cleaning  = findViewById(R.id.serviceCleaning);
-
-        if (plumbing != null) plumbing.setOnClickListener(v ->
-                showRequestDialog(SVC_PLUMBING, "Pipes, taps & drains",
-                        new String[]{"Leaking tap", "Blocked drain", "Burst pipe",
-                                "Low water pressure", "Other"}));
-
-        if (electric != null) electric.setOnClickListener(v ->
-                showRequestDialog(SVC_ELECTRIC, "Wiring & power issues",
-                        new String[]{"Power trip", "No power in room", "Faulty switch",
-                                "Light not working", "Other"}));
-
-        if (gas != null) gas.setOnClickListener(v ->
-                showRequestDialog(SVC_GAS, "Gas leaks & fittings",
-                        new String[]{"Gas smell", "Faulty gas fitting",
-                                "Gas meter issue", "Stove not igniting", "Other"}));
-
-        if (ac != null) ac.setOnClickListener(v ->
-                showRequestDialog(SVC_AC, "AC service & repair",
-                        new String[]{"Not cooling", "Not heating", "Strange noise",
-                                "Water leaking from unit", "Remote not working", "Other"}));
-
-        if (carpentry != null) carpentry.setOnClickListener(v ->
-                showRequestDialog(SVC_CARPENTRY, "Doors & furniture",
-                        new String[]{"Door not closing", "Broken cabinet",
-                                "Wardrobe damage", "Window frame issue", "Other"}));
-
-        if (cleaning != null) cleaning.setOnClickListener(v ->
-                showRequestDialog(SVC_CLEANING, "Deep & common area cleaning",
-                        new String[]{"Unit deep clean", "Common area",
-                                "Post-renovation clean", "Pest cleaning", "Other"}));
-    }
-
-    private void showRequestDialog(String serviceType, String subtitle, String[] issues) {
-        Dialog dialog = new Dialog(this);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.dialog_maintenance_request);
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        dialog.getWindow().setLayout(
-                (int) (getResources().getDisplayMetrics().widthPixels * 0.92),
-                ViewGroup.LayoutParams.WRAP_CONTENT);
-        dialog.setCancelable(true);
-
-        TextView tvName     = dialog.findViewById(R.id.dialogServiceName);
-        TextView tvSub      = dialog.findViewById(R.id.dialogServiceSubtitle);
-        AutoCompleteTextView issueDropdown    = dialog.findViewById(R.id.issueDropdown);
-        TextInputEditText etDescription       = dialog.findViewById(R.id.etDescription);
-        AutoCompleteTextView priorityDropdown = dialog.findViewById(R.id.priorityDropdown);
-        MaterialButton btnSubmit = dialog.findViewById(R.id.btnSubmitRequest);
-        MaterialButton btnCancel = dialog.findViewById(R.id.btnCancelRequest);
-
-        tvName.setText(serviceType);
-        tvSub.setText(subtitle);
-
-        issueDropdown.setAdapter(new ArrayAdapter<>(
-                this, android.R.layout.simple_dropdown_item_1line, issues));
-        issueDropdown.setText(issues[0], false);
-
-        priorityDropdown.setAdapter(new ArrayAdapter<>(
-                this, android.R.layout.simple_dropdown_item_1line,
-                new String[]{"Normal", "Urgent", "Emergency"}));
-        priorityDropdown.setText("Normal", false);
-
-        btnCancel.setOnClickListener(v -> dialog.dismiss());
-
-        btnSubmit.setOnClickListener(v -> {
-            String issue       = issueDropdown.getText().toString().trim();
-            String description = etDescription.getText() != null
-                    ? etDescription.getText().toString().trim() : "";
-            String priority    = priorityDropdown.getText().toString().trim();
-
-            if (description.isEmpty()) {
-                etDescription.setError("Please describe the issue");
-                etDescription.requestFocus();
-                return;
-            }
-
-            btnSubmit.setEnabled(false);
-            btnSubmit.setText("Submitting…");
-            submitRequest(serviceType, issue, description, priority, dialog, btnSubmit);
-        });
-
-        dialog.show();
-    }
-
-    private void submitRequest(String serviceType, String issue, String description,
-                               String priority, Dialog dialog, MaterialButton btnSubmit) {
-        String token = getSharedPreferences("LoginPrefs", MODE_PRIVATE)
-                .getString("access_token", null);
-        if (token == null) return;
-
-        String userId = extractUserIdFromToken(token);
+    // =========================================================
+    // SUBMIT REQUEST
+    // =========================================================
+    private void submitRequest(
+            String serviceType,
+            String issue,
+            String description,
+            String priority,
+            Dialog dialog,
+            MaterialButton btnSubmit) {
 
         new Thread(() -> {
             try {
-                JSONObject body = new JSONObject();
-                body.put("user_id",          userId);
-                body.put("apartment_number", currentApartmentNumber);
-                body.put("service_type",     serviceType);
-                body.put("title",            issue);
-                body.put("description",      description);
-                body.put("priority",         priority);
-                body.put("status",           "Under Review");
 
-                HttpURLConnection conn = (HttpURLConnection)
-                        new URL(SupabaseClient.SUPABASE_URL
-                                + "/rest/v1/maintenance_requests").openConnection();
+                JSONObject body = new JSONObject();
+
+                body.put("user_id", userId);
+                body.put("apartment_number", currentApartmentNumber);
+                body.put("service_type", serviceType);
+                body.put("title", issue);
+                body.put("description", description);
+                body.put("priority", priority);
+                body.put("status", "Under Review");
+
+                HttpURLConnection conn =
+                        (HttpURLConnection) new URL(
+                                SupabaseClient.SUPABASE_URL +
+                                        "/rest/v1/maintenance_requests")
+                                .openConnection();
+
                 conn.setRequestMethod("POST");
-                conn.setRequestProperty("apikey", SupabaseClient.SUPABASE_ANON_KEY);
-                conn.setRequestProperty("Authorization", "Bearer " + token);
-                conn.setRequestProperty("Content-Type", "application/json");
-                conn.setRequestProperty("Prefer", "return=representation");
+                conn.setRequestProperty("apikey",
+                        SupabaseClient.SUPABASE_ANON_KEY);
+                conn.setRequestProperty("Authorization",
+                        "Bearer " + token);
+                conn.setRequestProperty("Content-Type",
+                        "application/json");
+
                 conn.setDoOutput(true);
 
                 OutputStream os = conn.getOutputStream();
-                os.write(body.toString().getBytes(StandardCharsets.UTF_8));
+                os.write(body.toString()
+                        .getBytes(StandardCharsets.UTF_8));
                 os.close();
 
-                int code = conn.getResponseCode();
-                String requestNumber = "MNT-XXXX";
-
-                if (code == 201 || code == 200) {
-                    BufferedReader reader = new BufferedReader(
-                            new InputStreamReader(conn.getInputStream()));
-                    StringBuilder sb = new StringBuilder();
-                    String line;
-                    while ((line = reader.readLine()) != null) sb.append(line);
-                    reader.close();
-
-                    try {
-                        JSONArray arr = new JSONArray(sb.toString());
-                        if (arr.length() > 0)
-                            requestNumber = arr.getJSONObject(0)
-                                    .optString("request_number", requestNumber);
-                    } catch (Exception ignored) {}
-                }
-
+                conn.getResponseCode();
                 conn.disconnect();
 
-                String finalReqNum = requestNumber;
                 runOnUiThread(() -> {
                     dialog.dismiss();
-                    showSuccessDialog(serviceType, finalReqNum);
-                    // Refresh requests list
                     loadMyRequests();
+                    Toast.makeText(this,
+                            "Request submitted",
+                            Toast.LENGTH_SHORT).show();
                 });
 
             } catch (Exception e) {
+
                 runOnUiThread(() -> {
                     btnSubmit.setEnabled(true);
                     btnSubmit.setText("Submit Request");
-                    Toast.makeText(this, "Error: " + e.getMessage(),
-                            Toast.LENGTH_LONG).show();
                 });
             }
         }).start();
     }
 
-    private void showSuccessDialog(String serviceType, String requestNumber) {
-        Dialog d = new Dialog(this);
-        d.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        d.setContentView(R.layout.dialog_maintenance_success);
-        d.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        d.getWindow().setLayout(
-                (int) (getResources().getDisplayMetrics().widthPixels * 0.85),
-                ViewGroup.LayoutParams.WRAP_CONTENT);
-        d.setCancelable(false);
-
-        TextView tvNum     = d.findViewById(R.id.tvRequestNumber);
-        TextView tvConfirm = d.findViewById(R.id.tvServiceConfirm);
-        MaterialButton btnDone = d.findViewById(R.id.btnDone);
-
-        if (tvNum     != null) tvNum.setText("#" + requestNumber);
-        if (tvConfirm != null) tvConfirm.setText(serviceType + " request submitted");
-        if (btnDone   != null) btnDone.setOnClickListener(v -> d.dismiss());
-
-        d.show();
-    }
-
-    // ── Helpers ─────────────────────────────────────────────────────────────
-
-    private int dp(int value) {
-        return Math.round(value * getResources().getDisplayMetrics().density);
-    }
-
-    private int serviceIconBg(String type) {
-        switch (type) {
-            case SVC_PLUMBING:  return Color.parseColor("#DBEAFE");
-            case SVC_ELECTRIC:  return Color.parseColor("#FEF3C7");
-            case SVC_GAS:       return Color.parseColor("#FFE4E6");
-            case SVC_AC:        return Color.parseColor("#CFFAFE");
-            case SVC_CARPENTRY: return Color.parseColor("#FED7AA");
-            case SVC_CLEANING:  return Color.parseColor("#DCFCE7");
-            default:            return Color.parseColor("#EEF4FB");
-        }
-    }
-
-    private String serviceEmoji(String type) {
-        switch (type) {
-            case SVC_PLUMBING:  return "🚿";
-            case SVC_ELECTRIC:  return "⚡";
-            case SVC_GAS:       return "🔥";
-            case SVC_AC:        return "❄️";
-            case SVC_CARPENTRY: return "🪚";
-            case SVC_CLEANING:  return "🧹";
-            default:            return "🔧";
-        }
-    }
-
-    private int statusBgColor(String status) {
-        switch (status.toLowerCase()) {
-            case "in progress":  return Color.parseColor("#FEF3C7");
-            case "completed":
-            case "resolved":     return Color.parseColor("#DCFCE7");
-            case "scheduled":
-            case "under review": return Color.parseColor("#DBEAFE");
-            default:             return Color.parseColor("#F1F5F9");
-        }
-    }
-
-    private int statusTextColor(String status) {
-        switch (status.toLowerCase()) {
-            case "in progress":  return Color.parseColor("#D97706");
-            case "completed":
-            case "resolved":     return Color.parseColor("#16A34A");
-            case "scheduled":
-            case "under review": return Color.parseColor("#3667A6");
-            default:             return Color.parseColor("#64748B");
-        }
-    }
-
-    private String formatRelativeTime(String isoTime) {
-        if (isoTime == null || isoTime.isEmpty()) return "";
-        try {
-            SimpleDateFormat sdf = new SimpleDateFormat(
-                    "yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
-            sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-            Date d = sdf.parse(isoTime.substring(0, 19));
-            if (d == null) return "";
-            long diff = (System.currentTimeMillis() - d.getTime()) / 1000;
-            if (diff < 60)     return "Just now";
-            if (diff < 3600)   return (diff / 60) + " min ago";
-            if (diff < 86400)  return (diff / 3600) + " hours ago";
-            if (diff < 172800) return "Yesterday";
-            return (diff / 86400) + " days ago";
-        } catch (Exception e) { return ""; }
-    }
-
+    // =========================================================
+    // JWT USER ID EXTRACTION (SAFE)
+    // =========================================================
     private String extractUserIdFromToken(String token) {
+
         try {
             String[] parts = token.split("\\.");
+
             if (parts.length < 2) return "";
-            String payload = new String(android.util.Base64.decode(
-                    parts[1].replace("-", "+").replace("_", "/"),
-                    android.util.Base64.DEFAULT));
-            return new JSONObject(payload).optString("sub", "");
-        } catch (Exception e) { return ""; }
-    }
 
-    private void setupBackButton() {
-        CardView btnBack = findViewById(R.id.btnBack);
-        if (btnBack != null) btnBack.setOnClickListener(v -> finish());
-    }
+            String payload =
+                    new String(
+                            Base64.decode(parts[1],
+                                    Base64.URL_SAFE),
+                            StandardCharsets.UTF_8);
 
-    private void setupBottomNavigation() {
-        FrameLayout navFeed      = findViewById(R.id.nav_btn_feed);
-        LinearLayout navNotices  = findViewById(R.id.nav_btn_notices);
-        LinearLayout navChat     = findViewById(R.id.nav_btn_chat);
-        LinearLayout navServices = findViewById(R.id.nav_btn_services);
-        LinearLayout navProfile  = findViewById(R.id.nav_btn_profile);
+            JSONObject json = new JSONObject(payload);
 
-        navFeed.setOnClickListener(v -> {
-            startActivity(new Intent(this, FeedActivity.class));
-            overridePendingTransition(0, 0);
-            finish();
-        });
-        navNotices.setOnClickListener(v -> {
-            startActivity(new Intent(this, NoticesActivity.class));
-            overridePendingTransition(0, 0);
-            finish();
-        });
-        navChat.setOnClickListener(v -> {
-            startActivity(new Intent(this, ChatActivity.class));
-            overridePendingTransition(0, 0);
-            finish();
-        });
-        navServices.setOnClickListener(v -> {
-            startActivity(new Intent(this, ServicesActivity.class));
-            overridePendingTransition(0, 0);
-            finish();
-        });
-        navProfile.setOnClickListener(v -> {
-            startActivity(new Intent(this, ProfileActivity.class));
-            overridePendingTransition(0, 0);
-            finish();
-        });
+            return json.optString("sub", "");
+
+        } catch (Exception e) {
+            return "";
+        }
     }
 }

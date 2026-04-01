@@ -28,6 +28,7 @@ public class LoginActivity extends AppCompatActivity {
     private TextInputEditText apartmentInput, passwordInput;
     private SwitchCompat rememberMeSwitch;
     private MaterialButton signInButton;
+    private String userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -142,17 +143,16 @@ public class LoginActivity extends AppCompatActivity {
                 int responseCode = authConn.getResponseCode();
 
                 if (responseCode == 200) {
-                    BufferedReader authReader = new BufferedReader(
-                            new InputStreamReader(authConn.getInputStream()));
+                    BufferedReader authReader = new BufferedReader(new InputStreamReader(authConn.getInputStream()));
                     StringBuilder authSb = new StringBuilder();
                     while ((line = authReader.readLine()) != null) authSb.append(line);
                     authReader.close();
                     authConn.disconnect();
-
                     JSONObject authResponse = new JSONObject(authSb.toString());
                     String accessToken = authResponse.getString("access_token");
-
-                    saveToken(accessToken);
+                    JSONObject userObjForId = authResponse.getJSONObject("user");
+                    String actualUserId = userObjForId.getString("id");
+                    saveUserData(accessToken, actualUserId, fullName);
 
                     if (rememberMe) {
                         saveCredentials(apartment, password);
@@ -160,16 +160,13 @@ public class LoginActivity extends AppCompatActivity {
                         clearCredentials();
                     }
 
-                    String welcomeName = fullName;
                     runOnUiThread(() -> {
                         setLoading(false);
-                        Toast.makeText(this,
-                                "Welcome, " + welcomeName + "!",
-                                Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Welcome, " + fullName + "!", Toast.LENGTH_SHORT).show();
                         goToFeed();
                     });
 
-                } else {
+                }else {
                     BufferedReader errReader = new BufferedReader(
                             new InputStreamReader(authConn.getErrorStream()));
                     StringBuilder errSb = new StringBuilder();
@@ -219,10 +216,12 @@ public class LoginActivity extends AppCompatActivity {
         signInButton.setText(loading ? "Signing in..." : "Sign In");
     }
 
-    private void saveToken(String token) {
+    private void saveUserData(String token, String uId, String name) {
         getSharedPreferences("LoginPrefs", MODE_PRIVATE)
                 .edit()
                 .putString("access_token", token)
+                .putString("user_id", uId)
+                .putString("full_name", name)
                 .apply();
     }
 
