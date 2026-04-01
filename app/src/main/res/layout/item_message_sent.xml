@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingHorizontal="12dp"
+    android:paddingVertical="4dp">
+
+    <!-- Blue bubble (right-aligned) -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:orientation="vertical"
+        android:background="@drawable/bg_bubble_sent"
+        android:paddingHorizontal="14dp"
+        android:paddingVertical="10dp"
+        android:maxWidth="260dp">
+
+        <!-- Reply preview strip (hidden by default) -->
+        <LinearLayout
+            android:id="@+id/layoutReplyPreview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="#26FFFFFF"
+            android:padding="8dp"
+            android:layout_marginBottom="6dp"
+            android:visibility="gone">
+
+            <View
+                android:layout_width="3dp"
+                android:layout_height="match_parent"
+                android:background="#FFFFFF"
+                android:layout_marginEnd="6dp"/>
+
+            <TextView
+                android:id="@+id/tvReplyPreview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#DDFFFFFF"
+                android:textSize="12sp"
+                android:maxLines="2"
+                android:ellipsize="end"/>
+        </LinearLayout>
+
+        <!-- Message text -->
+        <TextView
+            android:id="@+id/tvMessageContent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#FFFFFF"
+            android:textSize="15sp"
+            android:lineSpacingMultiplier="1.2"/>
+
+        <!-- Timestamp -->
+        <TextView
+            android:id="@+id/tvMessageTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:textColor="#99FFFFFF"
+            android:textSize="10sp"
+            android:layout_marginTop="4dp"/>
+    </LinearLayout>
+
+    <!-- Reaction row (below bubble) -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginTop="3dp"
+        android:layout_marginEnd="4dp">
+
+        <!-- Reaction count badge -->
+        <TextView
+            android:id="@+id/tvReaction"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_reaction_badge"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="2dp"
+            android:textSize="12sp"
+            android:layout_marginEnd="6dp"
+            android:visibility="gone"/>
+
+        <!-- React (heart) button -->
+        <TextView
+            android:id="@+id/btnReact"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:text="🤍"
+            android:textSize="16sp"
+            android:gravity="center"
+            android:background="?attr/selectableItemBackgroundBorderless"/>
+    </LinearLayout>
+
+</LinearLayout>
