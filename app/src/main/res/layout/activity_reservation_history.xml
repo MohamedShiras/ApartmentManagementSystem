@@ -2,7 +2,6 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F0F6FB">
@@ -72,423 +71,33 @@
             android:paddingEnd="20dp"
             android:paddingTop="12dp">
 
-
-            <!-- ─── CONFIRMED SECTION LABEL ─── -->
-            <TextView
+            <!-- Loading -->
+            <ProgressBar
+                android:id="@+id/progressLoading"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Confirmed"
-                android:textColor="#214177"
-                android:textSize="13sp"
-                android:letterSpacing="0.08"
-                android:textAllCaps="true"
-                android:textStyle="bold"
-                android:layout_marginBottom="12dp"/>
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="60dp"
+                android:layout_marginBottom="40dp"
+                android:visibility="visible"/>
 
-            <!-- ─── CONFIRMED ITEM 1 — POOL ─── -->
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cardPoolConfirmed"
+            <!-- Dynamic Cards Go Here -->
+            <LinearLayout
+                android:id="@+id/llReservationsContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="14dp"
-                app:cardCornerRadius="20dp"
-                app:cardElevation="10dp"
-                app:cardBackgroundColor="#1E3A6E">
+                android:orientation="vertical"/>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <!-- Image Banner -->
-                    <FrameLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="130dp">
-
-                        <ImageView
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:src="@drawable/img_pool"
-                            android:scaleType="centerCrop"
-                            android:contentDescription="Pool"/>
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:background="@drawable/gradient_image_overlay"/>
-
-
-
-                        <!-- Amenity Name on image -->
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="bottom"
-                            android:padding="14dp"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical">
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text=" Swimming Pool"
-                                android:textColor="#FFFFFF"
-                                android:textSize="16sp"
-                                android:textStyle="bold"/>
-
-                        </LinearLayout>
-                    </FrameLayout>
-
-                    <!-- Details Row -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:padding="16dp"
-                        android:gravity="center_vertical">
-
-                        <!-- Info Column -->
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:id="@+id/tvPoolType"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Lap Swimming"
-                                android:textColor="#FFFFFF"
-                                android:textSize="14sp"
-                                android:textStyle="bold"
-                                android:layout_marginBottom="4dp"
-                                tools:text="Lap Swimming"/>
-
-                            <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal"
-                                android:gravity="center_vertical">
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="📅  "
-                                    android:textSize="12sp"/>
-
-                                <TextView
-                                    android:id="@+id/tvPoolDay"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Today · 07:00 AM"
-                                    android:textColor="#82A6CB"
-                                    android:textSize="12sp"
-                                    tools:text="Today · 07:00 AM"/>
-                            </LinearLayout>
-                        </LinearLayout>
-
-                        <!-- Cancel Button -->
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/btnCancelPool"
-                            android:layout_width="wrap_content"
-                            android:layout_height="36dp"
-                            android:text="Cancel"
-                            android:textColor="#FFFFFF"
-                            android:textSize="12sp"
-                            app:backgroundTint="#FF5A5F"
-                            app:cornerRadius="18dp"
-                            app:elevation="0dp"
-                            android:paddingStart="16dp"
-                            android:paddingEnd="16dp"/>
-
-                    </LinearLayout>
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-            <!-- ─── CONFIRMED ITEM 2 — RESTAURANT ─── -->
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cardRestaurantConfirmed"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
-                app:cardCornerRadius="20dp"
-                app:cardElevation="10dp"
-                app:cardBackgroundColor="#1E3A6E">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <FrameLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="130dp">
-
-                        <ImageView
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:src="@drawable/img_restaurant"
-                            android:scaleType="centerCrop"
-                            android:contentDescription="Restaurant"/>
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:background="@drawable/gradient_image_overlay"/>
-
-
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="bottom"
-                            android:padding="14dp"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical">
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text=" Restaurant"
-                                android:textColor="#FFFFFF"
-                                android:textSize="16sp"
-                                android:textStyle="bold"/>
-
-                        </LinearLayout>
-                    </FrameLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:padding="16dp"
-                        android:gravity="center_vertical">
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:id="@+id/tvRestType"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Dinner"
-                                android:textColor="#FFFFFF"
-                                android:textSize="14sp"
-                                android:textStyle="bold"
-                                android:layout_marginBottom="4dp"/>
-
-                            <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal"
-                                android:gravity="center_vertical">
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="📅  "
-                                    android:textSize="12sp"/>
-
-                                <TextView
-                                    android:id="@+id/tvRestDay"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Tomorrow · 07:30 PM"
-                                    android:textColor="#82A6CB"
-                                    android:textSize="12sp"/>
-                            </LinearLayout>
-                        </LinearLayout>
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/btnCancelGym"
-                            android:layout_width="wrap_content"
-                            android:layout_height="36dp"
-                            android:text="Cancel"
-                            android:textColor="#FFFFFF"
-                            android:textSize="12sp"
-                            app:backgroundTint="#FF5A5F"
-                            app:cornerRadius="18dp"
-                            app:elevation="0dp"
-                            android:paddingStart="16dp"
-                            android:paddingEnd="16dp"/>
-
-                    </LinearLayout>
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-            <!-- ─── PENDING SECTION LABEL ─── -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Pending"
-                android:textColor="#214177"
-                android:textSize="13sp"
-                android:letterSpacing="0.08"
-                android:textAllCaps="true"
-                android:textStyle="bold"
-                android:layout_marginBottom="12dp"/>
-
-            <!-- ─── PENDING ITEM — GYM ─── -->
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cardGymPending"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="14dp"
-                app:cardCornerRadius="20dp"
-                app:cardElevation="10dp"
-                app:cardBackgroundColor="#1E3A6E">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <FrameLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="130dp">
-
-                        <ImageView
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:src="@drawable/img_gym"
-                            android:scaleType="centerCrop"
-                            android:contentDescription="Gym"/>
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:background="@drawable/gradient_image_overlay"/>
-
-
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="bottom"
-                            android:padding="14dp">
-
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text=" Gym &amp; Fitness"
-                                android:textColor="#FFFFFF"
-                                android:textSize="16sp"
-                                android:textStyle="bold"/>
-                        </LinearLayout>
-                    </FrameLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="16dp">
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical"
-                            android:layout_marginBottom="12dp">
-
-                            <LinearLayout
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:orientation="vertical">
-
-                                <TextView
-                                    android:id="@+id/tvGymType"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Personal Training"
-                                    android:textColor="#FFFFFF"
-                                    android:textSize="14sp"
-                                    android:textStyle="bold"
-                                    android:layout_marginBottom="4dp"/>
-
-                                <LinearLayout
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:orientation="horizontal"
-                                    android:gravity="center_vertical">
-
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:text="📅  "
-                                        android:textSize="12sp"/>
-
-                                    <TextView
-                                        android:id="@+id/tvGymDay"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:text="Sun, Mar 09 · 06:00 AM"
-                                        android:textColor="#82A6CB"
-                                        android:textSize="12sp"/>
-                                </LinearLayout>
-                            </LinearLayout>
-
-                            <com.google.android.material.button.MaterialButton
-                                android:id="@+id/btnCancelRest"
-                                android:layout_width="wrap_content"
-                                android:layout_height="36dp"
-                                android:text="Cancel"
-                                android:textColor="#FFFFFF"
-                                android:textSize="12sp"
-                                app:backgroundTint="#FF5A5F"
-                                app:cornerRadius="18dp"
-                                app:elevation="0dp"
-                                android:paddingStart="16dp"
-                                android:paddingEnd="16dp"/>
-
-                        </LinearLayout>
-
-                        <!-- Pending Notice -->
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:background="@drawable/bg_pending_notice"
-                            android:padding="12dp"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text=" "
-                                android:textSize="13sp"
-                                android:layout_marginEnd="4dp"/>
-
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="Awaiting management approval. You will be notified once confirmed."
-                                android:textColor="#F39C12"
-                                android:textSize="11sp"
-                                android:lineSpacingMultiplier="1.3"/>
-                        </LinearLayout>
-
-                    </LinearLayout>
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-            <!-- ─── EMPTY STATE (hidden by default, show with visibility="visible" when list empty) ─── -->
+            <!-- Empty State -->
             <LinearLayout
                 android:id="@+id/layoutEmptyState"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:gravity="center"
-                android:paddingTop="40dp"
+                android:paddingTop="60dp"
                 android:paddingBottom="40dp"
-                android:visibility="gone"
-                tools:visibility="gone">
+                android:visibility="gone">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -509,7 +118,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Book a pool, gym, or restaurant session\nto see your reservations here."
+                    android:text="Book a pool, gym, or restaurant session&#10;to see your reservations here."
                     android:textColor="#82A6CB"
                     android:textSize="13sp"
                     android:gravity="center"
