@@ -3,6 +3,7 @@ package com.example.apartmentmanagementsystem;
 import android.app.DatePickerDialog;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
@@ -17,21 +18,30 @@ import androidx.core.content.ContextCompat;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 public class BookingActivity extends AppCompatActivity {
 
     private final String[] selectedDate = {""};
-    private final int[]    guestCount   = {2};
-    private final int[]    selectedChip = {-1};
+    private final int[] guestCount = {2};
+    private final int[] selectedChip = {-1};
 
-    private int   maxGuests;
+    private int maxGuests;
     private int[] chipIds;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
+        setContentView(R.layout.activity_booking);
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(getWindow().getAttributes());
+        lp.width = (int) (getResources().getDisplayMetrics().widthPixels * 0.90);
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        getWindow().setAttributes(lp);
+        View mainLayout = findViewById(R.id.main_container);
+        mainLayout.setBackgroundResource(R.drawable.bg_glass_card);
         setContentView(R.layout.activity_booking);
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
@@ -61,24 +71,24 @@ public class BookingActivity extends AppCompatActivity {
         }
 
 
-        String amenityTitle    = getIntent().getStringExtra("amenity_title");
+        String amenityTitle = getIntent().getStringExtra("amenity_title");
         String amenitySubtitle = getIntent().getStringExtra("amenity_subtitle");
-        int    amenityIcon     = getIntent().getIntExtra("amenity_icon", R.drawable.ic_pool);
-        String amenityType     = getIntent().getStringExtra("amenity_type");
+        int amenityIcon = getIntent().getIntExtra("amenity_icon", R.drawable.ic_pool);
+        String amenityType = getIntent().getStringExtra("amenity_type");
 
 
-        if ("Pool".equals(amenityType))       maxGuests = 20;
-        else if ("Gym".equals(amenityType))   maxGuests = 15;
-        else                                   maxGuests = 10;
+        if ("Pool".equals(amenityType)) maxGuests = 20;
+        else if ("Gym".equals(amenityType)) maxGuests = 15;
+        else maxGuests = 10;
 
         // ── Header ──
-        TextView  tvTitle    = findViewById(R.id.dialogTitle);
-        TextView  tvSubtitle = findViewById(R.id.dialogSubtitle);
-        ImageView ivIcon     = findViewById(R.id.dialogAmenityIcon);
+        TextView tvTitle = findViewById(R.id.dialogTitle);
+        TextView tvSubtitle = findViewById(R.id.dialogSubtitle);
+        ImageView ivIcon = findViewById(R.id.dialogAmenityIcon);
 
-        if (tvTitle    != null) tvTitle.setText(amenityTitle);
+        if (tvTitle != null) tvTitle.setText(amenityTitle);
         if (tvSubtitle != null) tvSubtitle.setText(amenitySubtitle);
-        if (ivIcon     != null) ivIcon.setImageResource(amenityIcon);
+        if (ivIcon != null) ivIcon.setImageResource(amenityIcon);
 
         // ── Close / back ──
         ImageView btnClose = findViewById(R.id.dialogBtnClose);
@@ -97,8 +107,8 @@ public class BookingActivity extends AppCompatActivity {
 
 
     private void setupDatePicker() {
-        View     layoutDate = findViewById(R.id.layoutSelectDate);
-        TextView tvDate     = findViewById(R.id.tvSelectedDate);
+        View layoutDate = findViewById(R.id.layoutSelectDate);
+        TextView tvDate = findViewById(R.id.tvSelectedDate);
         if (layoutDate == null || tvDate == null) return;
 
         layoutDate.setOnClickListener(v -> {
@@ -109,7 +119,7 @@ public class BookingActivity extends AppCompatActivity {
                         String date = String.format("%02d/%02d/%04d", day, month + 1, year);
                         selectedDate[0] = date;
                         tvDate.setText(date);
-                        tvDate.setTextColor(ContextCompat.getColor(this, android.R.color.white));
+                        tvDate.setTextColor(ContextCompat.getColor(this, android.R.color.black));
                     },
                     cal.get(Calendar.YEAR),
                     cal.get(Calendar.MONTH),
@@ -151,21 +161,25 @@ public class BookingActivity extends AppCompatActivity {
 
     // ── Guest Counter ────────────────────────────
     private void setupGuestCounter() {
-        TextView  tvGuests = findViewById(R.id.tvGuestCount);
+        TextView tvGuests = findViewById(R.id.tvGuestCount);
         ImageView btnMinus = findViewById(R.id.btnGuestMinus);
-        ImageView btnPlus  = findViewById(R.id.btnGuestPlus);
+        ImageView btnPlus = findViewById(R.id.btnGuestPlus);
         if (tvGuests == null || btnMinus == null || btnPlus == null) return;
 
         updateGuestLabel(tvGuests);
 
         btnMinus.setOnClickListener(v -> {
-            if (guestCount[0] > 1) { guestCount[0]--; updateGuestLabel(tvGuests); }
-            else Toast.makeText(this, "Minimum 1 guest required", Toast.LENGTH_SHORT).show();
+            if (guestCount[0] > 1) {
+                guestCount[0]--;
+                updateGuestLabel(tvGuests);
+            } else Toast.makeText(this, "Minimum 1 guest required", Toast.LENGTH_SHORT).show();
         });
 
         btnPlus.setOnClickListener(v -> {
-            if (guestCount[0] < maxGuests) { guestCount[0]++; updateGuestLabel(tvGuests); }
-            else Toast.makeText(this,
+            if (guestCount[0] < maxGuests) {
+                guestCount[0]++;
+                updateGuestLabel(tvGuests);
+            } else Toast.makeText(this,
                     "Maximum capacity is " + maxGuests + " guests", Toast.LENGTH_SHORT).show();
         });
     }
@@ -176,7 +190,7 @@ public class BookingActivity extends AppCompatActivity {
 
     // ── Action Buttons ───────────────────────────
     private void setupActionButtons(String amenityType) {
-        MaterialButton btnCancel  = findViewById(R.id.dialogBtnCancel);
+        MaterialButton btnCancel = findViewById(R.id.dialogBtnCancel);
         MaterialButton btnConfirm = findViewById(R.id.dialogBtnConfirm);
 
         if (btnCancel != null) btnCancel.setOnClickListener(v -> finish());
@@ -193,22 +207,90 @@ public class BookingActivity extends AppCompatActivity {
                 }
 
                 TextView chipView = findViewById(chipIds[selectedChip[0]]);
-                String timeSlot   = chipView != null ? chipView.getText().toString() : "";
+                String timeSlot = chipView != null ? chipView.getText().toString() : "";
 
-                EditText etRequest    = findViewById(R.id.etSpecialRequest);
+                EditText etRequest = findViewById(R.id.etSpecialRequest);
                 String specialRequest = etRequest != null
                         ? etRequest.getText().toString().trim() : "";
 
-                // ── TODO: Save to Firebase ──
-                // saveReservation(amenityType, selectedDate[0], timeSlot,
-                //                 guestCount[0], specialRequest);
-
+                saveReservation(amenityType, selectedDate[0], timeSlot, guestCount[0], specialRequest);
                 Toast.makeText(this,
                         "✔ " + amenityType + " booked on " + selectedDate[0] + " at " + timeSlot,
                         Toast.LENGTH_LONG).show();
 
-                finish();
             });
+
         }
+
+    }
+
+    private void saveReservation(String type, String date, String time, int guests, String request) {
+        android.content.SharedPreferences prefs = getSharedPreferences("LoginPrefs", MODE_PRIVATE);
+        String currentUserId = prefs.getString("user_id", null);
+
+        if (currentUserId == null) {
+            Toast.makeText(this, "❌ User not logged in!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // JSON body manually build කරන්න
+        String jsonBody = "{"
+                + "\"user_id\":\"" + currentUserId + "\","
+                + "\"amenity_type\":\"" + type + "\","
+                + "\"selected_date\":\"" + date + "\","
+                + "\"time_slot\":\"" + time + "\","
+                + "\"guest_count\":" + guests + ","
+                + "\"special_request\":\"" + request.replace("\"", "\\\"") + "\""
+                + "}";
+
+        new Thread(() -> {
+            try {
+                java.net.URL url = new java.net.URL(
+                        SupabaseClient.SUPABASE_URL + "/rest/v1/reservations"
+                );
+
+                java.net.HttpURLConnection conn = (java.net.HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("POST");
+                conn.setDoOutput(true);
+                conn.setRequestProperty("Content-Type", "application/json");
+                conn.setRequestProperty("apikey", SupabaseClient.SUPABASE_ANON_KEY);
+                conn.setRequestProperty("Authorization", "Bearer " + SupabaseClient.SUPABASE_ANON_KEY);
+                conn.setRequestProperty("Prefer", "return=minimal");
+
+                // Body write කරන්න
+                byte[] input = jsonBody.getBytes(java.nio.charset.StandardCharsets.UTF_8);
+                conn.getOutputStream().write(input, 0, input.length);
+
+                int responseCode = conn.getResponseCode();
+
+                if (responseCode == 200 || responseCode == 201) {
+                    runOnUiThread(() -> {
+                        Toast.makeText(this, "✅ Booking Saved!", Toast.LENGTH_SHORT).show();
+                        finish();
+                    });
+                } else {
+                    // Error body read කරන්න
+                    java.io.InputStream errorStream = conn.getErrorStream();
+                    String errorMsg = "";
+                    if (errorStream != null) {
+                        errorMsg = new java.util.Scanner(errorStream)
+                                .useDelimiter("\\A").next();
+                    }
+                    final String finalError = errorMsg;
+                    runOnUiThread(() -> {
+                        Toast.makeText(this,
+                                "❌ Error " + responseCode + ": " + finalError,
+                                Toast.LENGTH_LONG).show();
+                    });
+                }
+
+                conn.disconnect();
+
+            } catch (Exception e) {
+                runOnUiThread(() -> {
+                    Toast.makeText(this, "❌ " + e.getMessage(), Toast.LENGTH_LONG).show();
+                });
+            }
+        }).start();
     }
 }
