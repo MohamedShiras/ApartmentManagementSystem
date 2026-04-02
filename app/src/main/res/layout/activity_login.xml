@@ -5,14 +5,14 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F8FAFC"
+    android:background="@android:color/white"
     tools:context=".LoginActivity">
 
     <!-- Illustration Container -->
     <androidx.cardview.widget.CardView
         android:id="@+id/illustrationCard"
-        android:layout_width="160dp"
-        android:layout_height="160dp"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
         android:layout_marginTop="60dp"
         app:cardCornerRadius="30dp"
         app:cardElevation="0dp"
@@ -71,6 +71,7 @@
         app:placeholderText="Enter your username"
         app:hintEnabled="true"
         app:boxBackgroundMode="outline"
+        app:boxBackgroundColor="#FFFFFF"
         app:boxCornerRadiusBottomEnd="16dp"
         app:boxCornerRadiusBottomStart="16dp"
         app:boxCornerRadiusTopEnd="16dp"
@@ -91,11 +92,9 @@
             android:layout_height="wrap_content"
             android:inputType="text"
             android:textColor="#1E293B"
-            android:textSize="16sp"
-            android:background="@null" />
+            android:textSize="16sp" />
 
     </com.google.android.material.textfield.TextInputLayout>
-
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/passwordLayout"
         android:layout_width="0dp"
@@ -107,6 +106,7 @@
         app:placeholderText="Enter your password"
         app:hintEnabled="true"
         app:boxBackgroundMode="outline"
+        app:boxBackgroundColor="#FFFFFF"
         app:boxCornerRadiusBottomEnd="16dp"
         app:boxCornerRadiusBottomStart="16dp"
         app:boxCornerRadiusTopEnd="16dp"
@@ -129,8 +129,7 @@
             android:layout_height="wrap_content"
             android:inputType="textPassword"
             android:textColor="#1E293B"
-            android:textSize="16sp"
-            android:background="@null" />
+            android:textSize="16sp" />
 
     </com.google.android.material.textfield.TextInputLayout>>
 
