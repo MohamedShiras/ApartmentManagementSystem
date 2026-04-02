@@ -14,6 +14,7 @@ object SupabaseClient {
     const val SUPABASE_URL      = "https://mnpurtjoairsteofknva.supabase.co"
     const val SUPABASE_ANON_KEY = "sb_publishable_va_6pxQw-DBeezl3CXu9kg_kyZIdCvb"
 
+    @JvmField
     val client = createSupabaseClient(
         supabaseUrl = SUPABASE_URL,
         supabaseKey = SUPABASE_ANON_KEY
@@ -23,5 +24,7 @@ object SupabaseClient {
         install(Storage)
         install(Realtime)
     }
+
+
 
 }
