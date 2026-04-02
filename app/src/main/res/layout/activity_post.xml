@@ -9,6 +9,7 @@
     android:background="#F0F4FF"
     tools:context=".PostActivity">
 
+  <!-- TOP BAR -->
   <androidx.cardview.widget.CardView
       android:id="@+id/topBarCard"
       android:layout_width="0dp"
@@ -28,7 +29,6 @@
         android:paddingStart="4dp"
         android:paddingEnd="12dp">
 
-      <!-- Back -->
       <ImageButton
           android:id="@+id/btnBack"
           android:layout_width="44dp"
@@ -37,7 +37,6 @@
           android:src="@drawable/ic_arrow_back"
           app:tint="#0D47A1" />
 
-      <!-- Avatar circle with initials -->
       <FrameLayout
           android:layout_width="38dp"
           android:layout_height="38dp"
@@ -59,10 +58,8 @@
             android:textColor="#FFFFFF"
             android:textSize="13sp"
             android:textStyle="bold" />
-
       </FrameLayout>
 
-      <!-- Name + Unit -->
       <LinearLayout
           android:layout_width="0dp"
           android:layout_height="wrap_content"
@@ -86,7 +83,6 @@
             android:text="Unit 4B · Block C"
             android:textColor="#6B7A99"
             android:textSize="11sp" />
-
       </LinearLayout>
 
       <com.google.android.material.button.MaterialButton
@@ -104,7 +100,6 @@
           app:icon="@drawable/ic_send"
           app:iconGravity="end"
           app:iconSize="15dp" />
-
     </LinearLayout>
   </androidx.cardview.widget.CardView>
 
@@ -117,9 +112,7 @@
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toBottomOf="@id/topBarCard" />
 
-  <!-- ══════════════════════════════════════════
-       SCROLLABLE WRITE AREA
-       ══════════════════════════════════════════ -->
+  <!-- SCROLLABLE WRITE AREA -->
   <androidx.core.widget.NestedScrollView
       android:id="@+id/scrollContent"
       android:layout_width="0dp"
@@ -135,7 +128,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-      <!-- WRITE CARD — big open space -->
+      <!-- WRITE CARD -->
       <androidx.cardview.widget.CardView
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
@@ -148,46 +141,98 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="571dp"
+            android:layout_height="match_parent"
+            android:minHeight="400dp"
             android:orientation="vertical"
             android:padding="16dp">
 
+          <!-- Text input -->
+
+          <!-- IMAGE PREVIEW — GONE until image selected -->
           <EditText
               android:id="@+id/etCaption"
               android:layout_width="match_parent"
-              android:layout_height="451dp"
+              android:layout_height="207dp"
               android:background="@android:color/transparent"
               android:fontFamily="sans-serif"
               android:gravity="top|start"
               android:hint="What's on your mind? Share with your community..."
               android:inputType="textMultiLine|textCapSentences"
-              android:minHeight="280dp"
+              android:minHeight="120dp"
               android:padding="0dp"
               android:textColor="#0D1B3E"
               android:textColorHint="#A0AABF"
               android:textSize="15sp" />
 
+          <FrameLayout
+              android:id="@+id/frameImagePreview"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_marginTop="14dp"
+              android:visibility="gone">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="0dp">
+
+              <ImageView
+                  android:id="@+id/imgMediaPreview"
+                  android:layout_width="match_parent"
+                  android:layout_height="220dp"
+                  android:background="#E8EEFF"
+                  android:scaleType="centerCrop" />
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Video play overlay -->
+            <ImageView
+                android:id="@+id/ivPlayOverlay"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_play_circle"
+                android:visibility="gone"
+                app:tint="@android:color/white" />
+
+            <!-- Remove button -->
+            <ImageButton
+                android:id="@+id/btnRemoveMedia"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_gravity="top|end"
+                android:layout_margin="8dp"
+                android:background="@drawable/circle_dark_bg"
+                android:contentDescription="Remove media"
+                android:src="@drawable/ic_close"
+                app:tint="@android:color/white" />
+
+          </FrameLayout>
+
+          <!-- Char count -->
+
+          <!-- Divider -->
+
           <TextView
               android:id="@+id/tvCharCount"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:layout_marginTop="4dp"
+              android:layout_marginTop="8dp"
               android:gravity="end"
               android:text="0 / 500"
               android:textColor="#C0C8DC"
               android:textSize="11sp" />
 
-          <!-- Divider inside card -->
           <View
               android:layout_width="match_parent"
               android:layout_height="1dp"
-              android:layout_marginTop="12dp"
+              android:layout_marginTop="10dp"
               android:background="#E8ECF4" />
 
-          <!-- Photo + Add row inside write card -->
           <LinearLayout
               android:layout_width="match_parent"
-              android:layout_height="49dp"
+              android:layout_height="78dp"
               android:layout_marginTop="10dp"
               android:gravity="center_vertical"
               android:orientation="horizontal">
@@ -220,9 +265,9 @@
                   app:cornerRadius="10dp"
                   app:icon="@drawable/ic_add"
                   app:iconSize="30dp"
+                  app:iconTint="#3667A6"
                   app:strokeColor="#ffffff"
-                  app:strokeWidth="1.5dp"
-                  app:iconTint="#3667A6" />
+                  app:strokeWidth="1.5dp" />
 
 
             </LinearLayout>
@@ -232,65 +277,18 @@
           </LinearLayout>
 
         </LinearLayout>
+
+
       </androidx.cardview.widget.CardView>
 
-      <!-- MEDIA PREVIEW — hidden until media selected -->
-      <androidx.cardview.widget.CardView
-          android:id="@+id/cardMediaPreview"
+      <View
           android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_marginStart="12dp"
-          android:layout_marginTop="8dp"
-          android:layout_marginEnd="12dp"
-          android:layout_marginBottom="8dp"
-          android:visibility="gone"
-          app:cardBackgroundColor="#FFFFFF"
-          app:cardCornerRadius="16dp"
-          app:cardElevation="2dp">
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-          <ImageView
-              android:id="@+id/imgMediaPreview"
-              android:layout_width="match_parent"
-              android:layout_height="220dp"
-              android:background="#E8EEFF"
-              android:scaleType="centerCrop" />
-
-          <ImageView
-              android:id="@+id/ivPlayOverlay"
-              android:layout_width="56dp"
-              android:layout_height="56dp"
-              android:layout_centerInParent="true"
-              android:src="@drawable/ic_play_circle"
-              android:visibility="gone"
-              app:tint="@android:color/white" />
-
-          <ImageButton
-              android:id="@+id/btnRemoveMedia"
-              android:layout_width="32dp"
-              android:layout_height="32dp"
-              android:layout_alignParentTop="true"
-              android:layout_alignParentEnd="true"
-              android:layout_margin="8dp"
-              android:background="@drawable/circle_dark_bg"
-              android:contentDescription="Remove media"
-              android:src="@drawable/ic_close"
-              app:tint="@android:color/white" />
-
-        </RelativeLayout>
-      </androidx.cardview.widget.CardView>
+          android:layout_height="17dp" />
 
     </LinearLayout>
   </androidx.core.widget.NestedScrollView>
 
-  <!-- ══════════════════════════════════════════
-       BOTTOM ACTION BAR
-       [img thumb][+]  ·····  [Post Type chip row]
-       Sits just above the keyboard
-       ══════════════════════════════════════════ -->
+  <!-- BOTTOM BAR -->
   <androidx.cardview.widget.CardView
       android:id="@+id/bottomBar"
       android:layout_width="0dp"
@@ -305,34 +303,12 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"/>
+        android:orientation="vertical">
 
-      <!-- Top divider -->
       <View
           android:layout_width="match_parent"
           android:layout_height="1dp"
           android:background="#E8ECF4" />
-
-      <!-- Row 1: media thumbnails + add button -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-
-      <!-- Selected image thumbnail (visible after pick) -->
-      <androidx.cardview.widget.CardView
-          android:id="@+id/cardThumb"
-          android:layout_width="48dp"
-          android:layout_height="48dp"
-          android:visibility="gone"
-          app:cardCornerRadius="10dp"
-          app:cardElevation="0dp" />
-
-      <ImageView
-          android:id="@+id/imgThumb"
-          android:layout_width="match_parent"
-          android:layout_height="match_parent"
-          android:scaleType="centerCrop" />
 
 
     </LinearLayout>

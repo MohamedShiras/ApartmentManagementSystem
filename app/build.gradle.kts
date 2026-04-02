@@ -65,5 +65,8 @@ dependencies {
     implementation("io.github.jan-tennert.supabase:postgrest-kt:2.5.0")
     implementation("io.github.jan-tennert.supabase:auth-kt:2.5.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+    implementation ("com.github.bumptech.glide:glide:4.16.0")
+    annotationProcessor ("com.github.bumptech.glide:compiler:4.16.0")
+    implementation ("com.squareup.okhttp3:okhttp:4.12.0")
 
 }
