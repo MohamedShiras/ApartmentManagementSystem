@@ -228,6 +228,63 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- User Bookings Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/adminDashboardBookingsCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            app:cardBackgroundColor="#E8F5E9"
+            app:cardCornerRadius="18dp"
+            app:strokeColor="#81C784"
+            app:strokeWidth="1dp"
+            android:foreground="?attr/selectableItemBackground">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="16dp"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:src="@drawable/ic_pool"
+                    android:background="@drawable/bg_circle_green"
+                    android:padding="8dp"
+                    android:contentDescription="@string/bookings_icon" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginStart="14dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="User Bookings"
+                        android:textColor="#1B5E20"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:text="View and manage all user bookings"
+                        android:textColor="#2E7D32"
+                        android:textSize="13sp" />
+                </LinearLayout>
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:src="@drawable/ic_arrow_forward"
+                    app:tint="#1B5E20"
+                    android:contentDescription="@string/go" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
         <!-- Example: Add a third module for animation/feature demonstration -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"

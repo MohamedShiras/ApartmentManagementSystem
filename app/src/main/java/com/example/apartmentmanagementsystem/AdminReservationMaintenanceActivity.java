@@ -3,6 +3,8 @@ package com.example.apartmentmanagementsystem;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,7 +39,14 @@ public class AdminReservationMaintenanceActivity extends AppCompatActivity {
 
     private final ActivityResultLauncher<Intent> editLauncher =
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
-                fetchReservations();
+                if (result.getResultCode() == RESULT_OK) {
+                    // Add a small delay (800ms) to ensure Supabase data is synchronized
+                    // before we fetch the updated list
+                    new Handler(Looper.getMainLooper()).postDelayed(
+                        this::fetchReservations,
+                        800  // Wait 800ms for database sync
+                    );
+                }
             });
 
     @Override
@@ -59,7 +68,8 @@ public class AdminReservationMaintenanceActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(v -> finish());
         toolbar.setOnMenuItemClickListener(item -> {
             if (item.getItemId() == R.id.menuAddReservation) {
-                editLauncher.launch(new Intent(this, AdminEditReservationActivity.class));
+                // Launch AdminAddReservationActivity to add a new reservation
+                editLauncher.launch(new Intent(this, AdminAddReservationActivity.class));
                 return true;
             }
             if (item.getItemId() == R.id.menuRefreshReservations) {
@@ -75,19 +85,15 @@ public class AdminReservationMaintenanceActivity extends AppCompatActivity {
         emptyText = findViewById(R.id.adminReservationEmptyText);
         loadingText = findViewById(R.id.adminReservationLoadingText);
 
-        adapter = new AdminReservationMaintenanceAdapter(new AdminReservationMaintenanceAdapter.ReservationActionListener() {
+        adapter = new AdminReservationMaintenanceAdapter(reservations, new AdminReservationMaintenanceAdapter.ReservationActionListener() {
             @Override
             public void onEdit(AdminReservation reservation) {
                 Intent intent = new Intent(AdminReservationMaintenanceActivity.this, AdminEditReservationActivity.class);
                 intent.putExtra("reservation_id", reservation.getId());
                 intent.putExtra("service_name", reservation.getServiceName());
                 intent.putExtra("description", reservation.getDescription());
-                intent.putExtra("reservation_date", reservation.getReservationDate());
-                intent.putExtra("reservation_time", reservation.getReservationTime());
-                intent.putExtra("duration", reservation.getDuration());
-                intent.putExtra("image_url", reservation.getImageUrl());
-                intent.putExtra("status", reservation.getStatus());
-                intent.putExtra("booked_by", reservation.getBookedBy());
+                intent.putExtra("time_period", reservation.getTimePeriod());
+                intent.putExtra("max_guests", reservation.getMaxGuests());
                 editLauncher.launch(intent);
             }
 
@@ -107,14 +113,20 @@ public class AdminReservationMaintenanceActivity extends AppCompatActivity {
         new Thread(() -> {
             try {
                 String queryUrl = SupabaseClient.SUPABASE_URL
-                        + "/rest/v1/reservations"
+                        + "/rest/v1/add_reservation_services"
                         + "?select=*"
                         + "&order=created_at.desc.nullslast";
 
                 HttpURLConnection connection = (HttpURLConnection) new URL(queryUrl).openConnection();
                 connection.setRequestMethod("GET");
                 connection.setRequestProperty("apikey", SupabaseClient.SUPABASE_ANON_KEY);
-                connection.setRequestProperty("Authorization", "Bearer " + getBearerToken());
+
+                // Add Bearer token only if user is authenticated
+                String userToken = getAccessToken();
+                if (userToken != null && !userToken.isEmpty()) {
+                    connection.setRequestProperty("Authorization", "Bearer " + userToken);
+                }
+
                 connection.setRequestProperty("Content-Type", "application/json");
 
                 int code = connection.getResponseCode();
@@ -143,25 +155,19 @@ public class AdminReservationMaintenanceActivity extends AppCompatActivity {
                 for (int i = 0; i < array.length(); i++) {
                     JSONObject obj = array.getJSONObject(i);
 
-                    String imgUrl = valueOf(obj, "image_url", "reservation_image_url", "image", "imageUrl");
                     loaded.add(new AdminReservation(
-                            valueOf(obj, "id", "reservation_id"),
-                            valueOf(obj, "service_name", "amenity", "title", "service"),
-                            valueOf(obj, "description", "special_request", "notes"),
-                            valueOf(obj, "reservation_date", "date", "booking_date"),
-                            valueOf(obj, "reservation_time", "time_slot", "time"),
-                            valueOf(obj, "duration", "duration_text"),
-                            imgUrl,
-                            valueOf(obj, "status"),
-                            valueOf(obj, "booked_by", "resident_name", "full_name", "apartment_number"),
-                            valueOf(obj, "capacity", "max_guests", "guest_count")
+                            valueOf(obj, "id"),
+                            valueOf(obj, "service_name"),
+                            valueOf(obj, "description"),
+                            valueOf(obj, "time_period"),
+                            valueOf(obj, "max_guests")
                     ));
                 }
 
                 runOnUiThread(() -> {
                     reservations.clear();
                     reservations.addAll(loaded);
-                    adapter.submitList(reservations);
+                    adapter.notifyDataSetChanged();
                     setLoadingState(false);
                     showEmptyState(reservations.isEmpty(), getString(R.string.admin_reservation_empty));
                 });
@@ -188,12 +194,18 @@ public class AdminReservationMaintenanceActivity extends AppCompatActivity {
             try {
                 String encodedId = URLEncoder.encode(reservationId, "UTF-8");
                 String url = SupabaseClient.SUPABASE_URL
-                        + "/rest/v1/reservations?id=eq." + encodedId;
+                        + "/rest/v1/add_reservation_services?id=eq." + encodedId;
 
                 HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
                 connection.setRequestMethod("DELETE");
                 connection.setRequestProperty("apikey", SupabaseClient.SUPABASE_ANON_KEY);
-                connection.setRequestProperty("Authorization", "Bearer " + getBearerToken());
+
+                // Add Bearer token only if user is authenticated
+                String userToken = getAccessToken();
+                if (userToken != null && !userToken.isEmpty()) {
+                    connection.setRequestProperty("Authorization", "Bearer " + userToken);
+                }
+
                 connection.setRequestProperty("Prefer", "return=minimal");
 
                 int code = connection.getResponseCode();
@@ -229,13 +241,27 @@ public class AdminReservationMaintenanceActivity extends AppCompatActivity {
         return "";
     }
 
-    private String getBearerToken() {
+    /**
+     * Get the user's access token from SharedPreferences
+     * Returns null/empty if no token is available
+     */
+    private String getAccessToken() {
         SharedPreferences prefs = getSharedPreferences("LoginPrefs", MODE_PRIVATE);
         String token = prefs.getString("access_token", "");
-        if (token == null || token.trim().isEmpty()) {
-            return SupabaseClient.SUPABASE_ANON_KEY;
+        return (token == null || token.trim().isEmpty()) ? null : token;
+    }
+
+    /**
+     * Legacy method for compatibility - returns Bearer token only if user is authenticated
+     * WARNING: Do not use this for apikey header - use getAccessToken() instead
+     */
+    private String getBearerToken() {
+        String token = getAccessToken();
+        if (token != null && !token.isEmpty()) {
+            return token;
         }
-        return token;
+        // Return empty string if no user token (caller should not add Authorization header)
+        return "";
     }
 
     private void setLoadingState(boolean loading) {

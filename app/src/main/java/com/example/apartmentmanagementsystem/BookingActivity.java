@@ -1,8 +1,10 @@
 package com.example.apartmentmanagementsystem;
 
 import android.app.DatePickerDialog;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
@@ -16,10 +18,16 @@ import androidx.core.content.ContextCompat;
 
 import com.google.android.material.button.MaterialButton;
 
+import org.json.JSONObject;
+
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Calendar;
 
 public class BookingActivity extends AppCompatActivity {
 
+    private static final String TAG = "BookingActivity";
     private final String[] selectedDate = {""};
     private final int[]    guestCount   = {2};
     private final int[]    selectedChip = {-1};
@@ -95,86 +103,89 @@ public class BookingActivity extends AppCompatActivity {
         setupActionButtons(amenityType);
     }
 
-
     private void setupDatePicker() {
-        View     layoutDate = findViewById(R.id.layoutSelectDate);
-        TextView tvDate     = findViewById(R.id.tvSelectedDate);
-        if (layoutDate == null || tvDate == null) return;
+        TextView tvDate = findViewById(R.id.tvBookingDate);
+        if (tvDate == null) return;
 
-        layoutDate.setOnClickListener(v -> {
-            Calendar cal = Calendar.getInstance();
-            DatePickerDialog picker = new DatePickerDialog(
+        tvDate.setOnClickListener(v -> {
+            Calendar calendar = Calendar.getInstance();
+            int year = calendar.get(Calendar.YEAR);
+            int month = calendar.get(Calendar.MONTH);
+            int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+            DatePickerDialog datePickerDialog = new DatePickerDialog(
                     this,
-                    (view, year, month, day) -> {
-                        String date = String.format("%02d/%02d/%04d", day, month + 1, year);
-                        selectedDate[0] = date;
-                        tvDate.setText(date);
-                        tvDate.setTextColor(ContextCompat.getColor(this, android.R.color.white));
+                    (view, selectedYear, selectedMonth, selectedDay) -> {
+                        selectedDate[0] = String.format("%04d-%02d-%02d", selectedYear, selectedMonth + 1, selectedDay);
+                        tvDate.setText(selectedDate[0]);
+                        tvDate.setTextColor(ContextCompat.getColor(this, android.R.color.black));
                     },
-                    cal.get(Calendar.YEAR),
-                    cal.get(Calendar.MONTH),
-                    cal.get(Calendar.DAY_OF_MONTH)
+                    year, month, day
             );
-            picker.getDatePicker().setMinDate(cal.getTimeInMillis());
-            picker.show();
+            datePickerDialog.getDatePicker().setMinDate(calendar.getTimeInMillis());
+            datePickerDialog.show();
         });
     }
 
-    // ── Time Chips ───────────────────────────────
     private void setupTimeChips() {
+        String[] timeSlots = {"10:00 AM", "2:00 PM", "6:00 PM"};
+
         for (int i = 0; i < chipIds.length; i++) {
-            final int index = i;
             TextView chip = findViewById(chipIds[i]);
             if (chip == null) continue;
 
-            // ─ Default state ─
-            chip.setBackgroundColor(Color.WHITE);
-            chip.setTextColor(Color.parseColor("#2F5F9B")); // Dark Blue
-
+            final int index = i;
+            chip.setText(timeSlots[i]);
             chip.setOnClickListener(v -> {
-                for (int id : chipIds) {
-                    TextView c = findViewById(id);
+                // Reset all chips
+                for (int chipId : chipIds) {
+                    TextView c = findViewById(chipId);
                     if (c != null) {
-                        // Reset all chips to default
-                        c.setBackgroundColor(Color.WHITE);
-                        c.setTextColor(Color.parseColor("#2F5F9B"));
+                        c.setBackgroundColor(Color.TRANSPARENT);
+                        c.setTextColor(ContextCompat.getColor(BookingActivity.this, android.R.color.darker_gray));
                     }
                 }
 
-                // Selected chip
-                chip.setBackgroundColor(Color.parseColor("#2F5F9B")); // Dark Blue
+                // Highlight selected chip
+                chip.setBackgroundResource(R.drawable.bg_badge_confirmed);
                 chip.setTextColor(Color.WHITE);
                 selectedChip[0] = index;
             });
         }
     }
 
-    // ── Guest Counter ────────────────────────────
     private void setupGuestCounter() {
-        TextView  tvGuests = findViewById(R.id.tvGuestCount);
-        ImageView btnMinus = findViewById(R.id.btnGuestMinus);
-        ImageView btnPlus  = findViewById(R.id.btnGuestPlus);
-        if (tvGuests == null || btnMinus == null || btnPlus == null) return;
+        TextView tvMinus = findViewById(R.id.tvGuestMinus);
+        TextView tvCount = findViewById(R.id.tvGuestCount);
+        TextView tvPlus  = findViewById(R.id.tvGuestPlus);
 
-        updateGuestLabel(tvGuests);
+        if (tvCount != null) {
+            tvCount.setText(String.valueOf(guestCount[0]));
+        }
 
-        btnMinus.setOnClickListener(v -> {
-            if (guestCount[0] > 1) { guestCount[0]--; updateGuestLabel(tvGuests); }
-            else Toast.makeText(this, "Minimum 1 guest required", Toast.LENGTH_SHORT).show();
-        });
+        if (tvMinus != null) {
+            tvMinus.setOnClickListener(v -> {
+                if (guestCount[0] > 1) {
+                    guestCount[0]--;
+                    if (tvCount != null) {
+                        tvCount.setText(String.valueOf(guestCount[0]));
+                    }
+                }
+            });
+        }
 
-        btnPlus.setOnClickListener(v -> {
-            if (guestCount[0] < maxGuests) { guestCount[0]++; updateGuestLabel(tvGuests); }
-            else Toast.makeText(this,
-                    "Maximum capacity is " + maxGuests + " guests", Toast.LENGTH_SHORT).show();
-        });
+        if (tvPlus != null) {
+            tvPlus.setOnClickListener(v -> {
+                if (guestCount[0] < maxGuests) {
+                    guestCount[0]++;
+                    if (tvCount != null) {
+                        tvCount.setText(String.valueOf(guestCount[0]));
+                    }
+                }
+            });
+        }
     }
 
-    private void updateGuestLabel(TextView tv) {
-        tv.setText(guestCount[0] + (guestCount[0] == 1 ? " Guest" : " Guests"));
-    }
-
-    // ── Action Buttons ───────────────────────────
     private void setupActionButtons(String amenityType) {
         MaterialButton btnCancel  = findViewById(R.id.dialogBtnCancel);
         MaterialButton btnConfirm = findViewById(R.id.dialogBtnConfirm);
@@ -199,16 +210,66 @@ public class BookingActivity extends AppCompatActivity {
                 String specialRequest = etRequest != null
                         ? etRequest.getText().toString().trim() : "";
 
-                // ── TODO: Save to Firebase ──
-                // saveReservation(amenityType, selectedDate[0], timeSlot,
-                //                 guestCount[0], specialRequest);
-
-                Toast.makeText(this,
-                        "✔ " + amenityType + " booked on " + selectedDate[0] + " at " + timeSlot,
-                        Toast.LENGTH_LONG).show();
-
-                finish();
+                // Save booking to Supabase
+                saveBookingToSupabase(amenityType, selectedDate[0], timeSlot, guestCount[0], specialRequest);
             });
         }
+    }
+
+    private void saveBookingToSupabase(String serviceName, String bookingDate, String bookingTime,
+                                       int numberOfGuests, String specialRequest) {
+        new Thread(() -> {
+            try {
+                // Get logged-in user
+                SharedPreferences prefs = getSharedPreferences("ApartmentApp", MODE_PRIVATE);
+                String bookedBy = prefs.getString("user_email", "guest");
+
+                // Create JSON payload
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("service_name", serviceName);
+                jsonObject.put("booking_date", bookingDate);
+                jsonObject.put("booking_time", bookingTime);
+                jsonObject.put("number_of_guests", String.valueOf(numberOfGuests));
+                jsonObject.put("special_request", specialRequest);
+                jsonObject.put("booked_by", bookedBy);
+                jsonObject.put("status", "pending");
+
+                // Send to Supabase
+                URL url = new URL("https://awznxtzjssdajvgfvjvb.supabase.co/rest/v1/bookings");
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("POST");
+                conn.setRequestProperty("apikey", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF3em54dHpqc3NkYWp2Z2Z2anZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzI0NzA4OTAsImV4cCI6MjA0ODA0Njg5MH0.T-qBMDvxqRKFqfG_LXqMiHPLeI0hf6O39d1c6_KqPpc");
+                conn.setRequestProperty("Content-Type", "application/json");
+                conn.setRequestProperty("Prefer", "return=representation");
+                conn.setDoOutput(true);
+
+                try (OutputStream os = conn.getOutputStream()) {
+                    byte[] input = jsonObject.toString().getBytes("utf-8");
+                    os.write(input, 0, input.length);
+                }
+
+                int responseCode = conn.getResponseCode();
+                conn.disconnect();
+
+                runOnUiThread(() -> {
+                    if (responseCode == HttpURLConnection.HTTP_CREATED || responseCode == HttpURLConnection.HTTP_OK) {
+                        Toast.makeText(BookingActivity.this,
+                                "✔ " + serviceName + " booked successfully on " + bookingDate + " at " + bookingTime,
+                                Toast.LENGTH_LONG).show();
+                        finish();
+                    } else {
+                        Toast.makeText(BookingActivity.this,
+                                "Error booking. Please try again. (Code: " + responseCode + ")",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+            } catch (Exception e) {
+                Log.e(TAG, "Error saving booking: " + e.getMessage(), e);
+                runOnUiThread(() ->
+                    Toast.makeText(BookingActivity.this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show()
+                );
+            }
+        }).start();
     }
 }

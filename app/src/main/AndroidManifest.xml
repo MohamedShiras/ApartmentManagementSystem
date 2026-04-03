@@ -80,6 +80,21 @@
         <activity
             android:name=".ComplaintDetailActivity"
             android:exported="false" />
+        <activity
+            android:name=".AdminBookingActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AdminDashboardActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AdminReservationMaintenanceActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AdminAddReservationActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AdminEditReservationActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

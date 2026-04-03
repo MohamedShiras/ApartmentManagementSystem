@@ -86,11 +86,11 @@ public class LoginActivity extends AppCompatActivity {
 
         new Thread(() -> {
             try {
-                // ── Step 1: Get email from users table by apartment number ──
+                // ── Step 1: Get email, role from users table by apartment number ──
                 String queryUrl = SupabaseClient.SUPABASE_URL
                         + "/rest/v1/users"
                         + "?apartment_number=eq." + apartment
-                        + "&select=email,full_name"
+                        + "&select=email,full_name,role"
                         + "&limit=1";
 
                 HttpURLConnection conn = (HttpURLConnection)
@@ -121,6 +121,7 @@ public class LoginActivity extends AppCompatActivity {
                 JSONObject userObj = arr.getJSONObject(0);
                 String email    = userObj.getString("email");
                 String fullName = userObj.optString("full_name", "Resident " + apartment);
+                String role     = userObj.optString("role", "user"); // Get role, default to 'user'
 
                 // ── Step 2: Sign in with Supabase Auth ──
                 String authUrl = SupabaseClient.SUPABASE_URL
@@ -153,6 +154,7 @@ public class LoginActivity extends AppCompatActivity {
                     String accessToken = authResponse.getString("access_token");
 
                     saveToken(accessToken);
+                    saveUserRole(role); // Save the role (admin or user)
 
                     if (rememberMe) {
                         saveCredentials(apartment, password);
@@ -161,12 +163,27 @@ public class LoginActivity extends AppCompatActivity {
                     }
 
                     String welcomeName = fullName;
+                    String userRole = role; // Capture role for navigation
+
                     runOnUiThread(() -> {
                         setLoading(false);
                         Toast.makeText(this,
                                 "Welcome, " + welcomeName + "!",
                                 Toast.LENGTH_SHORT).show();
-                        goToFeed();
+
+                        // Route to correct page based on role
+                        if ("admin".equalsIgnoreCase(userRole)) {
+                            // Admin user -> go to AdminDashboardActivity
+                            Intent intent = new Intent(LoginActivity.this, AdminDashboardActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(intent);
+                        } else {
+                            // Regular user -> go to FeedActivity
+                            Intent intent = new Intent(LoginActivity.this, FeedActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(intent);
+                        }
+                        finish();
                     });
 
                 } else {
@@ -223,6 +240,13 @@ public class LoginActivity extends AppCompatActivity {
         getSharedPreferences("LoginPrefs", MODE_PRIVATE)
                 .edit()
                 .putString("access_token", token)
+                .apply();
+    }
+
+    private void saveUserRole(String role) {
+        getSharedPreferences("LoginPrefs", MODE_PRIVATE)
+                .edit()
+                .putString("user_role", role)
                 .apply();
     }
 

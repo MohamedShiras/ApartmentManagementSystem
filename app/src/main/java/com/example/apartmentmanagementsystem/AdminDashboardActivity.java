@@ -26,6 +26,14 @@ public class AdminDashboardActivity extends AppCompatActivity {
         maintenanceCard.setOnClickListener(v -> startActivity(
                 new Intent(this, AdminReservationMaintenanceActivity.class)
         ));
+
+        // Add booking card click listener if it exists
+        MaterialCardView bookingCard = findViewById(R.id.adminDashboardBookingsCard);
+        if (bookingCard != null) {
+            bookingCard.setOnClickListener(v -> startActivity(
+                    new Intent(this, AdminBookingActivity.class)
+            ));
+        }
     }
 }
 

@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="12dp"
+    app:cardBackgroundColor="#FFFFFF"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="4dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Service Name and Status Row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/tvAdminBookingServiceName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Swimming Pool"
+                android:textColor="#2A5090"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvAdminBookingStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Confirmed"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="6dp"
+                android:background="@drawable/bg_status_badge"
+                android:gravity="center" />
+        </LinearLayout>
+
+        <!-- Date and Time -->
+        <TextView
+            android:id="@+id/tvAdminBookingDateTime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="01/01/2024 at 10:00 AM"
+            android:textColor="#5E7EA6"
+            android:textSize="14sp"
+            android:layout_marginTop="8dp" />
+
+        <!-- Guests Count -->
+        <TextView
+            android:id="@+id/tvAdminBookingGuests"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Guests: 4"
+            android:textColor="#5E7EA6"
+            android:textSize="13sp"
+            android:layout_marginTop="6dp" />
+
+        <!-- Booked By -->
+        <TextView
+            android:id="@+id/tvAdminBookingBookedBy"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Booked by: John Doe"
+            android:textColor="#5E7EA6"
+            android:textSize="13sp"
+            android:layout_marginTop="4dp" />
+
+        <!-- Special Request -->
+        <TextView
+            android:id="@+id/tvAdminBookingSpecialRequest"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Request: Extra towels needed"
+            android:textColor="#9C27B0"
+            android:textSize="12sp"
+            android:layout_marginTop="6dp"
+            android:visibility="gone"
+            android:fontFamily="sans-serif-medium" />
+
+        <!-- Action Buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="end"
+            android:layout_marginTop="12dp"
+            android:spacing="8dp">
+
+            <ImageView
+                android:id="@+id/btnAdminBookingViewDetails"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_info"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:padding="8dp"
+                android:contentDescription="@string/view_details"
+                android:scaleType="centerInside"
+                android:tint="#2A5090"
+                android:clickable="true"
+                android:focusable="true" />
+
+            <ImageView
+                android:id="@+id/btnAdminBookingDelete"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_delete"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:padding="8dp"
+                android:contentDescription="@string/delete"
+                android:scaleType="centerInside"
+                android:tint="#F44336"
+                android:clickable="true"
+                android:focusable="true"
+                android:layout_marginStart="4dp" />
+        </LinearLayout>
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>
+
