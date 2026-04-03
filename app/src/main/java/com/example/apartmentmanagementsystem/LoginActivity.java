@@ -28,7 +28,6 @@ public class LoginActivity extends AppCompatActivity {
     private TextInputEditText apartmentInput, passwordInput;
     private SwitchCompat rememberMeSwitch;
     private MaterialButton signInButton;
-    private String userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,40 +76,25 @@ public class LoginActivity extends AppCompatActivity {
             passwordInput.requestFocus();
             return;
         }
-        if (password.length() < 6) {
-            passwordLayout.setError("Password must be at least 6 characters");
-            passwordInput.requestFocus();
-            return;
-        }
 
         setLoading(true);
 
         new Thread(() -> {
             try {
-                // ── Step 1: Get email from users table by apartment number ──
-                String queryUrl = SupabaseClient.SUPABASE_URL
-                        + "/rest/v1/users"
-                        + "?apartment_number=eq." + apartment
-                        + "&select=email,full_name"
-                        + "&limit=1";
-
-                HttpURLConnection conn = (HttpURLConnection)
-                        new URL(queryUrl).openConnection();
+                // 1. Get user details
+                String queryUrl = SupabaseClient.SUPABASE_URL + "/rest/v1/users?apartment_number=eq." + apartment + "&select=email,full_name&limit=1";
+                HttpURLConnection conn = (HttpURLConnection) new URL(queryUrl).openConnection();
                 conn.setRequestMethod("GET");
                 conn.setRequestProperty("apikey", SupabaseClient.SUPABASE_ANON_KEY);
                 conn.setRequestProperty("Authorization", "Bearer " + SupabaseClient.SUPABASE_ANON_KEY);
-                conn.setRequestProperty("Content-Type", "application/json");
 
-                BufferedReader reader = new BufferedReader(
-                        new InputStreamReader(conn.getInputStream()));
+                BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
                 StringBuilder sb = new StringBuilder();
                 String line;
                 while ((line = reader.readLine()) != null) sb.append(line);
                 reader.close();
-                conn.disconnect();
 
                 JSONArray arr = new JSONArray(sb.toString());
-
                 if (arr.length() == 0) {
                     runOnUiThread(() -> {
                         setLoading(false);
@@ -120,44 +104,38 @@ public class LoginActivity extends AppCompatActivity {
                 }
 
                 JSONObject userObj = arr.getJSONObject(0);
-                String email    = userObj.getString("email");
+                String email = userObj.getString("email");
                 String fullName = userObj.optString("full_name", "Resident " + apartment);
 
-                // ── Step 2: Sign in with Supabase Auth ──
-                String authUrl = SupabaseClient.SUPABASE_URL
-                        + "/auth/v1/token?grant_type=password";
-
-                HttpURLConnection authConn = (HttpURLConnection)
-                        new URL(authUrl).openConnection();
+                // 2. Auth Login
+                String authUrl = SupabaseClient.SUPABASE_URL + "/auth/v1/token?grant_type=password";
+                HttpURLConnection authConn = (HttpURLConnection) new URL(authUrl).openConnection();
                 authConn.setRequestMethod("POST");
                 authConn.setRequestProperty("apikey", SupabaseClient.SUPABASE_ANON_KEY);
                 authConn.setRequestProperty("Content-Type", "application/json");
                 authConn.setDoOutput(true);
 
-                String body = "{\"email\":\"" + email
-                        + "\",\"password\":\"" + password + "\"}";
-                OutputStream os = authConn.getOutputStream();
-                os.write(body.getBytes(StandardCharsets.UTF_8));
-                os.close();
+                String body = "{\"email\":\"" + email + "\",\"password\":\"" + password + "\"}";
+                try (OutputStream os = authConn.getOutputStream()) {
+                    os.write(body.getBytes(StandardCharsets.UTF_8));
+                }
 
-                int responseCode = authConn.getResponseCode();
-
-                if (responseCode == 200) {
+                if (authConn.getResponseCode() == 200) {
                     BufferedReader authReader = new BufferedReader(new InputStreamReader(authConn.getInputStream()));
                     StringBuilder authSb = new StringBuilder();
                     while ((line = authReader.readLine()) != null) authSb.append(line);
                     authReader.close();
-                    authConn.disconnect();
+
                     JSONObject authResponse = new JSONObject(authSb.toString());
                     String accessToken = authResponse.getString("access_token");
-                    JSONObject userObjForId = authResponse.getJSONObject("user");
-                    String actualUserId = userObjForId.getString("id");
-                    saveUserData(accessToken, actualUserId, fullName);
+
+                    // ALWAYS save the unit number and token for the active session
+                    saveSessionData(accessToken, apartment, fullName);
 
                     if (rememberMe) {
-                        saveCredentials(apartment, password);
+                        savePersistentCredentials(apartment, password);
                     } else {
-                        clearCredentials();
+                        clearPersistentCredentials();
                     }
 
                     runOnUiThread(() -> {
@@ -165,47 +143,61 @@ public class LoginActivity extends AppCompatActivity {
                         Toast.makeText(this, "Welcome, " + fullName + "!", Toast.LENGTH_SHORT).show();
                         goToFeed();
                     });
-
-                }else {
-                    BufferedReader errReader = new BufferedReader(
-                            new InputStreamReader(authConn.getErrorStream()));
-                    StringBuilder errSb = new StringBuilder();
-                    while ((line = errReader.readLine()) != null) errSb.append(line);
-                    errReader.close();
-                    authConn.disconnect();
-
-                    JSONObject errObj = new JSONObject(errSb.toString());
-                    String errMsg = errObj.optString("error_description", "Login failed");
-
+                } else {
                     runOnUiThread(() -> {
                         setLoading(false);
-                        if (errMsg.toLowerCase().contains("invalid")) {
-                            passwordLayout.setError("Incorrect password");
-                        } else {
-                            Toast.makeText(this, errMsg, Toast.LENGTH_LONG).show();
-                        }
+                        passwordLayout.setError("Invalid credentials");
                     });
                 }
-
+                authConn.disconnect();
+                conn.disconnect();
             } catch (Exception e) {
                 runOnUiThread(() -> {
                     setLoading(false);
-                    String msg = e.getMessage() != null ? e.getMessage() : "";
-                    if (msg.contains("network") || msg.contains("Unable to resolve")
-                            || msg.contains("timeout")) {
-                        Toast.makeText(this,
-                                "Network error. Check your connection.",
-                                Toast.LENGTH_LONG).show();
-                    } else {
-                        Toast.makeText(this, "Error: " + msg, Toast.LENGTH_LONG).show();
-                    }
+                    Toast.makeText(this, "Network Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 });
             }
         }).start();
     }
 
+    private void saveSessionData(String token, String apartment, String fullName) {
+        getSharedPreferences("LoginPrefs", MODE_PRIVATE)
+                .edit()
+                .putString("access_token", token)
+                .putString("apartment", apartment) // This is what FileComplaintActivity looks for
+                .putString("full_name", fullName)
+                .apply();
+    }
+
+    private void savePersistentCredentials(String apartment, String password) {
+        getSharedPreferences("LoginPrefs", MODE_PRIVATE)
+                .edit()
+                .putString("saved_apartment", apartment)
+                .putString("saved_password", password)
+                .putBoolean("rememberMe", true)
+                .apply();
+    }
+
+    private void clearPersistentCredentials() {
+        getSharedPreferences("LoginPrefs", MODE_PRIVATE)
+                .edit()
+                .remove("saved_apartment")
+                .remove("saved_password")
+                .putBoolean("rememberMe", false)
+                .apply();
+    }
+
+    private void checkRememberedUser() {
+        SharedPreferences prefs = getSharedPreferences("LoginPrefs", MODE_PRIVATE);
+        if (prefs.getBoolean("rememberMe", false)) {
+            apartmentInput.setText(prefs.getString("saved_apartment", ""));
+            passwordInput.setText(prefs.getString("saved_password", ""));
+            rememberMeSwitch.setChecked(true);
+        }
+    }
+
     private void goToFeed() {
-        Intent intent = new Intent(LoginActivity.this, FeedActivity.class);
+        Intent intent = new Intent(this, FeedActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
@@ -214,41 +206,5 @@ public class LoginActivity extends AppCompatActivity {
     private void setLoading(boolean loading) {
         signInButton.setEnabled(!loading);
         signInButton.setText(loading ? "Signing in..." : "Sign In");
-    }
-
-    private void saveUserData(String token, String uId, String name) {
-        getSharedPreferences("LoginPrefs", MODE_PRIVATE)
-                .edit()
-                .putString("access_token", token)
-                .putString("user_id", uId)
-                .putString("full_name", name)
-                .apply();
-    }
-
-    private void saveCredentials(String apartment, String password) {
-        getSharedPreferences("LoginPrefs", MODE_PRIVATE)
-                .edit()
-                .putString("apartment", apartment)
-                .putString("password", password)
-                .putBoolean("rememberMe", true)
-                .apply();
-    }
-
-    private void clearCredentials() {
-        getSharedPreferences("LoginPrefs", MODE_PRIVATE)
-                .edit()
-                .remove("apartment")
-                .remove("password")
-                .putBoolean("rememberMe", false)
-                .apply();
-    }
-
-    private void checkRememberedUser() {
-        SharedPreferences prefs = getSharedPreferences("LoginPrefs", MODE_PRIVATE);
-        if (prefs.getBoolean("rememberMe", false)) {
-            apartmentInput.setText(prefs.getString("apartment", ""));
-            passwordInput.setText(prefs.getString("password", ""));
-            rememberMeSwitch.setChecked(true);
-        }
     }
 }
