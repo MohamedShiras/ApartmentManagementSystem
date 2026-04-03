@@ -1,11 +1,16 @@
 package com.example.apartmentmanagementsystem;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -14,6 +19,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.tabs.TabLayout;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +36,7 @@ public class ComplaintActivity extends AppCompatActivity {
     private List<Complaint> allComplaints;
     private List<Complaint> filteredComplaints;
     private TextView textActiveCount, textResolvedCount, textPendingCount, textListHeader;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,73 +47,121 @@ public class ComplaintActivity extends AppCompatActivity {
             getSupportActionBar().hide();
         }
 
-        // ✅ Fixed: matches android:id="@+id/main" in activity_complaint.xml
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+        View mainView = findViewById(R.id.main);
+        if (mainView != null) {
+            ViewCompat.setOnApplyWindowInsetsListener(mainView, (v, insets) -> {
+                Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+                v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+                return insets;
+            });
+        }
 
         initViews();
-        setupData();
         setupTabs();
-        setupStaticCardClicks();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        fetchComplaints();
     }
 
     private void initViews() {
-        CardView btnBack = findViewById(R.id.btnBack);
-        btnBack.setOnClickListener(v -> finish());
+        findViewById(R.id.btnBack).setOnClickListener(v -> finish());
 
         textActiveCount   = findViewById(R.id.textActiveCount);
         textResolvedCount = findViewById(R.id.textResolvedCount);
         textPendingCount  = findViewById(R.id.textPendingCount);
         textListHeader    = findViewById(R.id.textListHeader);
+        progressBar       = findViewById(R.id.progressBar);
 
         recyclerView = findViewById(R.id.recyclerViewComplaints);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        CardView fabFileComplaint = findViewById(R.id.fabFileComplaint);
-        fabFileComplaint.setOnClickListener(v ->
+        allComplaints = new ArrayList<>();
+        filteredComplaints = new ArrayList<>();
+        adapter = new ComplaintAdapter(filteredComplaints, this::openDetail);
+        recyclerView.setAdapter(adapter);
+
+        findViewById(R.id.fabFileComplaint).setOnClickListener(v ->
                 startActivity(new Intent(this, FileComplaintActivity.class)));
     }
 
-    private void setupData() {
-        allComplaints = new ArrayList<>();
-        allComplaints.add(new Complaint("CMP-0018", "Noise",       "Noisy neighbour — late night",    "The tenant in the unit above plays loud music past midnight.", "Under Review", "Oct 24, 2023"));
-        allComplaints.add(new Complaint("CMP-0017", "Parking",     "Unauthorized parking — Bay 12",   "Someone is parking in my reserved bay regularly.",            "In Progress",  "Oct 22, 2023"));
-        allComplaints.add(new Complaint("CMP-0016", "Cleanliness", "Littering in common corridor",    "Garbage is being left outside unit doors on Floor 3.",        "Pending",      "Oct 20, 2023"));
-        allComplaints.add(new Complaint("CMP-0014", "Maintenance", "Lift doors closing too fast",     "The lift doors close before residents can safely enter.",     "Resolved",     "Oct 14, 2023"));
+    private void fetchComplaints() {
+        if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
+        
+        new Thread(() -> {
+            try {
+                SharedPreferences prefs = getSharedPreferences("LoginPrefs", MODE_PRIVATE);
+                String apartment = prefs.getString("apartment", "").trim();
+                String token = prefs.getString("access_token", "");
 
-        filteredComplaints = new ArrayList<>(allComplaints);
-        adapter = new ComplaintAdapter(filteredComplaints, this::openDetail);
-        recyclerView.setAdapter(adapter);
-        updateSummary();
-    }
+                if (apartment.isEmpty()) {
+                    runOnUiThread(() -> {
+                        if (progressBar != null) progressBar.setVisibility(View.GONE);
+                        Toast.makeText(this, "Session Error: Please login again", Toast.LENGTH_LONG).show();
+                    });
+                    return;
+                }
 
-    private void setupStaticCardClicks() {
-        int[] cardIds = {
-                R.id.complaintItem1,
-                R.id.complaintItem2,
-                R.id.complaintItem3,
-                R.id.complaintItem4
-        };
-        for (int i = 0; i < cardIds.length; i++) {
-            final int index = i;
-            CardView card = findViewById(cardIds[i]);
-            if (card != null && index < allComplaints.size()) {
-                card.setOnClickListener(v -> openDetail(allComplaints.get(index)));
+                // URL encode the apartment number to handle spaces (e.g., "Unit 4B" -> "Unit%204B")
+                String encodedApartment = Uri.encode(apartment);
+
+                // Use 'eq' for exact match. If you want partial, keep 'ilike' but encoded values are safer with 'eq'.
+                String queryUrl = SupabaseClient.SUPABASE_URL + "/rest/v1/complaints"
+                        + "?apartment_number=eq." + encodedApartment
+                        + "&select=*&order=id.desc";
+
+                URL url = new URL(queryUrl);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("GET");
+                conn.setRequestProperty("apikey", SupabaseClient.SUPABASE_ANON_KEY);
+                conn.setRequestProperty("Authorization", "Bearer " + token);
+
+                int responseCode = conn.getResponseCode();
+                if (responseCode == 200) {
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                    StringBuilder sb = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) sb.append(line);
+                    reader.close();
+
+                    JSONArray arr = new JSONArray(sb.toString());
+                    allComplaints.clear();
+                    for (int i = 0; i < arr.length(); i++) {
+                        JSONObject obj = arr.getJSONObject(i);
+                        String id = obj.optString("id", String.valueOf(obj.optInt("id", 0)));
+                        
+                        allComplaints.add(new Complaint(
+                                id,
+                                obj.optString("category", "Other"),
+                                obj.optString("subject", "No Subject"),
+                                obj.optString("description", ""),
+                                obj.optString("status", "Pending"),
+                                obj.optString("date", "")
+                        ));
+                    }
+
+                    runOnUiThread(() -> {
+                        if (progressBar != null) progressBar.setVisibility(View.GONE);
+                        applyFilter();
+                        updateSummary();
+                    });
+                } else {
+                    runOnUiThread(() -> {
+                        if (progressBar != null) progressBar.setVisibility(View.GONE);
+                        Toast.makeText(this, "Server Error: " + responseCode, Toast.LENGTH_SHORT).show();
+                    });
+                }
+                conn.disconnect();
+            } catch (Exception e) {
+                Log.e("ComplaintFetch", "Error", e);
+                runOnUiThread(() -> {
+                    if (progressBar != null) progressBar.setVisibility(View.GONE);
+                    Toast.makeText(this, "Network Error", Toast.LENGTH_SHORT).show();
+                });
             }
-        }
-
-        // "View Details" links also navigate to detail
-        TextView v1 = findViewById(R.id.viewDetailsComplaint);
-        if (v1 != null) v1.setOnClickListener(v -> openDetail(allComplaints.get(0)));
-
-        TextView v2 = findViewById(R.id.viewDetailsComplaint2);
-        if (v2 != null) v2.setOnClickListener(v -> openDetail(allComplaints.get(1)));
-
-        TextView v3 = findViewById(R.id.viewDetailsComplaint3);
-        if (v3 != null) v3.setOnClickListener(v -> openDetail(allComplaints.get(2)));
+        }).start();
     }
 
     private void openDetail(Complaint complaint) {
@@ -118,23 +179,34 @@ public class ComplaintActivity extends AppCompatActivity {
         TabLayout tabLayout = findViewById(R.id.tabLayoutStatus);
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override public void onTabSelected(TabLayout.Tab tab) {
-                filterByStatus(tab.getText() != null ? tab.getText().toString() : "All");
+                applyFilter();
             }
             @Override public void onTabUnselected(TabLayout.Tab tab) {}
             @Override public void onTabReselected(TabLayout.Tab tab) {}
         });
     }
 
-    private void filterByStatus(String status) {
+    private void applyFilter() {
+        TabLayout tabLayout = findViewById(R.id.tabLayoutStatus);
+        int position = tabLayout.getSelectedTabPosition();
+        if (position < 0) return;
+        
+        TabLayout.Tab tab = tabLayout.getTabAt(position);
+        if (tab == null || tab.getText() == null) return;
+        
+        String statusFilter = tab.getText().toString();
+        
         filteredComplaints.clear();
-        if ("All".equals(status)) {
+        if ("All".equalsIgnoreCase(statusFilter)) {
             filteredComplaints.addAll(allComplaints);
-            textListHeader.setText("All Reports");
+            textListHeader.setText("All Reports (" + allComplaints.size() + ")");
         } else {
             for (Complaint c : allComplaints) {
-                if (c.getStatus().equalsIgnoreCase(status)) filteredComplaints.add(c);
+                if (c.getStatus().equalsIgnoreCase(statusFilter)) {
+                    filteredComplaints.add(c);
+                }
             }
-            textListHeader.setText(status + " Reports");
+            textListHeader.setText(statusFilter + " Reports (" + filteredComplaints.size() + ")");
         }
         adapter.notifyDataSetChanged();
     }
@@ -142,9 +214,10 @@ public class ComplaintActivity extends AppCompatActivity {
     private void updateSummary() {
         int active = 0, resolved = 0, pending = 0;
         for (Complaint c : allComplaints) {
-            if ("Resolved".equalsIgnoreCase(c.getStatus())) {
+            String s = c.getStatus().toLowerCase();
+            if (s.equals("resolved") || s.equals("withdrawn")) {
                 resolved++;
-            } else if ("Pending".equalsIgnoreCase(c.getStatus())) {
+            } else if (s.equals("pending")) {
                 pending++;
                 active++;
             } else {
