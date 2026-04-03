@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- res/layout/dialog_post_success.xml -->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="280dp"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_dialog_rounded"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="32dp">
+
+    <!-- Animated green circle with checkmark -->
+    <FrameLayout
+        android:layout_width="88dp"
+        android:layout_height="88dp">
+
+        <!-- Circle background -->
+        <View
+            android:id="@+id/successCircle"
+            android:layout_width="88dp"
+            android:layout_height="88dp"
+            android:background="@drawable/circle_success_bg" />
+
+        <!-- Checkmark icon -->
+        <ImageView
+            android:id="@+id/successCheck"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_check_white"
+            android:alpha="0" />
+
+    </FrameLayout>
+
+    <!-- "Post Shared!" -->
+    <TextView
+        android:id="@+id/tvSuccessMsg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:fontFamily="sans-serif-medium"
+        android:text="Post Shared!"
+        android:textColor="#0D1B3E"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <!-- Sub message -->
+    <TextView
+        android:id="@+id/tvSuccessSub"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:text="Your post is now visible\nto your community."
+        android:textColor="#6B7A99"
+        android:textSize="13sp" />
+
+</LinearLayout>

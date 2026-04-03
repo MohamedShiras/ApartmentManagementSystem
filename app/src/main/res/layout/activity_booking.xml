@@ -1,258 +1,277 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:background="#F4F8FC"
-    android:padding="24dp">
+    android:layout_margin="16dp"
+    app:cardCornerRadius="24dp"
+    app:cardElevation="8dp"
+    app:cardBackgroundColor="#FFFFFF">
 
-    <!-- HEADER -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:layout_marginBottom="4dp">
+        android:orientation="vertical"
+        android:padding="24dp">
 
-        <FrameLayout
-            android:layout_width="44dp"
-            android:layout_height="44dp"
-            android:background="@drawable/ic_pool"
-            android:backgroundTint="#2F5F9B">
-
-            <ImageView
-                android:id="@+id/dialogAmenityIcon"
-                android:layout_width="22dp"
-                android:layout_height="20dp"
-                android:layout_gravity="center"
-                app:tint="#FFFFFF" />
-        </FrameLayout>
-
+        <!-- HEADER -->
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:layout_marginStart="12dp">
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
 
-            <TextView
-                android:id="@+id/dialogTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Book Swimming Pool"
-                android:textColor="#1E3A66"
-                android:textSize="18sp"
-                android:textStyle="bold"/>
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                app:cardCornerRadius="14dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="0dp"
+                app:cardBackgroundColor="#E3EEF9">
 
-            <TextView
-                android:id="@+id/dialogSubtitle"
-                android:layout_width="wrap_content"
+                <ImageView
+                    android:id="@+id/dialogAmenityIcon"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_pool"
+                    app:tint="#2F5F9B" />
+            </com.google.android.material.card.MaterialCardView>
+
+            <LinearLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="6AM – 10PM · Max 20 guests"
-                android:textColor="#5E7EA6"
-                android:textSize="12sp"/>
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_marginStart="16dp">
+
+                <TextView
+                    android:id="@+id/dialogTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Book Swimming Pool"
+                    android:textColor="#1E3A66"
+                    android:textSize="18sp"
+                    android:fontFamily="sans-serif-black"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:id="@+id/dialogSubtitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="6AM – 10PM · Max 20 guests"
+                    android:textColor="#5E7EA6"
+                    android:textSize="13sp"/>
+            </LinearLayout>
+
+            <ImageButton
+                android:id="@+id/dialogBtnClose"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@android:drawable/ic_menu_close_clear_cancel"
+                app:tint="#A0B3CC" />
         </LinearLayout>
 
-        <ImageView
-            android:id="@+id/dialogBtnClose"
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#F0F5FA"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"/>
+
+        <!-- SELECT DATE -->
+        <TextView
             android:layout_width="wrap_content"
-            android:layout_height="36dp"
-            android:background="@drawable/bg_icon_circle"
-            android:backgroundTint="#E3EEF9"
-            android:padding="7dp"
-
-            app:tint="#2F5F9B" />
-    </LinearLayout>
-
-    <!-- Divider -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#D6E5F5"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="20dp"/>
-
-    <!-- SELECT DATE -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Select Date"
-        android:textColor="#1E3A66"
-        android:textSize="12sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="8dp"/>
-
-    <LinearLayout
-        android:id="@+id/layoutSelectDate"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:paddingStart="14dp"
-        android:paddingEnd="14dp"
-        android:background="#FFFFFF"
-        android:layout_marginBottom="20dp">
-
-        <ImageView
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:src="@drawable/ic_calendar_month"
-            app:tint="#2F5F9B"
-            android:layout_marginEnd="10dp"/>
-
-        <TextView
-            android:id="@+id/tvSelectedDate"
-            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Choose a date"
-            android:textColor="#5E7EA6"/>
-
-    </LinearLayout>
-
-    <!-- TIME SLOT -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Select Time Slot"
-        android:textColor="#1E3A66"
-        android:textSize="12sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="8dp"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginBottom="8dp">
-
-        <TextView
-            android:id="@+id/chipTime1"
-            android:layout_width="0dp"
-            android:layout_height="38dp"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="6:00 AM"
+            android:text="SELECT DATE"
             android:textColor="#2F5F9B"
-            android:background="#ffffff"
-            android:layout_marginEnd="8dp"/>
+            android:textSize="11sp"
+            android:letterSpacing="0.1"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp"/>
 
+        <RelativeLayout
+            android:id="@+id/layoutSelectDate"
+            android:layout_width="match_parent"
+            android:layout_height="54dp"
+            android:paddingHorizontal="16dp"
+            android:layout_marginBottom="20dp">
+            <!-- Note: Create a drawable bg_input_field with rounded corners & light grey stroke -->
+
+            <ImageView
+                android:id="@+id/ic_cal"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_centerVertical="true"
+                android:src="@drawable/ic_calendar_month"
+                app:tint="#2F5F9B"/>
+
+            <TextView
+                android:id="@+id/tvSelectedDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@id/ic_cal"
+                android:layout_marginStart="12dp"
+                android:text="Choose a date"
+                android:textColor="#1E3A66"
+                android:textSize="15sp"/>
+        </RelativeLayout>
+
+        <!-- TIME SLOT -->
         <TextView
-            android:id="@+id/chipTime2"
-            android:layout_width="0dp"
-            android:layout_height="38dp"
-            android:layout_marginEnd="8dp"
-            android:layout_weight="1"
-        android:background="#FFFFFF"
-            android:gravity="center"
-            android:text="9:00 AM"
-            android:textColor="#2F5F9B" />
-
-        <TextView
-            android:id="@+id/chipTime3"
-            android:layout_width="0dp"
-            android:layout_height="38dp"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="12:00 PM"
-            android:textColor="#2F5F9B"
-            android:background="#FFFFFF"/>
-    </LinearLayout>
-
-    <!-- GUESTS -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Number of Guests"
-        android:textColor="#1E3A66"
-        android:textSize="12sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="8dp"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:paddingStart="14dp"
-        android:paddingEnd="8dp"
-        android:background="#FFFFFF"
-        android:layout_marginBottom="20dp">
-
-        <TextView
-            android:id="@+id/tvGuestCount"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="2 Guests"
-            android:textColor="#1E3A66"/>
+            android:text="SELECT TIME SLOT"
+            android:textColor="#2F5F9B"
+            android:textSize="11sp"
+            android:letterSpacing="0.1"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp"/>
 
-        <ImageView
-            android:id="@+id/btnGuestMinus"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:background="@drawable/bg_chip_selected"
-            android:backgroundTint="#172C76"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="20dp">
 
-        <ImageView
-            android:id="@+id/btnGuestPlus"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:background="@drawable/bg_chip_unselected"
-            android:backgroundTint="#2948A8"
-            android:src="@drawable/ic_add" />
+            <TextView
+                android:id="@+id/chipTime1"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="6:00 AM"
+                android:textColor="#2F5F9B"
+                android:background="@drawable/bg_chip_unselected"
+                android:layout_marginEnd="8dp"/>
+
+            <TextView
+                android:id="@+id/chipTime2"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="9:00 AM"
+                android:textColor="#FFFFFF"
+                android:background="@drawable/bg_chip_selected"
+                android:layout_marginEnd="8dp"/>
+
+            <TextView
+                android:id="@+id/chipTime3"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="12:00 PM"
+                android:textColor="#2F5F9B"
+                android:background="@drawable/bg_chip_unselected"/>
+        </LinearLayout>
+
+        <!-- GUESTS -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="NUMBER OF GUESTS"
+            android:textColor="#2F5F9B"
+            android:textSize="11sp"
+            android:letterSpacing="0.1"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="54dp"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="16dp"
+            android:layout_marginBottom="20dp">
+
+            <TextView
+                android:id="@+id/tvGuestCount"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="2 Guests"
+                android:textStyle="bold"
+                android:textColor="#1E3A66"
+                android:textSize="15sp"/>
+
+            <ImageButton
+                android:id="@+id/btnGuestMinus"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/ic_minus"
+                app:tint="#FFFFFF"/>
+
+            <TextView
+                android:layout_width="40dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="02"
+                android:textColor="#1E3A66"
+                android:textStyle="bold"/>
+
+            <ImageButton
+                android:id="@+id/btnGuestPlus"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/ic_add"
+                app:tint="#FFFFFF" />
+        </LinearLayout>
+
+        <!-- SPECIAL REQUEST -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="SPECIAL REQUEST"
+            android:textColor="#2F5F9B"
+            android:textSize="11sp"
+            android:letterSpacing="0.1"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp"/>
+
+        <EditText
+            android:id="@+id/etSpecialRequest"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:hint="e.g. wheelchair access, towels"
+            android:gravity="top"
+            android:padding="16dp"
+            android:textSize="14sp"
+            android:layout_marginBottom="28dp"/>
+
+        <!-- BUTTONS -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/dialogBtnCancel"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="0dp"
+                android:layout_height="54dp"
+                android:layout_weight="1"
+                android:text="Cancel"
+                android:textColor="#5E7EA6"
+                app:cornerRadius="16dp"
+                android:layout_marginEnd="12dp"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/dialogBtnConfirm"
+                android:layout_width="0dp"
+                android:layout_height="54dp"
+                android:layout_weight="1.5"
+                android:text="Confirm"
+                android:textAllCaps="false"
+                android:textSize="16sp"
+                android:textColor="#FFFFFF"
+                app:backgroundTint="#2F5F9B"
+                app:elevation="4dp"
+                app:cornerRadius="16dp"/>
+        </LinearLayout>
     </LinearLayout>
-
-    <!-- SPECIAL REQUEST -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Special Request"
-        android:textColor="#1E3A66"
-        android:textSize="12sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="8dp"/>
-
-    <EditText
-        android:id="@+id/etSpecialRequest"
-        android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:hint="e.g. wheelchair access, towels"
-        android:textColor="#1E3A66"
-        android:textColorHint="#5E7EA6"
-        android:background="#FFFFFF"
-        android:layout_marginBottom="24dp"
-        android:padding="14dp"/>
-
-    <!-- BUTTONS -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/dialogBtnCancel"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_weight="1"
-            android:text="Cancel"
-            android:textColor="#1E3A66"
-            app:backgroundTint="#E3EEF9"
-            app:cornerRadius="12dp"
-            android:layout_marginEnd="10dp"/>
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/dialogBtnConfirm"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_weight="1"
-            android:text="Confirm"
-            android:textColor="#FFFFFF"
-            app:backgroundTint="#2F5F9B"
-            app:cornerRadius="12dp"/>
-    </LinearLayout>
-
-</LinearLayout>
-
+</androidx.cardview.widget.CardView>

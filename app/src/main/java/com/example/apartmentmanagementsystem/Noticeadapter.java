@@ -43,22 +43,26 @@ public class Noticeadapter extends RecyclerView.Adapter<Noticeadapter.NoticeView
         holder.tvComments.setText(notice.getComments() + " Comments");
 
         // Like button toggle
-        holder.btnLike.setOnClickListener(v -> {
-            if (notice.isLiked()) {
-                notice.setLiked(false);
-                notice.setLikes(notice.getLikes() - 1);
-            } else {
-                notice.setLiked(true);
-                notice.setLikes(notice.getLikes() + 1);
-            }
-            notifyItemChanged(position);
-        });
+        if (holder.btnLike != null) {
+            holder.btnLike.setOnClickListener(v -> {
+                if (notice.isLiked()) {
+                    notice.setLiked(false);
+                    notice.setLikes(notice.getLikes() - 1);
+                } else {
+                    notice.setLiked(true);
+                    notice.setLikes(notice.getLikes() + 1);
+                }
+                notifyItemChanged(position);
+            });
+        }
 
         // See more
-        holder.tvSeeMore.setOnClickListener(v -> {
-            Toast.makeText(context, "Opening: " + notice.getTitle(), Toast.LENGTH_SHORT).show();
-            // TODO: Open full notice detail activity
-        });
+        if (holder.tvSeeMore != null) {
+            holder.tvSeeMore.setOnClickListener(v -> {
+                Toast.makeText(context, "Opening: " + notice.getTitle(), Toast.LENGTH_SHORT).show();
+                // TODO: Open full notice detail activity
+            });
+        }
     }
 
     @Override
@@ -72,7 +76,7 @@ public class Noticeadapter extends RecyclerView.Adapter<Noticeadapter.NoticeView
         notifyItemInserted(0);
     }
 
-    // Update full list (e.g., from Firebase)
+    // Update full list (e.g., from Supabase)
     public void updateList(List<Notice> newList) {
         noticeList.clear();
         noticeList.addAll(newList);

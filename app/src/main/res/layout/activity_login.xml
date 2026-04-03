@@ -5,14 +5,14 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F8FAFC"
+    android:background="@android:color/white"
     tools:context=".LoginActivity">
 
     <!-- Illustration Container -->
     <androidx.cardview.widget.CardView
         android:id="@+id/illustrationCard"
-        android:layout_width="160dp"
-        android:layout_height="160dp"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
         android:layout_marginTop="60dp"
         app:cardCornerRadius="30dp"
         app:cardElevation="0dp"
@@ -68,8 +68,10 @@
         android:layout_marginEnd="32dp"
         android:layout_marginTop="40dp"
         android:hint="Username"
-        app:boxBackgroundColor="#FFFFFF"
+        app:placeholderText="Enter your username"
+        app:hintEnabled="true"
         app:boxBackgroundMode="outline"
+        app:boxBackgroundColor="#FFFFFF"
         app:boxCornerRadiusBottomEnd="16dp"
         app:boxCornerRadiusBottomStart="16dp"
         app:boxCornerRadiusTopEnd="16dp"
@@ -77,7 +79,7 @@
         app:boxStrokeWidth="1dp"
         app:boxStrokeWidthFocused="2dp"
         app:boxStrokeColor="#E2E8F0"
-        app:hintTextColor="#94A3B8"
+        app:hintTextColor="@color/textinput_hint_color"
         app:startIconDrawable="@drawable/ic_user"
         app:startIconTint="#94A3B8"
         app:layout_constraintEnd_toEndOf="parent"
@@ -89,13 +91,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="text"
-            android:padding="18dp"
             android:textColor="#1E293B"
             android:textSize="16sp" />
 
     </com.google.android.material.textfield.TextInputLayout>
-
-    <!-- Password Input Container -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/passwordLayout"
         android:layout_width="0dp"
@@ -104,8 +103,10 @@
         android:layout_marginEnd="32dp"
         android:layout_marginTop="16dp"
         android:hint="Password"
-        app:boxBackgroundColor="#FFFFFF"
+        app:placeholderText="Enter your password"
+        app:hintEnabled="true"
         app:boxBackgroundMode="outline"
+        app:boxBackgroundColor="#FFFFFF"
         app:boxCornerRadiusBottomEnd="16dp"
         app:boxCornerRadiusBottomStart="16dp"
         app:boxCornerRadiusTopEnd="16dp"
@@ -113,7 +114,7 @@
         app:boxStrokeWidth="1dp"
         app:boxStrokeWidthFocused="2dp"
         app:boxStrokeColor="#E2E8F0"
-        app:hintTextColor="#94A3B8"
+        app:hintTextColor="@color/textinput_hint_color"
         app:startIconDrawable="@drawable/ic_lock"
         app:startIconTint="#94A3B8"
         app:endIconMode="password_toggle"
@@ -128,10 +129,9 @@
             android:layout_height="wrap_content"
             android:inputType="textPassword"
             android:textColor="#1E293B"
-            android:textSize="16sp"
-            android:padding="18dp" />
+            android:textSize="16sp" />
 
-    </com.google.android.material.textfield.TextInputLayout>
+    </com.google.android.material.textfield.TextInputLayout>>
 
     <!-- Remember Me Container -->
     <LinearLayout
@@ -185,7 +185,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/rememberMeContainer" />
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

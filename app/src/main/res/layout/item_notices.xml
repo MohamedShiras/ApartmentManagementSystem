@@ -14,141 +14,126 @@
         android:orientation="vertical"
         android:padding="14dp">
 
-        <!-- Top Row: Avatar + Name/Time + Badge -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical">
 
-            <!-- Avatar Icon -->
             <FrameLayout
                 android:layout_width="44dp"
                 android:layout_height="44dp">
-
                 <ImageView
                     android:layout_width="44dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:src="@drawable/ic_announcement"/>
+                    android:src="@drawable/ic_announcement"
+                    app:tint="#3667A6"/>
             </FrameLayout>
 
-            <!-- Name and Time -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:orientation="vertical"
-                android:layout_marginStart="10dp">
-
+                android:layout_marginStart="12dp">
                 <TextView
                     android:id="@+id/tvSender"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Management"
                     android:textSize="14sp"
-                    android:textStyle="bold"
-                    android:textColor="#1A1A2E" />
-
+                    android:textColor="#1A3A5C"
+                    android:textStyle="bold" />
                 <TextView
                     android:id="@+id/tvTime"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="2 hours ago"
                     android:textSize="12sp"
-                    android:textColor="#9E9E9E" />
+                    android:textColor="#7C8A9C" />
             </LinearLayout>
 
-            <!-- Notice Badge -->
             <TextView
                 android:id="@+id/tvBadge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="🔔 Notice"
+                android:text="Notice"
                 android:textSize="11sp"
-                android:textColor="#1A3A5C"
-                android:textStyle="bold"
-                android:background="@drawable/badge_notice_bg"
-                android:paddingStart="10dp"
-                android:paddingEnd="10dp"
+                android:textColor="#2979FF"
+                android:background="#E8F0FE"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
                 android:paddingTop="4dp"
-                android:paddingBottom="4dp" />
-
+                android:paddingBottom="4dp"
+                android:textStyle="bold" />
         </LinearLayout>
 
-        <!-- Notice Title -->
         <TextView
             android:id="@+id/tvTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Water supply maintenance on Saturday"
-            android:textSize="15sp"
+            android:text="Notice Title"
+            android:textSize="16sp"
+            android:textColor="#1A3A5C"
             android:textStyle="bold"
-            android:textColor="#1A1A2E"
-            android:layout_marginTop="10dp" />
+            android:layout_marginTop="12dp" />
 
-        <!-- Notice Body -->
         <TextView
             android:id="@+id/tvBody"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Water supply will be interrupted from 9 AM to 1 PM this Saturday for routine maintenance. Please store water accordingly."
-            android:textSize="13sp"
+            android:text="This is the description of the notice."
+            android:textSize="14sp"
             android:textColor="#555555"
-            android:layout_marginTop="4dp"
-            android:maxLines="3"
-            android:ellipsize="end" />
+            android:layout_marginTop="6dp" />
 
-        <!-- Divider -->
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="#F0F0F0"
+            android:background="#E0E0E0"
             android:layout_marginTop="12dp"
-            android:layout_marginBottom="8dp" />
+            android:layout_marginBottom="12dp" />
 
-        <!-- Footer: Likes, Comments, See More -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical">
 
-            <!-- Likes -->
             <ImageView
                 android:id="@+id/btnLike"
                 android:layout_width="18dp"
                 android:layout_height="18dp"
-                android:src="@android:drawable/btn_star_big_off"
-                android:background="?attr/selectableItemBackgroundBorderless" />
+                android:src="@drawable/ic_thumb_up"
+                app:tint="#82A6CB" />
 
             <TextView
                 android:id="@+id/tvLikes"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="24 Likes"
+                android:text="0 Likes"
                 android:textSize="12sp"
                 android:textColor="#555555"
                 android:layout_marginStart="4dp" />
 
-            <!-- Comments -->
             <ImageView
                 android:layout_width="18dp"
                 android:layout_height="18dp"
-                android:src="@android:drawable/ic_menu_send"
-                android:layout_marginStart="16dp" />
+                android:src="@drawable/ic_comment"
+                android:layout_marginStart="16dp"
+                app:tint="#82A6CB" />
 
             <TextView
                 android:id="@+id/tvComments"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="8 Comments"
+                android:text="0 Comments"
                 android:textSize="12sp"
                 android:textColor="#555555"
                 android:layout_marginStart="4dp" />
 
-            <!-- See More -->
             <TextView
                 android:id="@+id/tvSeeMore"
                 android:layout_width="wrap_content"
