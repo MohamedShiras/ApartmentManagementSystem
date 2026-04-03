@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="280dp"
+    android:layout_height="wrap_content"
+    android:background="@drawable/edittext_border"
+    android:backgroundTint="#FFFFFF"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="32dp"
+    android:layout_gravity="center">
+
+    <FrameLayout
+        android:layout_width="88dp"
+        android:layout_height="88dp">
+
+        <!-- කොළ පාට රවුම -->
+        <View
+            android:id="@+id/successCircle"
+            android:layout_width="88dp"
+            android:layout_height="88dp"
+            android:background="@drawable/circle_success_bg" />
+
+        <!-- හරි ලකුණ (Checkmark) -->
+        <ImageView
+            android:id="@+id/successCheck"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_check_white"
+            android:alpha="0" />
+    </FrameLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="Payment Successful!"
+        android:textColor="#214177"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tvSuccessSub"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:text="Your receipt has been sent\nto your email address."
+        android:textColor="#64748b"
+        android:textSize="14sp" />
+
+</LinearLayout>
