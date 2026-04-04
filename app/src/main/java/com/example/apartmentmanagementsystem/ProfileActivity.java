@@ -97,11 +97,12 @@ public class ProfileActivity extends AppCompatActivity {
 
     // ───────────────── LOAD PROFILE ─────────────────
     private void loadProfileFromSupabase() {
+        // 1. Get both Token and User ID from SharedPreferences
+        android.content.SharedPreferences prefs = getSharedPreferences("LoginPrefs", MODE_PRIVATE);
+        String token = prefs.getString("access_token", null);
+        String userId = prefs.getString("user_id", null);
 
-        String token = getSharedPreferences("LoginPrefs", MODE_PRIVATE)
-                .getString("access_token", null);
-
-        if (token == null) {
+        if (token == null || userId == null) {
             startActivity(new Intent(this, LoginActivity.class));
             finish();
             return;
@@ -109,32 +110,31 @@ public class ProfileActivity extends AppCompatActivity {
 
         new Thread(() -> {
             try {
+                // 2. Add the filter: id=eq.userId
+                // This ensures you only get the row belonging to the logged-in user
+                String queryUrl = SupabaseClient.SUPABASE_URL + "/rest/v1/users" +
+                        "?id=eq." + userId +
+                        "&select=full_name,email,apartment_number,block," +
+                        "phone,member_since,lease_expiry,rent_amount," +
+                        "posts_count,requests_count,tenure" +
+                        "&limit=1";
 
-                String queryUrl =
-                        SupabaseClient.SUPABASE_URL +
-                                "/rest/v1/users" +
-                                "?select=full_name,email,apartment_number,block," +
-                                "phone,member_since,lease_expiry,rent_amount," +
-                                "posts_count,requests_count,tenure" +
-                                "&limit=1";
-
-                HttpURLConnection conn =
-                        (HttpURLConnection) new URL(queryUrl).openConnection();
-
+                HttpURLConnection conn = (HttpURLConnection) new URL(queryUrl).openConnection();
                 conn.setRequestMethod("GET");
                 conn.setRequestProperty("apikey", SupabaseClient.SUPABASE_ANON_KEY);
                 conn.setRequestProperty("Authorization", "Bearer " + token);
                 conn.setRequestProperty("Content-Type", "application/json");
 
-                BufferedReader reader =
-                        new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                int responseCode = conn.getResponseCode();
+                if (responseCode != 200) {
+                    // Optional: handle error response
+                    return;
+                }
 
+                BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
                 StringBuilder sb = new StringBuilder();
                 String line;
-
-                while ((line = reader.readLine()) != null)
-                    sb.append(line);
-
+                while ((line = reader.readLine()) != null) sb.append(line);
                 reader.close();
                 conn.disconnect();
 
@@ -143,6 +143,7 @@ public class ProfileActivity extends AppCompatActivity {
 
                 JSONObject u = arr.getJSONObject(0);
 
+                // Parsing data
                 String fullName = u.optString("full_name", "Resident");
                 String email = u.optString("email", "—");
                 String aptNumber = u.optString("apartment_number", "—");
@@ -151,33 +152,25 @@ public class ProfileActivity extends AppCompatActivity {
                 String since = u.optString("member_since", "—");
                 String lease = u.optString("lease_expiry", "—");
                 String rent = u.optString("rent_amount", "—");
-
                 String posts = String.valueOf(u.optInt("posts_count", 0));
                 String requests = String.valueOf(u.optInt("requests_count", 0));
                 String tenure = u.optString("tenure", "—");
 
+                // UI Formatting
                 String initials = buildInitials(fullName);
-
-                String unitLabel =
-                        "Unit " + aptNumber +
-                                (block.isEmpty() ? "" : " · Block " + block);
-
+                String unitLabel = "Unit " + aptNumber + (block.isEmpty() ? "" : " · Block " + block);
                 String sinceLabel = "Member since " + since;
                 String rentLabel = rent + " · Next Due";
 
                 runOnUiThread(() -> {
-
                     avatarInitialsTop.setText(initials);
                     avatarInitials.setText(initials);
-
                     residentName.setText(fullName);
                     residentUnit.setText(unitLabel);
                     memberSince.setText(sinceLabel);
-
                     statPosts.setText(posts);
                     statRequests.setText(requests);
                     statTenure.setText(tenure);
-
                     phoneValue.setText(phone);
                     emailValue.setText(email);
                     leaseExpiryValue.setText(lease);
@@ -185,12 +178,10 @@ public class ProfileActivity extends AppCompatActivity {
                 });
 
             } catch (Exception e) {
+                e.printStackTrace();
                 runOnUiThread(() ->
-                        Toast.makeText(
-                                this,
-                                "Failed to load profile",
-                                Toast.LENGTH_SHORT
-                        ).show());
+                        Toast.makeText(this, "Failed to load profile", Toast.LENGTH_SHORT).show()
+                );
             }
         }).start();
     }

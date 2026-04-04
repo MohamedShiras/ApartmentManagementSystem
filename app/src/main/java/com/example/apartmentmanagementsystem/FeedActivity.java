@@ -67,14 +67,14 @@ public class FeedActivity extends AppCompatActivity {
         setupPostButton();
         setupQuickActions();  // This now checks payment status
         loadUserGreeting();
-        loadFeedFromSupabase();
-        loadHeroCardData();
+        loadFeedFromSupabase(); // Kept from main
+        loadHeroCardData(); // Added from feature branch
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        // Refresh feed and payment status when returning from PaymentActivity
+        // Refresh feed and payment status when returning from other activities
         loadFeedFromSupabase();
         loadHeroCardData();
         CardView payNowBtn = findViewById(R.id.heroBtn);
@@ -82,6 +82,7 @@ public class FeedActivity extends AppCompatActivity {
             checkAndBlockPaymentButton(payNowBtn);
         }
     }
+
     private void loadHeroCardData() {
         String userId = getSharedPreferences("LoginPrefs", MODE_PRIVATE)
                 .getString("user_id", null);
@@ -216,6 +217,7 @@ public class FeedActivity extends AppCompatActivity {
         if (titleTv != null)     titleTv.setText("Rent Due");
         if (subTv != null)       subTv.setText(rentDisplay + " · " + subtitle);
     }
+
     // ── User greeting — mirrors PostActivity.loadUserData() exactly ─────────
     private void loadUserGreeting() {
         int hour = java.util.Calendar.getInstance().get(java.util.Calendar.HOUR_OF_DAY);
@@ -630,6 +632,7 @@ public class FeedActivity extends AppCompatActivity {
             }
         }).start();
     }
+
     private Date parseSupabaseDate(String dateStr) {
         if (dateStr == null || dateStr.isEmpty()) return null;
         try {
@@ -659,6 +662,7 @@ public class FeedActivity extends AppCompatActivity {
             return null;
         }
     }
+
     // Check if payment date is within 28 days
     private boolean isPaymentWithin28Days(String dateStr) {
         try {
