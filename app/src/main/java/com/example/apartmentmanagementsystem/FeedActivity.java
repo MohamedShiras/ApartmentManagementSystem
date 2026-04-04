@@ -761,8 +761,8 @@ public class FeedActivity extends AppCompatActivity {
     private int getDaysRemaining(String paymentDateStr) {
         try {
             SimpleDateFormat[] formats = {
-                    new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS", Locale.getDefault()),
-                    new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()),
+                new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS", Locale.getDefault()),
+                new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()),
             };
 
             Date paymentDate = null;
@@ -798,8 +798,8 @@ public class FeedActivity extends AppCompatActivity {
     private String getNextDueDate(String paymentDateStr) {
         try {
             SimpleDateFormat[] formats = {
-                    new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS", Locale.getDefault()),
-                    new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()),
+                new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS", Locale.getDefault()),
+                new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()),
             };
 
             Date paymentDate = null;
