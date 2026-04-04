@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -64,16 +65,157 @@ public class FeedActivity extends AppCompatActivity {
 
         setupBottomNavigation();
         setupPostButton();
-        setupQuickActions();
+        setupQuickActions();  // This now checks payment status
         loadUserGreeting();
-        loadFeedFromSupabase();
+        loadFeedFromSupabase(); // Kept from main
+        loadHeroCardData(); // Added from feature branch
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        // Refresh feed when returning from PostActivity
+        // Refresh feed and payment status when returning from other activities
         loadFeedFromSupabase();
+        loadHeroCardData();
+        CardView payNowBtn = findViewById(R.id.heroBtn);
+        if (payNowBtn != null) {
+            checkAndBlockPaymentButton(payNowBtn);
+        }
+    }
+
+    private void loadHeroCardData() {
+        String userId = getSharedPreferences("LoginPrefs", MODE_PRIVATE)
+                .getString("user_id", null);
+        if (userId == null) return;
+
+        new Thread(() -> {
+            try {
+                // ── Step 1: Load user info ─────────────────────────────────────
+                String userUrl = SupabaseClient.SUPABASE_URL
+                        + "/rest/v1/users?id=eq." + userId
+                        + "&select=full_name,apartment_number,block,rent_amount";
+
+                HttpURLConnection uc = (HttpURLConnection) new URL(userUrl).openConnection();
+                uc.setRequestMethod("GET");
+                uc.setRequestProperty("apikey", SupabaseClient.SUPABASE_ANON_KEY);
+                uc.setRequestProperty("Authorization", "Bearer " + SupabaseClient.SUPABASE_ANON_KEY);
+
+                BufferedReader ur = new BufferedReader(new InputStreamReader(uc.getInputStream()));
+                StringBuilder usb = new StringBuilder();
+                String ul;
+                while ((ul = ur.readLine()) != null) usb.append(ul);
+                ur.close(); uc.disconnect();
+
+                JSONArray userArr = new JSONArray(usb.toString());
+                if (userArr.length() == 0) return;
+
+                JSONObject user   = userArr.getJSONObject(0);
+                String unit       = user.optString("apartment_number", "--");
+                String block      = user.optString("block", "--");
+                String rentAmount = user.optString("rent_amount", "N/A");
+                String rentDisplay = rentAmount;
+
+                // ── Step 2: Load latest payment ────────────────────────────────
+                String payUrl = SupabaseClient.SUPABASE_URL
+                        + "/rest/v1/payments?user_id=eq." + userId
+                        + "&order=payment_date.desc&limit=1";
+
+                HttpURLConnection pc = (HttpURLConnection) new URL(payUrl).openConnection();
+                pc.setRequestMethod("GET");
+                pc.setRequestProperty("apikey", SupabaseClient.SUPABASE_ANON_KEY);
+                pc.setRequestProperty("Authorization", "Bearer " + SupabaseClient.SUPABASE_ANON_KEY);
+
+                BufferedReader pr = new BufferedReader(new InputStreamReader(pc.getInputStream()));
+                StringBuilder psb = new StringBuilder();
+                String pl;
+                while ((pl = pr.readLine()) != null) psb.append(pl);
+                pr.close(); pc.disconnect();
+
+                JSONArray payArr = new JSONArray(psb.toString());
+
+                // ── Step 3: Calculate next due date (28th of current/next month) ─
+                java.util.Calendar today = java.util.Calendar.getInstance();
+                java.util.Calendar due28  = java.util.Calendar.getInstance();
+                due28.set(java.util.Calendar.DAY_OF_MONTH, 28);
+                due28.set(java.util.Calendar.HOUR_OF_DAY, 0);
+                due28.set(java.util.Calendar.MINUTE, 0);
+                due28.set(java.util.Calendar.SECOND, 0);
+                due28.set(java.util.Calendar.MILLISECOND, 0);
+
+                // If today is past the 28th, move to next month's 28th
+                if (today.get(java.util.Calendar.DAY_OF_MONTH) > 28) {
+                    due28.add(java.util.Calendar.MONTH, 1);
+                }
+
+                long daysUntilDue = (due28.getTimeInMillis() - System.currentTimeMillis())
+                        / (1000L * 60 * 60 * 24);
+                String dueDateFmt = new SimpleDateFormat("dd MMM", Locale.getDefault())
+                        .format(due28.getTime());
+
+                // ── Step 4: Check if this month's 28th is already paid ─────────
+                boolean paidThisMonth = false;
+
+                if (payArr.length() > 0) {
+                    String payDateStr = payArr.getJSONObject(0).optString("payment_date", "");
+                    Date payDate      = parseSupabaseDate(payDateStr);
+
+                    if (payDate != null) {
+                        java.util.Calendar payCal = java.util.Calendar.getInstance();
+                        payCal.setTime(payDate);
+
+                        // Paid in same month & year as due28 → paid this month
+                        paidThisMonth =
+                                payCal.get(java.util.Calendar.MONTH) == due28.get(java.util.Calendar.MONTH)
+                                        && payCal.get(java.util.Calendar.YEAR) == due28.get(java.util.Calendar.YEAR);
+                    }
+                }
+
+                final boolean paid        = paidThisMonth;
+                final long    daysLeft    = daysUntilDue;
+                final String  dueFmt      = dueDateFmt;
+                final String  unitF       = unit;
+                final String  blockF      = block;
+                final String  rentF       = rentDisplay;
+
+                runOnUiThread(() -> {
+                    TextView unitBlockTv = findViewById(R.id.heroUnitBlock);
+                    TextView titleTv     = findViewById(R.id.heroTitle);
+                    TextView subTv       = findViewById(R.id.heroSub);
+
+                    if (paid) {
+                        // ✅ PAID — show next due
+                        if (unitBlockTv != null)
+                            unitBlockTv.setText("Unit " + unitF + " · Block " + blockF + " · PAID ✓");
+                        if (titleTv != null)
+                            titleTv.setText("Next Rent Due");
+                        if (subTv != null)
+                            subTv.setText(rentF + " due on " + dueFmt + "  (" + daysLeft + " days left)");
+
+                    } else {
+                        // ❌ NOT PAID — show countdown to 28th
+                        if (unitBlockTv != null)
+                            unitBlockTv.setText("Unit " + unitF + " · Block " + blockF);
+                        if (titleTv != null)
+                            titleTv.setText("Rent Due in " + daysLeft + " days");
+                        if (subTv != null)
+                            subTv.setText(rentF + " due on " + dueFmt);
+                    }
+                });
+
+            } catch (Exception e) {
+                Log.e("HERO_CARD", "Error: " + e.getMessage(), e);
+            }
+        }).start();
+    }
+
+    private void updateHeroUnpaid(String unit, String block, String rentDisplay, String subtitle) {
+        TextView unitBlockTv = findViewById(R.id.heroUnitBlock);
+        TextView titleTv     = findViewById(R.id.heroTitle);
+        TextView subTv       = findViewById(R.id.heroSub);
+
+        if (unitBlockTv != null) unitBlockTv.setText("Unit " + unit + " · Block " + block);
+        if (titleTv != null)     titleTv.setText("Rent Due");
+        if (subTv != null)       subTv.setText(rentDisplay + " · " + subtitle);
     }
 
     // ── User greeting — mirrors PostActivity.loadUserData() exactly ─────────
@@ -397,6 +539,292 @@ public class FeedActivity extends AppCompatActivity {
         CardView serviceReservation = findViewById(R.id.serviceReservation);
         if (serviceReservation != null)
             serviceReservation.setOnClickListener(v -> startActivity(new Intent(this, ReservationsActivity.class)));
+
+        // Check payment status and update Pay Now button
+        CardView payNowBtn = findViewById(R.id.heroBtn);
+        if (payNowBtn != null) {
+            checkAndBlockPaymentButton(payNowBtn);
+        }
+    }
+
+    // Check payment status from Supabase payments table
+    private void checkAndBlockPaymentButton(CardView payNowBtn) {
+        String userId = getSharedPreferences("LoginPrefs", MODE_PRIVATE).getString("user_id", "");
+
+        Log.d("PAYMENT_CHECK", "Checking payment for userId: " + userId);
+
+        if (userId.isEmpty()) {
+            Log.w("PAYMENT_CHECK", "userId is empty, enabling button");
+            enablePaymentButton(payNowBtn);
+            return;
+        }
+
+        new Thread(() -> {
+            try {
+                // Query Supabase payments table
+                String queryUrl = SupabaseClient.SUPABASE_URL + "/rest/v1/payments"
+                        + "?user_id=eq." + userId
+                        + "&order=payment_date.desc"
+                        + "&limit=1";
+
+                Log.d("PAYMENT_CHECK", "Query URL: " + queryUrl);
+
+                URL url = new URL(queryUrl);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("GET");
+                conn.setRequestProperty("apikey", SupabaseClient.SUPABASE_ANON_KEY);
+                conn.setRequestProperty("Authorization", "Bearer " + SupabaseClient.SUPABASE_ANON_KEY);
+
+                int responseCode = conn.getResponseCode();
+                Log.d("PAYMENT_CHECK", "Response Code: " + responseCode);
+
+                BufferedReader reader;
+                if (responseCode == 200 || responseCode == 201) {
+                    reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                } else {
+                    // Read error stream if response code is not 200/201
+                    reader = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
+                    StringBuilder errorResponse = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        errorResponse.append(line);
+                    }
+                    Log.e("PAYMENT_CHECK", "Error Response: " + errorResponse.toString());
+                    reader.close();
+                    conn.disconnect();
+                    runOnUiThread(() -> enablePaymentButton(payNowBtn));
+                    return;
+                }
+
+                StringBuilder response = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    response.append(line);
+                }
+                reader.close();
+                conn.disconnect();
+
+                String jsonResponse = response.toString();
+                Log.d("PAYMENT_CHECK", "Response: " + jsonResponse);
+
+                JSONArray result = new JSONArray(jsonResponse);
+
+                if (result.length() > 0) {
+                    JSONObject lastPayment = result.getJSONObject(0);
+                    String createdAt = lastPayment.optString("payment_date", "");
+
+                    Log.d("PAYMENT_CHECK", "Last payment date: " + createdAt);
+
+                    if (isPaymentWithin28Days(createdAt)) {
+                        Log.d("PAYMENT_CHECK", "Payment is within 28 days - BLOCKING button");
+                        runOnUiThread(() -> blockPaymentButton(payNowBtn, createdAt));
+                    } else {
+                        Log.d("PAYMENT_CHECK", "Payment is older than 28 days - ENABLING button");
+                        runOnUiThread(() -> enablePaymentButton(payNowBtn));
+                    }
+                } else {
+                    Log.d("PAYMENT_CHECK", "No payment found - ENABLING button");
+                    runOnUiThread(() -> enablePaymentButton(payNowBtn));
+                }
+            } catch (Exception e) {
+                Log.e("PAYMENT_CHECK", "Error checking payment: " + e.getMessage(), e);
+                runOnUiThread(() -> enablePaymentButton(payNowBtn));
+            }
+        }).start();
+    }
+
+    private Date parseSupabaseDate(String dateStr) {
+        if (dateStr == null || dateStr.isEmpty()) return null;
+        try {
+            String clean = dateStr;
+
+            // Remove timezone offset (+00:00 / +05:30)
+            int plusIdx = clean.indexOf("+");
+            if (plusIdx > 10) clean = clean.substring(0, plusIdx);
+            int lastMinus = clean.lastIndexOf("-");
+            if (lastMinus > 10) clean = clean.substring(0, lastMinus);
+
+            // Trim microseconds to milliseconds
+            if (clean.contains(".")) {
+                int dot = clean.indexOf(".");
+                String ms = clean.substring(dot + 1);
+                if (ms.length() > 3) ms = ms.substring(0, 3);
+                clean = clean.substring(0, dot) + "." + ms;
+            }
+
+            SimpleDateFormat sdf = clean.contains(".")
+                    ? new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", Locale.getDefault())
+                    : new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
+            sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+            return sdf.parse(clean);
+        } catch (Exception e) {
+            Log.e("DATE_PARSE", "Failed: " + e.getMessage());
+            return null;
+        }
+    }
+
+    // Check if payment date is within 28 days
+    private boolean isPaymentWithin28Days(String dateStr) {
+        try {
+            if (dateStr == null || dateStr.isEmpty()) return false;
+
+            // Strip timezone offset (+00:00 or +05:30 etc.)
+            String cleanDate = dateStr;
+            if (cleanDate.contains("+")) {
+                cleanDate = cleanDate.substring(0, cleanDate.indexOf("+"));
+            } else if (cleanDate.lastIndexOf("-") > 10) {
+                // handles negative offset like -05:00
+                cleanDate = cleanDate.substring(0, cleanDate.lastIndexOf("-"));
+            }
+
+            // Trim microseconds to milliseconds (keep only 3 decimal digits)
+            if (cleanDate.contains(".")) {
+                int dotIndex = cleanDate.indexOf(".");
+                String beforeDot = cleanDate.substring(0, dotIndex);
+                String afterDot  = cleanDate.substring(dotIndex + 1);
+                if (afterDot.length() > 3) afterDot = afterDot.substring(0, 3);
+                cleanDate = beforeDot + "." + afterDot;
+            }
+
+            Log.d("DATE_CHECK", "Cleaned date string: " + cleanDate);
+
+            SimpleDateFormat sdf;
+            if (cleanDate.contains(".")) {
+                sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", Locale.getDefault());
+            } else {
+                sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
+            }
+            sdf.setTimeZone(TimeZone.getTimeZone("UTC")); // ← important!
+
+            Date lastPaymentDate = sdf.parse(cleanDate);
+            if (lastPaymentDate == null) {
+                Log.w("DATE_CHECK", "Could not parse date: " + cleanDate);
+                return false;
+            }
+
+            long diffInMillis = System.currentTimeMillis() - lastPaymentDate.getTime();
+            long diffInDays   = diffInMillis / (1000L * 60 * 60 * 24);
+
+            Log.d("DATE_CHECK", "Days since payment: " + diffInDays);
+            return diffInDays <= 28;
+
+        } catch (Exception e) {
+            Log.e("DATE_CHECK", "Error: " + e.getMessage(), e);
+            return false;
+        }
+    }
+
+    // Block the Pay Now button
+    private void blockPaymentButton(CardView payNowBtn, String paymentDate) {
+        Log.d("PAYMENT_UI", "Blocking payment button");
+
+        payNowBtn.setEnabled(false);
+        payNowBtn.setAlpha(0.5f);
+
+        TextView btnText = payNowBtn.findViewById(R.id.heroBtnText);
+        if (btnText != null) {
+            btnText.setText("PAID");
+            btnText.setTextColor(Color.parseColor("#999999"));
+        }
+
+        payNowBtn.setOnClickListener(v -> {
+            int daysRemaining = getDaysRemaining(paymentDate);
+            String nextDueDate = getNextDueDate(paymentDate);
+            Toast.makeText(FeedActivity.this,
+                    "✓ Payment already made!\nNext payment due: " + nextDueDate + " (" + daysRemaining + " days)",
+                    Toast.LENGTH_LONG).show();
+        });
+    }
+
+    // Enable the Pay Now button
+    private void enablePaymentButton(CardView payNowBtn) {
+        Log.d("PAYMENT_UI", "Enabling payment button");
+
+        // Enable button
+        payNowBtn.setEnabled(true);
+        payNowBtn.setAlpha(1f);
+
+        // Update text
+        TextView btnText = payNowBtn.findViewById(R.id.heroBtnText);
+        if (btnText != null) {
+            btnText.setText("Pay Now");
+            btnText.setTextColor(Color.parseColor("#214177"));
+        }
+
+        // Set click listener to open PaymentActivity
+        payNowBtn.setOnClickListener(v -> {
+            startActivity(new Intent(FeedActivity.this, PaymentActivity.class));
+        });
+    }
+
+    // Get days remaining until next payment
+    private int getDaysRemaining(String paymentDateStr) {
+        try {
+            SimpleDateFormat[] formats = {
+                new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS", Locale.getDefault()),
+                new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()),
+            };
+
+            Date paymentDate = null;
+            for (SimpleDateFormat format : formats) {
+                try {
+                    String cleanDate = paymentDateStr;
+                    if (paymentDateStr.contains("+")) {
+                        cleanDate = paymentDateStr.substring(0, paymentDateStr.indexOf("+"));
+                    }
+                    paymentDate = format.parse(cleanDate);
+                    if (paymentDate != null) break;
+                } catch (Exception e) {
+                    continue;
+                }
+            }
+
+            if (paymentDate == null) return 28;
+
+            Date nextDueDate = new Date(paymentDate.getTime() + (28L * 24 * 60 * 60 * 1000));
+            Date today = new Date();
+
+            long diffInMillis = nextDueDate.getTime() - today.getTime();
+            long daysRemaining = diffInMillis / (1000 * 60 * 60 * 24);
+
+            return (int) daysRemaining;
+        } catch (Exception e) {
+            Log.e("DAYS_CALC", "Error: " + e.getMessage());
+            return 28;
+        }
+    }
+
+    // Get next due date
+    private String getNextDueDate(String paymentDateStr) {
+        try {
+            SimpleDateFormat[] formats = {
+                new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS", Locale.getDefault()),
+                new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()),
+            };
+
+            Date paymentDate = null;
+            for (SimpleDateFormat format : formats) {
+                try {
+                    String cleanDate = paymentDateStr;
+                    if (paymentDateStr.contains("+")) {
+                        cleanDate = paymentDateStr.substring(0, paymentDateStr.indexOf("+"));
+                    }
+                    paymentDate = format.parse(cleanDate);
+                    if (paymentDate != null) break;
+                } catch (Exception e) {
+                    continue;
+                }
+            }
+
+            if (paymentDate == null) return "N/A";
+
+            Date nextDueDate = new Date(paymentDate.getTime() + (28L * 24 * 60 * 60 * 1000));
+            SimpleDateFormat displayFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+            return displayFormat.format(nextDueDate);
+        } catch (Exception e) {
+            Log.e("DATE_FORMAT", "Error: " + e.getMessage());
+            return "N/A";
+        }
     }
 
     private void setupPostButton() {

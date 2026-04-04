@@ -128,6 +128,7 @@
                             android:background="#22C55E"
                             android:layout_marginEnd="6dp" />
                         <TextView
+                            android:id="@+id/heroUnitBlock"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Unit 4B · Block C"
@@ -137,6 +138,7 @@
                     </LinearLayout>
 
                     <TextView
+
                         android:id="@+id/heroTitle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -185,6 +187,7 @@
                                     android:layout_marginEnd="6dp"
                                     app:tint="#214177" />
                                 <TextView
+                                    android:id="@+id/heroBtnText"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="Pay Now"

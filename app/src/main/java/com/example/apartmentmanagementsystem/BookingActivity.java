@@ -233,7 +233,7 @@ public class BookingActivity extends AppCompatActivity {
             return;
         }
 
-        // JSON body manually build කරන්න
+
         String jsonBody = "{"
                 + "\"user_id\":\"" + currentUserId + "\","
                 + "\"amenity_type\":\"" + type + "\","
@@ -257,7 +257,7 @@ public class BookingActivity extends AppCompatActivity {
                 conn.setRequestProperty("Authorization", "Bearer " + SupabaseClient.SUPABASE_ANON_KEY);
                 conn.setRequestProperty("Prefer", "return=minimal");
 
-                // Body write කරන්න
+
                 byte[] input = jsonBody.getBytes(java.nio.charset.StandardCharsets.UTF_8);
                 conn.getOutputStream().write(input, 0, input.length);
 
@@ -269,7 +269,7 @@ public class BookingActivity extends AppCompatActivity {
                         finish();
                     });
                 } else {
-                    // Error body read කරන්න
+
                     java.io.InputStream errorStream = conn.getErrorStream();
                     String errorMsg = "";
                     if (errorStream != null) {
