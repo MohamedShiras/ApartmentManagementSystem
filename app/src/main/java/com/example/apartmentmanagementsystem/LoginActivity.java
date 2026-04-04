@@ -3,6 +3,7 @@ package com.example.apartmentmanagementsystem;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Base64;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -34,9 +35,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().hide();
-        }
+        if (getSupportActionBar() != null) getSupportActionBar().hide();
 
         initializeViews();
         checkRememberedUser();
@@ -50,7 +49,6 @@ public class LoginActivity extends AppCompatActivity {
         passwordInput    = findViewById(R.id.passwordInput);
         rememberMeSwitch = findViewById(R.id.rememberMeSwitch);
         signInButton     = findViewById(R.id.signInButton);
-
         apartmentLayout.setHint("Apartment Number");
     }
 
@@ -81,18 +79,28 @@ public class LoginActivity extends AppCompatActivity {
 
         new Thread(() -> {
             try {
-                // 1. Get user details
-                String queryUrl = SupabaseClient.SUPABASE_URL + "/rest/v1/users?apartment_number=eq." + apartment + "&select=email,full_name&limit=1";
-                HttpURLConnection conn = (HttpURLConnection) new URL(queryUrl).openConnection();
+                // ── Step 1: Look up email by apartment number ─────────────────
+                // Use anon key here — RLS policy allows public lookup by apartment
+                String queryUrl = SupabaseClient.SUPABASE_URL
+                        + "/rest/v1/users"
+                        + "?apartment_number=eq." + apartment
+                        + "&select=email,full_name"
+                        + "&limit=1";
+
+                HttpURLConnection conn = (HttpURLConnection)
+                        new URL(queryUrl).openConnection();
                 conn.setRequestMethod("GET");
                 conn.setRequestProperty("apikey", SupabaseClient.SUPABASE_ANON_KEY);
-                conn.setRequestProperty("Authorization", "Bearer " + SupabaseClient.SUPABASE_ANON_KEY);
+                conn.setRequestProperty("Authorization",
+                        "Bearer " + SupabaseClient.SUPABASE_ANON_KEY);
 
-                BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                BufferedReader reader = new BufferedReader(
+                        new InputStreamReader(conn.getInputStream()));
                 StringBuilder sb = new StringBuilder();
                 String line;
                 while ((line = reader.readLine()) != null) sb.append(line);
                 reader.close();
+                conn.disconnect();
 
                 JSONArray arr = new JSONArray(sb.toString());
                 if (arr.length() == 0) {
@@ -104,33 +112,45 @@ public class LoginActivity extends AppCompatActivity {
                 }
 
                 JSONObject userObj = arr.getJSONObject(0);
-                String email = userObj.getString("email");
-                String fullName = userObj.optString("full_name", "Resident " + apartment);
+                String email    = userObj.getString("email");
+                String fullName = userObj.optString("full_name", "Resident");
 
-                // 2. Auth Login
-                String authUrl = SupabaseClient.SUPABASE_URL + "/auth/v1/token?grant_type=password";
-                HttpURLConnection authConn = (HttpURLConnection) new URL(authUrl).openConnection();
+                // ── Step 2: Authenticate with Supabase Auth ───────────────────
+                String authUrl = SupabaseClient.SUPABASE_URL
+                        + "/auth/v1/token?grant_type=password";
+
+                HttpURLConnection authConn = (HttpURLConnection)
+                        new URL(authUrl).openConnection();
                 authConn.setRequestMethod("POST");
                 authConn.setRequestProperty("apikey", SupabaseClient.SUPABASE_ANON_KEY);
                 authConn.setRequestProperty("Content-Type", "application/json");
                 authConn.setDoOutput(true);
 
-                String body = "{\"email\":\"" + email + "\",\"password\":\"" + password + "\"}";
+                String body = "{\"email\":\"" + email
+                        + "\",\"password\":\"" + password + "\"}";
                 try (OutputStream os = authConn.getOutputStream()) {
                     os.write(body.getBytes(StandardCharsets.UTF_8));
                 }
 
-                if (authConn.getResponseCode() == 200) {
-                    BufferedReader authReader = new BufferedReader(new InputStreamReader(authConn.getInputStream()));
+                int authCode = authConn.getResponseCode();
+
+                if (authCode == 200) {
+                    BufferedReader authReader = new BufferedReader(
+                            new InputStreamReader(authConn.getInputStream()));
                     StringBuilder authSb = new StringBuilder();
                     while ((line = authReader.readLine()) != null) authSb.append(line);
                     authReader.close();
+                    authConn.disconnect();
 
                     JSONObject authResponse = new JSONObject(authSb.toString());
                     String accessToken = authResponse.getString("access_token");
 
-                    // ALWAYS save the unit number and token for the active session
-                    saveSessionData(accessToken, apartment, fullName);
+                    // ── Step 3: Extract user_id from JWT ─────────────────────
+                    // This is the UUID stored in auth.users — same as users.id
+                    String userId = extractUserIdFromToken(accessToken);
+
+                    // ── Step 4: Save everything to SharedPreferences ──────────
+                    saveSessionData(accessToken, userId, apartment, fullName);
 
                     if (rememberMe) {
                         savePersistentCredentials(apartment, password);
@@ -140,32 +160,70 @@ public class LoginActivity extends AppCompatActivity {
 
                     runOnUiThread(() -> {
                         setLoading(false);
-                        Toast.makeText(this, "Welcome, " + fullName + "!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this,
+                                "Welcome, " + fullName + "!",
+                                Toast.LENGTH_SHORT).show();
                         goToFeed();
                     });
+
                 } else {
+                    // Read error body
+                    String errMsg = "Incorrect password";
+                    try {
+                        BufferedReader errReader = new BufferedReader(
+                                new InputStreamReader(authConn.getErrorStream()));
+                        StringBuilder errSb = new StringBuilder();
+                        while ((line = errReader.readLine()) != null) errSb.append(line);
+                        errReader.close();
+                        JSONObject errObj = new JSONObject(errSb.toString());
+                        String desc = errObj.optString("error_description", "");
+                        if (!desc.isEmpty()) errMsg = desc;
+                    } catch (Exception ignored) {}
+
+                    authConn.disconnect();
+                    String finalMsg = errMsg;
                     runOnUiThread(() -> {
                         setLoading(false);
-                        passwordLayout.setError("Invalid credentials");
+                        passwordLayout.setError(finalMsg);
                     });
                 }
-                authConn.disconnect();
-                conn.disconnect();
+
             } catch (Exception e) {
                 runOnUiThread(() -> {
                     setLoading(false);
-                    Toast.makeText(this, "Network Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(this,
+                            "Network error: " + e.getMessage(),
+                            Toast.LENGTH_LONG).show();
                 });
             }
         }).start();
     }
 
-    private void saveSessionData(String token, String apartment, String fullName) {
+    // ── Extract UUID (sub) from JWT payload ──────────────────────────────────
+    private String extractUserIdFromToken(String token) {
+        try {
+            String[] parts = token.split("\\.");
+            if (parts.length < 2) return "";
+            byte[] decoded = Base64.decode(
+                    parts[1].replace("-", "+").replace("_", "/"),
+                    Base64.DEFAULT);
+            JSONObject payload = new JSONObject(new String(decoded, StandardCharsets.UTF_8));
+            return payload.optString("sub", "");
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
+    // ── SharedPreferences helpers ─────────────────────────────────────────────
+
+    private void saveSessionData(String token, String userId,
+                                 String apartment, String fullName) {
         getSharedPreferences("LoginPrefs", MODE_PRIVATE)
                 .edit()
-                .putString("access_token", token)
-                .putString("apartment", apartment) // This is what FileComplaintActivity looks for
-                .putString("full_name", fullName)
+                .putString("access_token",   token)
+                .putString("user_id",        userId)      // ← critical: used by Feed, Profile, etc.
+                .putString("apartment",      apartment)
+                .putString("full_name",      fullName)
                 .apply();
     }
 
@@ -173,8 +231,8 @@ public class LoginActivity extends AppCompatActivity {
         getSharedPreferences("LoginPrefs", MODE_PRIVATE)
                 .edit()
                 .putString("saved_apartment", apartment)
-                .putString("saved_password", password)
-                .putBoolean("rememberMe", true)
+                .putString("saved_password",  password)
+                .putBoolean("rememberMe",     true)
                 .apply();
     }
 
@@ -191,7 +249,7 @@ public class LoginActivity extends AppCompatActivity {
         SharedPreferences prefs = getSharedPreferences("LoginPrefs", MODE_PRIVATE);
         if (prefs.getBoolean("rememberMe", false)) {
             apartmentInput.setText(prefs.getString("saved_apartment", ""));
-            passwordInput.setText(prefs.getString("saved_password", ""));
+            passwordInput.setText(prefs.getString("saved_password",   ""));
             rememberMeSwitch.setChecked(true);
         }
     }
