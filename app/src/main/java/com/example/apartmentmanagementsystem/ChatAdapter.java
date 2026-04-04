@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -29,7 +28,6 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     public interface OnMessageActionListener {
         void onLongPress(Message message, boolean isOwn);
-        void onReact(Message message);
     }
 
     public ChatAdapter(Context context, List<Message> messages, String currentUserId) {
@@ -61,11 +59,11 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         Message msg = messages.get(position);
-        if (holder instanceof SentViewHolder)     bindSent((SentViewHolder) holder, msg, position);
-        else                                       bindReceived((ReceivedViewHolder) holder, msg, position);
+        if (holder instanceof SentViewHolder)     bindSent((SentViewHolder) holder, msg);
+        else                                      bindReceived((ReceivedViewHolder) holder, msg);
     }
 
-    private void bindSent(SentViewHolder h, Message msg, int position) {
+    private void bindSent(SentViewHolder h, Message msg) {
         h.tvContent.setText(msg.getContent());
         h.tvTime.setText(formatTime(msg.getCreatedAt()));
 
@@ -76,29 +74,13 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             h.layoutReply.setVisibility(View.GONE);
         }
 
-        if (msg.getReactionCount() > 0) {
-            h.tvReaction.setVisibility(View.VISIBLE);
-            h.tvReaction.setText("❤️ " + msg.getReactionCount());
-        } else {
-            h.tvReaction.setVisibility(View.GONE);
-        }
-
-        h.btnReact.setText(msg.isHasReacted() ? "❤️" : "🤍");
         h.itemView.setOnLongClickListener(v -> {
             if (listener != null) listener.onLongPress(msg, true);
             return true;
         });
-
-        h.btnReact.setOnClickListener(v -> {
-
-            boolean newState = !msg.isHasReacted();
-            msg.setHasReacted(newState);
-            h.btnReact.setText(newState ? "❤️" : "🤍");
-            if (listener != null) listener.onReact(msg);
-        });
     }
 
-    private void bindReceived(ReceivedViewHolder h, Message msg, int position) {
+    private void bindReceived(ReceivedViewHolder h, Message msg) {
         h.tvContent.setText(msg.getContent());
         h.tvTime.setText(formatTime(msg.getCreatedAt()));
 
@@ -114,26 +96,9 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             h.layoutReply.setVisibility(View.GONE);
         }
 
-        if (msg.getReactionCount() > 0) {
-            h.tvReaction.setVisibility(View.VISIBLE);
-            h.tvReaction.setText("❤️ " + msg.getReactionCount());
-        } else {
-            h.tvReaction.setVisibility(View.GONE);
-        }
-
-        h.btnReact.setText(msg.isHasReacted() ? "❤️" : "🤍");
-
         h.itemView.setOnLongClickListener(v -> {
             if (listener != null) listener.onLongPress(msg, false);
             return true;
-        });
-
-        h.btnReact.setOnClickListener(v -> {
-            if (!msg.isHasReacted()) {
-                msg.setHasReacted(true);
-                h.btnReact.setText("❤️");
-                if (listener != null) listener.onReact(msg);
-            }
         });
     }
 
@@ -160,34 +125,30 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     static class SentViewHolder extends RecyclerView.ViewHolder {
-        TextView      tvContent, tvTime, tvReaction, tvReplyPreview, btnReact;
+        TextView      tvContent, tvTime, tvReplyPreview;
         LinearLayout  layoutReply;
 
         SentViewHolder(View v) {
             super(v);
-            tvContent     = v.findViewById(R.id.tvMessageContent);
-            tvTime        = v.findViewById(R.id.tvMessageTime);
-            tvReaction    = v.findViewById(R.id.tvReaction);
+            tvContent      = v.findViewById(R.id.tvMessageContent);
+            tvTime         = v.findViewById(R.id.tvMessageTime);
             tvReplyPreview = v.findViewById(R.id.tvReplyPreview);
-            layoutReply   = v.findViewById(R.id.layoutReplyPreview);
-            btnReact      = v.findViewById(R.id.btnReact);
+            layoutReply    = v.findViewById(R.id.layoutReplyPreview);
         }
     }
 
     static class ReceivedViewHolder extends RecyclerView.ViewHolder {
-        TextView      tvContent, tvTime, tvSenderName, tvReaction, tvReplyPreview, tvAvatar, btnReact;
+        TextView      tvContent, tvTime, tvSenderName, tvReplyPreview, tvAvatar;
         LinearLayout  layoutReply;
 
         ReceivedViewHolder(View v) {
             super(v);
-            tvContent     = v.findViewById(R.id.tvMessageContent);
-            tvTime        = v.findViewById(R.id.tvMessageTime);
-            tvSenderName  = v.findViewById(R.id.tvSenderName);
-            tvReaction    = v.findViewById(R.id.tvReaction);
+            tvContent      = v.findViewById(R.id.tvMessageContent);
+            tvTime         = v.findViewById(R.id.tvMessageTime);
+            tvSenderName   = v.findViewById(R.id.tvSenderName);
             tvReplyPreview = v.findViewById(R.id.tvReplyPreview);
-            layoutReply   = v.findViewById(R.id.layoutReplyPreview);
-            tvAvatar      = v.findViewById(R.id.tvAvatar);
-            btnReact      = v.findViewById(R.id.btnReact);
+            layoutReply    = v.findViewById(R.id.layoutReplyPreview);
+            tvAvatar       = v.findViewById(R.id.tvAvatar);
         }
     }
 }

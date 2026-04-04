@@ -87,65 +87,6 @@
             android:textSize="14sp"
             android:textColor="#555555"
             android:layout_marginTop="6dp" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#E0E0E0"
-            android:layout_marginTop="12dp"
-            android:layout_marginBottom="12dp" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
-
-            <ImageView
-                android:id="@+id/btnLike"
-                android:layout_width="18dp"
-                android:layout_height="18dp"
-                android:src="@drawable/ic_thumb_up"
-                app:tint="#82A6CB" />
-
-            <TextView
-                android:id="@+id/tvLikes"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="0 Likes"
-                android:textSize="12sp"
-                android:textColor="#555555"
-                android:layout_marginStart="4dp" />
-
-            <ImageView
-                android:layout_width="18dp"
-                android:layout_height="18dp"
-                android:src="@drawable/ic_comment"
-                android:layout_marginStart="16dp"
-                app:tint="#82A6CB" />
-
-            <TextView
-                android:id="@+id/tvComments"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="0 Comments"
-                android:textSize="12sp"
-                android:textColor="#555555"
-                android:layout_marginStart="4dp" />
-
-            <TextView
-                android:id="@+id/tvSeeMore"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="See more"
-                android:textSize="12sp"
-                android:textColor="#2979FF"
-                android:textStyle="bold"
-                android:background="?attr/selectableItemBackgroundBorderless" />
-
-        </LinearLayout>
-
     </LinearLayout>
 
 </androidx.cardview.widget.CardView>

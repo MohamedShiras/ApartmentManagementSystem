@@ -65,37 +65,4 @@
             android:layout_marginTop="4dp"/>
     </LinearLayout>
 
-    <!-- Reaction row (below bubble) -->
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:layout_marginTop="3dp"
-        android:layout_marginEnd="4dp">
-
-        <!-- Reaction count badge -->
-        <TextView
-            android:id="@+id/tvReaction"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_reaction_badge"
-            android:paddingHorizontal="8dp"
-            android:paddingVertical="2dp"
-            android:textSize="12sp"
-            android:layout_marginEnd="6dp"
-            android:visibility="gone"/>
-
-        <!-- React (heart) button -->
-        <TextView
-            android:id="@+id/btnReact"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:text="🤍"
-            android:textSize="16sp"
-            android:gravity="center"
-            android:background="?attr/selectableItemBackgroundBorderless"/>
-    </LinearLayout>
-
 </LinearLayout>
