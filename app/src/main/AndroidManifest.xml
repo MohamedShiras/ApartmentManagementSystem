@@ -84,6 +84,12 @@
         <activity
             android:name=".PaymentActivity"
             android:theme="@style/Theme.PaymentDialog" />
+        <activity
+            android:name=".MaintenanceStaffActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AdminActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

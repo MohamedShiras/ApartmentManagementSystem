@@ -134,6 +134,10 @@ public class FeedActivity extends AppCompatActivity {
         if (greetView != null) greetView.setText(greeting);
         if (nameView  == null) return;
 
+    // =========================================================================
+    // HERO CARD — rent due / paid status
+    // =========================================================================
+    private void loadHeroCardData() {
         new Thread(() -> {
             try {
                 // ✅ Use access_token as Bearer — this passes RLS
@@ -594,11 +598,6 @@ public class FeedActivity extends AppCompatActivity {
         if (serviceReservation != null)
             serviceReservation.setOnClickListener(v ->
                     startActivity(new Intent(this, ReservationsActivity.class)));
-
-        TextView serviceActivity = findViewById(R.id.seeAll);
-        if (serviceActivity != null)
-            serviceActivity.setOnClickListener(v ->
-                    startActivity(new Intent(this, ServicesActivity.class)));
     }
 
     private void setupPostButton() {

@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="24dp"
+    app:cardElevation="16dp"
+    app:cardBackgroundColor="#FFFFFF">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Request Details"
+            android:textColor="#1E293B"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Service Type -->
+        <TextView android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="SERVICE" android:textColor="#94A3B8"
+            android:textSize="10sp" android:textStyle="bold"
+            android:layout_marginBottom="2dp"/>
+        <TextView android:id="@+id/detailServiceType"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#1E293B" android:textSize="14sp"
+            android:textStyle="bold" android:layout_marginBottom="12dp"/>
+
+        <!-- Title -->
+        <TextView android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ISSUE" android:textColor="#94A3B8"
+            android:textSize="10sp" android:textStyle="bold"
+            android:layout_marginBottom="2dp"/>
+        <TextView android:id="@+id/detailTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#1E293B" android:textSize="13sp"
+            android:layout_marginBottom="12dp"/>
+
+        <!-- Description -->
+        <TextView android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="DESCRIPTION" android:textColor="#94A3B8"
+            android:textSize="10sp" android:textStyle="bold"
+            android:layout_marginBottom="2dp"/>
+        <TextView android:id="@+id/detailDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#64748B" android:textSize="13sp"
+            android:layout_marginBottom="12dp"/>
+
+        <!-- Row: Unit + Status -->
+        <LinearLayout android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="12dp">
+            <LinearLayout android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+                <TextView android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="UNIT" android:textColor="#94A3B8"
+                    android:textSize="10sp" android:textStyle="bold"
+                    android:layout_marginBottom="2dp"/>
+                <TextView android:id="@+id/detailApartment"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#1E293B" android:textSize="13sp"
+                    android:textStyle="bold"/>
+            </LinearLayout>
+            <LinearLayout android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+                <TextView android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="STATUS" android:textColor="#94A3B8"
+                    android:textSize="10sp" android:textStyle="bold"
+                    android:layout_marginBottom="2dp"/>
+                <TextView android:id="@+id/detailStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#214177" android:textSize="13sp"
+                    android:textStyle="bold"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Row: Priority + Created -->
+        <LinearLayout android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="20dp">
+            <LinearLayout android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+                <TextView android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="PRIORITY" android:textColor="#94A3B8"
+                    android:textSize="10sp" android:textStyle="bold"
+                    android:layout_marginBottom="2dp"/>
+                <TextView android:id="@+id/detailPriority"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#1E293B" android:textSize="13sp"
+                    android:textStyle="bold"/>
+            </LinearLayout>
+            <LinearLayout android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+                <TextView android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="SUBMITTED" android:textColor="#94A3B8"
+                    android:textSize="10sp" android:textStyle="bold"
+                    android:layout_marginBottom="2dp"/>
+                <TextView android:id="@+id/detailCreatedAt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#1E293B" android:textSize="13sp"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Request # -->
+        <TextView android:id="@+id/detailReqNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#94A3B8" android:textSize="12sp"
+            android:layout_marginBottom="16dp"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCloseDetails"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="Close"
+            android:backgroundTint="#214177"
+            app:cornerRadius="24dp"/>
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>
