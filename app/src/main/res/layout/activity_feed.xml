@@ -38,16 +38,14 @@
                     android:layout_height="44dp"
                     app:cardCornerRadius="14dp"
                     app:cardElevation="0dp"
-                    app:cardBackgroundColor="#214177">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:text="AL"
-                        android:textColor="#BDD8F1"
-                        android:textSize="14sp"
-                        android:textStyle="bold" />
-                </androidx.cardview.widget.CardView>
+                    app:cardBackgroundColor="#0000">
+
+                    <ImageView
+                    android:id="@+id/brandLogo"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/apartment_logo" /> </androidx.cardview.widget.CardView>
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -72,7 +70,6 @@
                 </LinearLayout>
 
             </LinearLayout>
-
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </com.google.android.material.appbar.AppBarLayout>
@@ -221,12 +218,15 @@
                     android:textSize="15sp"
                     android:textStyle="bold" />
                 <TextView
+                    android:id="@+id/seeAll"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="See all →"
                     android:textColor="#3667A6"
                     android:textSize="12sp"
-                    android:textStyle="bold" />
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:textStyle="bold"/>
             </LinearLayout>
 
             <HorizontalScrollView

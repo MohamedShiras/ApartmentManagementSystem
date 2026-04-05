@@ -134,6 +134,10 @@ public class FeedActivity extends AppCompatActivity {
         if (greetView != null) greetView.setText(greeting);
         if (nameView  == null) return;
 
+    // =========================================================================
+    // HERO CARD — rent due / paid status
+    // =========================================================================
+    private void loadHeroCardData() {
         new Thread(() -> {
             try {
                 // ✅ Use access_token as Bearer — this passes RLS
