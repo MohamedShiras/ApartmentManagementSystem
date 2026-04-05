@@ -249,8 +249,12 @@ public class ChatActivity extends AppCompatActivity
                 try (OutputStream os = conn.getOutputStream()) {
                     os.write(body.toString().getBytes(StandardCharsets.UTF_8));
                 }
-                if (conn.getResponseCode() == 201 || conn.getResponseCode() == 200) {
+                int responseCode = conn.getResponseCode();
+                if (responseCode == 201 || responseCode == 200) {
                     runOnUiThread(this::loadMessages);
+                } else {
+                    android.util.Log.e("CHAT_ERROR", "Response Code: " + responseCode);
+                    runOnUiThread(() -> Toast.makeText(ChatActivity.this, "Failed! Code: " + responseCode, Toast.LENGTH_LONG).show());
                 }
                 conn.disconnect();
             } catch (Exception e) {
