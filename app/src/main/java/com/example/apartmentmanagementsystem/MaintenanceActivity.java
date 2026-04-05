@@ -465,9 +465,6 @@ public class MaintenanceActivity extends AppCompatActivity {
         } catch (Exception e) { e.printStackTrace(); }
     }
 
-    // =========================================================================
-    // SERVICE CARD CLICK → SHOW DIALOG
-    // =========================================================================
     private void setupServiceCards() {
         CardView plumbing  = findViewById(R.id.servicePlumbing);
         CardView electric  = findViewById(R.id.serviceElectric);
