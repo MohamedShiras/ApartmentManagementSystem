@@ -118,26 +118,42 @@ public class ReservationHistoryActivity extends AppCompatActivity {
         String timeSlot    = obj.optString("time_slot", "");
         int    guests      = obj.optInt("guest_count", 1);
 
+        // Life jacket — only meaningful for Pool
+        boolean lifeJacket = "Pool".equals(amenityType) && obj.optBoolean("life_jacket_needed", false);
+
         View card = LayoutInflater.from(this)
                 .inflate(R.layout.item_reservation_card, llContainer, false);
 
-        // Image
         ImageView ivImg = card.findViewById(R.id.ivAmenityImage);
         ivImg.setImageResource(getAmenityImage(amenityType));
 
-        // Amenity name
         TextView tvName = card.findViewById(R.id.tvAmenityName);
         tvName.setText(getAmenityEmoji(amenityType) + " " + amenityType);
 
-        // Time slot
         TextView tvTime = card.findViewById(R.id.tvTimeSlot);
         tvTime.setText(timeSlot);
 
-        // Date + guests
         TextView tvDate = card.findViewById(R.id.tvDateGuests);
         tvDate.setText(date + "  ·  " + guests + (guests == 1 ? " Guest" : " Guests"));
 
-        // Cancel button
+        // ── Life Jacket Badge (Pool only) ──────────────────────────
+        // Add a small tag below the date line if life jacket was requested
+        TextView tvLifeJacket = card.findViewById(R.id.tvLifeJacketBadge);
+        if (tvLifeJacket != null) {
+            if ("Pool".equals(amenityType)) {
+                tvLifeJacket.setVisibility(View.VISIBLE);
+                if (lifeJacket) {
+                    tvLifeJacket.setText("🦺 Life jacket requested");
+                    tvLifeJacket.setTextColor(android.graphics.Color.parseColor("#2F5F9B"));
+                } else {
+                    tvLifeJacket.setText("🦺 No life jacket");
+                    tvLifeJacket.setTextColor(android.graphics.Color.parseColor("#A0B3CC"));
+                }
+            } else {
+                tvLifeJacket.setVisibility(View.GONE);
+            }
+        }
+
         MaterialButton btnCancel = card.findViewById(R.id.btnCancelCard);
         btnCancel.setOnClickListener(v ->
                 showCancelDialog(amenityType, date, timeSlot, recordId, card));

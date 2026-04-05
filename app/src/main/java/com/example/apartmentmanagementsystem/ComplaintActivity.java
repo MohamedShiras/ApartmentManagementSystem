@@ -104,10 +104,8 @@ public class ComplaintActivity extends AppCompatActivity {
                     return;
                 }
 
-                // URL encode the apartment number to handle spaces (e.g., "Unit 4B" -> "Unit%204B")
                 String encodedApartment = Uri.encode(apartment);
 
-                // Use 'eq' for exact match. If you want partial, keep 'ilike' but encoded values are safer with 'eq'.
                 String queryUrl = SupabaseClient.SUPABASE_URL + "/rest/v1/complaints"
                         + "?apartment_number=eq." + encodedApartment
                         + "&select=*&order=id.desc";

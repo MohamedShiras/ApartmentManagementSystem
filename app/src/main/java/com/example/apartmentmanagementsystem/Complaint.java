@@ -5,7 +5,7 @@ public class Complaint {
     private String category;
     private String subject;
     private String description;
-    private String status; // Pending, In Progress, Resolved
+    private String status;
     private String date;
 
     public Complaint(String id, String category, String subject, String description, String status, String date) {

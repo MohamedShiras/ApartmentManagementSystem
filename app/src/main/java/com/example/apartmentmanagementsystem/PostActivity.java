@@ -311,10 +311,6 @@ public class PostActivity extends AppCompatActivity {
         }, 2200);
     }
 
-    // ══════════════════════════════════════════════════════════════════
-    //  PERMISSIONS + BOTTOM SHEET
-    // ══════════════════════════════════════════════════════════════════
-
     private void requestImagePermissionAndPick() {
         String p = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
                 ? Manifest.permission.READ_MEDIA_IMAGES
