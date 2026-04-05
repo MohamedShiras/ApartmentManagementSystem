@@ -58,16 +58,13 @@ public class PostRepository {
 
         executor.execute(() -> {
             try {
-                // 1. Upload image if user picked one
                 String imageUrl = null;
                 if (imageUri != null) {
                     imageUrl = uploadImage(context, imageUri, userId);
                 }
 
-                // 2. Insert post row into Supabase DB
                 String postId = insertPost(userId, userName, userUnit, caption, imageUrl);
 
-                // 3. Return success on main thread
                 final String finalId = postId;
                 mainHandler.post(() -> callback.onSuccess(finalId));
 

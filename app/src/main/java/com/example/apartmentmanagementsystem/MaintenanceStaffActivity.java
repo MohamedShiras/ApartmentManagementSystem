@@ -57,9 +57,6 @@ public class MaintenanceStaffActivity extends AppCompatActivity {
             "All", "Under Review", "In Progress", "Scheduled", "Completed"
     };
 
-    // =========================================================================
-    // LIFECYCLE
-    // =========================================================================
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,9 +81,6 @@ public class MaintenanceStaffActivity extends AppCompatActivity {
         loadSession();
     }
 
-    // =========================================================================
-    // SESSION
-    // =========================================================================
     private void loadSession() {
         SharedPreferences prefs = getSharedPreferences("LoginPrefs", MODE_PRIVATE);
         token = prefs.getString("access_token", null);
@@ -96,12 +90,11 @@ public class MaintenanceStaffActivity extends AppCompatActivity {
             return;
         }
         userId = extractUserIdFromToken(token);
-        // Staff name show කරන්න
+
         String fullName = prefs.getString("full_name", "Maintenance Staff");
         TextView staffName = findViewById(R.id.staffNameText);
         if (staffName != null) staffName.setText(fullName);
 
-        // Refresh button
         CardView btnLogout = findViewById(R.id.btnLogout);
 
         if (btnLogout != null) {
@@ -119,7 +112,6 @@ public class MaintenanceStaffActivity extends AppCompatActivity {
         fetchRequests();
     }
 
-    // Hero card stats update
     private void loadStats() {
         new Thread(() -> {
             try {
@@ -200,9 +192,6 @@ public class MaintenanceStaffActivity extends AppCompatActivity {
         }
     }
 
-    // =========================================================================
-    // FETCH ALL REQUESTS
-    // =========================================================================
     private void fetchRequests() {
         loadingBar.setVisibility(View.VISIBLE);
         emptyCard.setVisibility(View.GONE);
@@ -250,9 +239,6 @@ public class MaintenanceStaffActivity extends AppCompatActivity {
         }).start();
     }
 
-    // =========================================================================
-    // BUILD EACH REQUEST CARD
-    // =========================================================================
     private void buildRequestCard(JSONObject req) {
         if (req == null) return;
         try {
@@ -297,7 +283,6 @@ public class MaintenanceStaffActivity extends AppCompatActivity {
                 inner.addView(stripe);
             }
 
-            // ── Header row ────────────────────────────────────────────────
             LinearLayout header = new LinearLayout(this);
             LinearLayout.LayoutParams hlp = new LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
@@ -322,7 +307,6 @@ public class MaintenanceStaffActivity extends AppCompatActivity {
             iconCard.addView(iconTv);
             header.addView(iconCard);
 
-            // Service name + apartment + time
             LinearLayout nameCol = new LinearLayout(this);
             LinearLayout.LayoutParams ncp = new LinearLayout.LayoutParams(
                     0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
@@ -486,9 +470,6 @@ public class MaintenanceStaffActivity extends AppCompatActivity {
         }
     }
 
-    // =========================================================================
-    // UPDATE STATUS DIALOG
-    // =========================================================================
     private void showUpdateStatusDialog(String reqId, String currentStatus) {
         Dialog dialog = new Dialog(this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -520,9 +501,6 @@ public class MaintenanceStaffActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    // =========================================================================
-    // DETAILS DIALOG
-    // =========================================================================
     private void showDetailsDialog(JSONObject req) {
         Dialog dialog = new Dialog(this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -563,9 +541,6 @@ public class MaintenanceStaffActivity extends AppCompatActivity {
         if (tv != null) tv.setText(text);
     }
 
-    // =========================================================================
-    // SUPABASE — UPDATE STATUS
-    // =========================================================================
     private void updateRequestStatus(String reqId, String newStatus,
                                      Dialog dialog, MaterialButton btnSave) {
         new Thread(() -> {
@@ -619,10 +594,6 @@ public class MaintenanceStaffActivity extends AppCompatActivity {
             }
         }).start();
     }
-
-    // =========================================================================
-    // HELPERS
-    // =========================================================================
     private int dp(int v) {
         return Math.round(v * getResources().getDisplayMetrics().density);
     }

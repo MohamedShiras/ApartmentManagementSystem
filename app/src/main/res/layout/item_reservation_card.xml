@@ -92,7 +92,24 @@
                         android:layout_height="wrap_content"
                         android:textColor="#82A6CB"
                         android:textSize="12sp"/>
+
                 </LinearLayout>
+
+                <!-- ── Life Jacket Badge (Pool reservations only) ── -->
+                <TextView
+                    android:id="@+id/tvLifeJacketBadge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"
+                    android:paddingTop="3dp"
+                    android:paddingBottom="3dp"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:background="@drawable/bg_chip_unselected"
+                    android:visibility="gone"/>
+
             </LinearLayout>
 
             <com.google.android.material.button.MaterialButton

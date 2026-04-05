@@ -157,7 +157,6 @@ public class LoginActivity extends AppCompatActivity {
         return new String[]{email, fullName};
     }
 
-    /** Calls Supabase Auth, parses JWT for User ID, saves session, and navigates. */
     private void authenticate(String email, String password,
                               String displayId, String role,
                               String fullName, boolean remember) throws Exception {
@@ -183,10 +182,8 @@ public class LoginActivity extends AppCompatActivity {
             JSONObject authResponse = new JSONObject(authBody);
             String accessToken = authResponse.getString("access_token");
 
-            // Extract user_id from JWT payload
             String userId = extractUserIdFromToken(accessToken);
 
-            // Save data to SharedPreferences
             saveSessionData(accessToken, userId, displayId, fullName, role);
 
             if (remember) {

@@ -51,7 +51,7 @@ public class PaymentActivity extends AppCompatActivity {
             getSupportActionBar().hide();
         }
 
-        // Window transparent + blur behind setup
+
         getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         getWindow().setStatusBarColor(Color.TRANSPARENT);
 
@@ -130,7 +130,6 @@ public class PaymentActivity extends AppCompatActivity {
         tvUnit.setText("Apartment: " + currentUserUnit);
         tvAmount.setText(currentUserRent);
 
-        // Check if payment already made in last 28 days
         checkPaymentStatus(etCard, etExp, etCvc, btnPay);
 
         etCard.addTextChangedListener(new TextWatcher() {
@@ -172,8 +171,8 @@ public class PaymentActivity extends AppCompatActivity {
             String expDate = etExp.getText().toString().trim();
             String cvc = etCvc.getText().toString().trim();
 
-            // Validations
-            if ( cardNum.length() < 16) { // 16 digits + 3 spaces = 19 characters
+
+            if ( cardNum.length() < 16) {
                 etCard.setError("Please enter a valid 16-digit card number");
                 etCard.requestFocus();
                 return;
@@ -227,7 +226,6 @@ public class PaymentActivity extends AppCompatActivity {
         });
     }
 
-    // Check if payment already made within 28 days
     private void checkPaymentStatus(EditText etCard, EditText etExp, EditText etCvc, Button btnPay) {
         new Thread(() -> {
             try {
@@ -266,7 +264,6 @@ public class PaymentActivity extends AppCompatActivity {
         }).start();
     }
 
-    // Check if date is within 28 days
     private boolean isWithin28Days(String dateStr) {
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
@@ -285,7 +282,6 @@ public class PaymentActivity extends AppCompatActivity {
         }
     }
 
-    // Block payment button
     private void blockPaymentButton(EditText etCard, EditText etExp, EditText etCvc, Button btnPay, String paymentDate) {
         btnPay.setEnabled(false);
         btnPay.setAlpha(0.5f);
@@ -304,7 +300,6 @@ public class PaymentActivity extends AppCompatActivity {
         Toast.makeText(this, "✓ Payment completed!\nNext payment due: " + nextDueDate + " (" + daysRemaining + " days)", Toast.LENGTH_LONG).show();
     }
 
-    // Calculate days remaining
     private int getDaysRemaining(String paymentDateStr) {
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
@@ -322,7 +317,6 @@ public class PaymentActivity extends AppCompatActivity {
         }
     }
 
-    // Get next due date
     private String getNextDueDate(String paymentDateStr) {
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());

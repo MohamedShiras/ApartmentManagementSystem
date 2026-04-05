@@ -5,7 +5,7 @@ public class Message {
     private String userId;
     private String content;
     private String replyToId;
-    private String replyToContent;   // filled in at load time
+    private String replyToContent;
     private String createdAt;
     private String senderName;
     private String senderApartment;

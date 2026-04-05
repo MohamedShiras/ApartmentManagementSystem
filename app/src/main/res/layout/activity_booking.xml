@@ -10,268 +10,330 @@
     app:cardElevation="8dp"
     app:cardBackgroundColor="#FFFFFF">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="24dp">
+        android:fillViewport="true"
+        android:scrollbars="none">
 
-        <!-- HEADER -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
+            android:orientation="vertical"
+            android:padding="24dp">
 
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                app:cardCornerRadius="14dp"
-                app:cardElevation="0dp"
-                app:strokeWidth="0dp"
-                app:cardBackgroundColor="#E3EEF9">
-
-                <ImageView
-                    android:id="@+id/dialogAmenityIcon"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_gravity="center"
-                    android:src="@drawable/ic_pool"
-                    app:tint="#2F5F9B" />
-            </com.google.android.material.card.MaterialCardView>
-
+            <!-- HEADER -->
             <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:layout_marginStart="16dp">
-
-                <TextView
-                    android:id="@+id/dialogTitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Book Swimming Pool"
-                    android:textColor="#1E3A66"
-                    android:textSize="18sp"
-                    android:fontFamily="sans-serif-black"
-                    android:textStyle="bold"/>
-
-                <TextView
-                    android:id="@+id/dialogSubtitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="6AM – 10PM · Max 20 guests"
-                    android:textColor="#5E7EA6"
-                    android:textSize="13sp"/>
-            </LinearLayout>
-
-            <ImageButton
-                android:id="@+id/dialogBtnClose"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@android:drawable/ic_menu_close_clear_cancel"
-                app:tint="#A0B3CC" />
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#F0F5FA"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="20dp"/>
-
-        <!-- SELECT DATE -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="SELECT DATE"
-            android:textColor="#2F5F9B"
-            android:textSize="11sp"
-            android:letterSpacing="0.1"
-            android:textStyle="bold"
-            android:layout_marginBottom="8dp"/>
-
-        <RelativeLayout
-            android:id="@+id/layoutSelectDate"
-            android:layout_width="match_parent"
-            android:layout_height="54dp"
-            android:paddingHorizontal="16dp"
-            android:layout_marginBottom="20dp">
-            <!-- Note: Create a drawable bg_input_field with rounded corners & light grey stroke -->
-
-            <ImageView
-                android:id="@+id/ic_cal"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_centerVertical="true"
-                android:src="@drawable/ic_calendar_month"
-                app:tint="#2F5F9B"/>
-
-            <TextView
-                android:id="@+id/tvSelectedDate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_toEndOf="@id/ic_cal"
-                android:layout_marginStart="12dp"
-                android:text="Choose a date"
-                android:textColor="#1E3A66"
-                android:textSize="15sp"/>
-        </RelativeLayout>
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
 
-        <!-- TIME SLOT -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="SELECT TIME SLOT"
-            android:textColor="#2F5F9B"
-            android:textSize="11sp"
-            android:letterSpacing="0.1"
-            android:textStyle="bold"
-            android:layout_marginBottom="8dp"/>
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    app:cardCornerRadius="14dp"
+                    app:cardElevation="0dp"
+                    app:strokeWidth="0dp"
+                    app:cardBackgroundColor="#E3EEF9">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="20dp">
+                    <ImageView
+                        android:id="@+id/dialogAmenityIcon"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_pool"
+                        app:tint="#2F5F9B" />
+                </com.google.android.material.card.MaterialCardView>
 
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginStart="16dp">
+
+                    <TextView
+                        android:id="@+id/dialogTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Book Swimming Pool"
+                        android:textColor="#1E3A66"
+                        android:textSize="18sp"
+                        android:fontFamily="sans-serif-black"
+                        android:textStyle="bold"/>
+
+                    <TextView
+                        android:id="@+id/dialogSubtitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="6AM – 10PM · Max 20 guests"
+                        android:textColor="#5E7EA6"
+                        android:textSize="13sp"/>
+                </LinearLayout>
+
+                <ImageButton
+                    android:id="@+id/dialogBtnClose"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@android:drawable/ic_menu_close_clear_cancel"
+                    app:tint="#A0B3CC" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#F0F5FA"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"/>
+
+            <!-- SELECT DATE -->
             <TextView
-                android:id="@+id/chipTime1"
-                android:layout_width="0dp"
-                android:layout_height="44dp"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="6:00 AM"
-                android:textColor="#2F5F9B"
-                android:background="@drawable/bg_chip_unselected"
-                android:layout_marginEnd="8dp"/>
-
-            <TextView
-                android:id="@+id/chipTime2"
-                android:layout_width="0dp"
-                android:layout_height="44dp"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="9:00 AM"
-                android:textColor="#FFFFFF"
-                android:background="@drawable/bg_chip_selected"
-                android:layout_marginEnd="8dp"/>
-
-            <TextView
-                android:id="@+id/chipTime3"
-                android:layout_width="0dp"
-                android:layout_height="44dp"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="12:00 PM"
-                android:textColor="#2F5F9B"
-                android:background="@drawable/bg_chip_unselected"/>
-        </LinearLayout>
-
-        <!-- GUESTS -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="NUMBER OF GUESTS"
-            android:textColor="#2F5F9B"
-            android:textSize="11sp"
-            android:letterSpacing="0.1"
-            android:textStyle="bold"
-            android:layout_marginBottom="8dp"/>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="54dp"
-            android:gravity="center_vertical"
-            android:paddingHorizontal="16dp"
-            android:layout_marginBottom="20dp">
-
-            <TextView
-                android:id="@+id/tvGuestCount"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="2 Guests"
+                android:text="SELECT DATE"
+                android:textColor="#2F5F9B"
+                android:textSize="11sp"
+                android:letterSpacing="0.1"
                 android:textStyle="bold"
-                android:textColor="#1E3A66"
-                android:textSize="15sp"/>
+                android:layout_marginBottom="8dp"/>
 
-            <ImageButton
-                android:id="@+id/btnGuestMinus"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:src="@drawable/ic_minus"
-                app:tint="#FFFFFF"/>
+            <RelativeLayout
+                android:id="@+id/layoutSelectDate"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:paddingHorizontal="16dp"
+                android:background="@drawable/bg_input_field"
+                android:layout_marginBottom="20dp">
 
+                <ImageView
+                    android:id="@+id/ic_cal"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/ic_calendar_month"
+                    app:tint="#2F5F9B"/>
+
+                <TextView
+                    android:id="@+id/tvSelectedDate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toEndOf="@id/ic_cal"
+                    android:layout_marginStart="12dp"
+                    android:text="Choose a date"
+                    android:textColor="#A0B3CC"
+                    android:textSize="15sp"/>
+            </RelativeLayout>
+
+            <!-- TIME SLOT -->
             <TextView
-                android:layout_width="40dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="02"
-                android:textColor="#1E3A66"
-                android:textStyle="bold"/>
+                android:text="SELECT TIME SLOT"
+                android:textColor="#2F5F9B"
+                android:textSize="11sp"
+                android:letterSpacing="0.1"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp"/>
 
-            <ImageButton
-                android:id="@+id/btnGuestPlus"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:src="@drawable/ic_add"
-                app:tint="#FFFFFF" />
-        </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="20dp">
 
-        <!-- SPECIAL REQUEST -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="SPECIAL REQUEST"
-            android:textColor="#2F5F9B"
-            android:textSize="11sp"
-            android:letterSpacing="0.1"
-            android:textStyle="bold"
-            android:layout_marginBottom="8dp"/>
+                <TextView
+                    android:id="@+id/chipTime1"
+                    android:layout_width="0dp"
+                    android:layout_height="44dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="6:00 AM"
+                    android:textColor="#2F5F9B"
+                    android:background="@drawable/bg_chip_unselected"
+                    android:layout_marginEnd="8dp"/>
 
-        <EditText
-            android:id="@+id/etSpecialRequest"
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:hint="e.g. wheelchair access, towels"
-            android:gravity="top"
-            android:padding="16dp"
-            android:textSize="14sp"
-            android:layout_marginBottom="28dp"/>
+                <TextView
+                    android:id="@+id/chipTime2"
+                    android:layout_width="0dp"
+                    android:layout_height="44dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="9:00 AM"
+                    android:textColor="#FFFFFF"
+                    android:background="@drawable/bg_chip_selected"
+                    android:layout_marginEnd="8dp"/>
 
-        <!-- BUTTONS -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/chipTime3"
+                    android:layout_width="0dp"
+                    android:layout_height="44dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="12:00 PM"
+                    android:textColor="#2F5F9B"
+                    android:background="@drawable/bg_chip_unselected"/>
+            </LinearLayout>
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/dialogBtnCancel"
-                style="@style/Widget.MaterialComponents.Button.TextButton"
-                android:layout_width="0dp"
+            <!-- GUESTS -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="NUMBER OF GUESTS"
+                android:textColor="#2F5F9B"
+                android:textSize="11sp"
+                android:letterSpacing="0.1"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="54dp"
-                android:layout_weight="1"
-                android:text="Cancel"
-                android:textColor="#5E7EA6"
-                app:cornerRadius="16dp"
-                android:layout_marginEnd="12dp"/>
+                android:gravity="center_vertical"
+                android:paddingHorizontal="16dp"
+                android:background="@drawable/bg_input_field"
+                android:layout_marginBottom="20dp">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/dialogBtnConfirm"
-                android:layout_width="0dp"
-                android:layout_height="54dp"
-                android:layout_weight="1.5"
-                android:text="Confirm"
-                android:textAllCaps="false"
-                android:textSize="16sp"
-                android:textColor="#FFFFFF"
-                app:backgroundTint="#2F5F9B"
-                app:elevation="4dp"
-                app:cornerRadius="16dp"/>
+                <TextView
+                    android:id="@+id/tvGuestCount"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="2 Guests"
+                    android:textStyle="bold"
+                    android:textColor="#1E3A66"
+                    android:textSize="15sp"/>
+
+                <ImageButton
+                    android:id="@+id/btnGuestMinus"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_minus"
+                    app:tint="#2F5F9B"/>
+
+                <TextView
+                    android:layout_width="40dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="02"
+                    android:textColor="#1E3A66"
+                    android:textStyle="bold"/>
+
+                <ImageButton
+                    android:id="@+id/btnGuestPlus"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_add"
+                    app:tint="#2F5F9B"/>
+            </LinearLayout>
+
+            <!-- LIFE JACKET (Pool only) -->
+            <LinearLayout
+                android:id="@+id/layoutLifeJacket"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="12dp"
+                android:background="@drawable/bg_input_field"
+                android:layout_marginBottom="20dp"
+                android:visibility="gone">
+
+                <CheckBox
+                    android:id="@+id/checkLifeJacket"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:buttonTint="#2F5F9B"/>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginStart="12dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Life Jacket Needed?"
+                        android:textColor="#1E3A66"
+                        android:textSize="15sp"
+                        android:textStyle="bold"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Free of charge · Available at poolside"
+                        android:textColor="#5E7EA6"
+                        android:textSize="12sp"/>
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="🦺"
+                    android:textSize="22sp"/>
+
+            </LinearLayout>
+
+            <!-- SPECIAL REQUEST -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="SPECIAL REQUEST"
+                android:textColor="#2F5F9B"
+                android:textSize="11sp"
+                android:letterSpacing="0.1"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp"/>
+
+            <EditText
+                android:id="@+id/etSpecialRequest"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:hint="e.g. wheelchair access, towels"
+                android:gravity="top|start"
+                android:padding="16dp"
+                android:textSize="14sp"
+                android:background="@drawable/bg_input_field"
+                android:layout_marginBottom="28dp"/>
+
+            <!-- BUTTONS -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/dialogBtnCancel"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:layout_width="0dp"
+                    android:layout_height="54dp"
+                    android:layout_weight="1"
+                    android:text="Cancel"
+                    android:textColor="#5E7EA6"
+                    app:cornerRadius="16dp"
+                    android:layout_marginEnd="12dp"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/dialogBtnConfirm"
+                    android:layout_width="0dp"
+                    android:layout_height="54dp"
+                    android:layout_weight="1.5"
+                    android:text="Confirm"
+                    android:textAllCaps="false"
+                    android:textSize="16sp"
+                    android:textColor="#FFFFFF"
+                    app:backgroundTint="#2F5F9B"
+                    app:elevation="4dp"
+                    app:cornerRadius="16dp"/>
+            </LinearLayout>
+
         </LinearLayout>
-    </LinearLayout>
+    </ScrollView>
 </androidx.cardview.widget.CardView>

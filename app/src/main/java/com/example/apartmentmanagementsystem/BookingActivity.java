@@ -3,12 +3,13 @@ package com.example.apartmentmanagementsystem;
 import android.app.DatePickerDialog;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,8 +19,6 @@ import androidx.core.content.ContextCompat;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Map;
 
 public class BookingActivity extends AppCompatActivity {
 
@@ -30,82 +29,68 @@ public class BookingActivity extends AppCompatActivity {
     private int maxGuests;
     private int[] chipIds;
 
+    // ── Life jacket ──────────────────────────────
+    private CheckBox checkLifeJacket;
+    private LinearLayout layoutLifeJacket;
+    private boolean isPool = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_booking);
-        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-        lp.copyFrom(getWindow().getAttributes());
-        lp.width = (int) (getResources().getDisplayMetrics().widthPixels * 0.90);
-        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-        getWindow().setAttributes(lp);
-        View mainLayout = findViewById(R.id.main_container);
-        mainLayout.setBackgroundResource(R.drawable.bg_glass_card);
-        setContentView(R.layout.activity_booking);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().hide();
-        }
-
         if (getWindow() != null) {
-
             getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-
             WindowManager.LayoutParams params = getWindow().getAttributes();
-
-
-            params.gravity = Gravity.CENTER;
-
-
-            params.width = (int) (getResources().getDisplayMetrics().widthPixels * 0.90);
-            params.height = WindowManager.LayoutParams.WRAP_CONTENT;
-
-
+            params.gravity   = Gravity.CENTER;
+            params.width     = (int) (getResources().getDisplayMetrics().widthPixels * 0.90);
+            params.height    = WindowManager.LayoutParams.WRAP_CONTENT;
             params.dimAmount = 0.75f;
-
             getWindow().setAttributes(params);
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-
-
             getWindow().setWindowAnimations(android.R.style.Animation_Dialog);
         }
 
+        if (getSupportActionBar() != null) getSupportActionBar().hide();
 
-        String amenityTitle = getIntent().getStringExtra("amenity_title");
+
+
+        String amenityTitle    = getIntent().getStringExtra("amenity_title");
         String amenitySubtitle = getIntent().getStringExtra("amenity_subtitle");
-        int amenityIcon = getIntent().getIntExtra("amenity_icon", R.drawable.ic_pool);
-        String amenityType = getIntent().getStringExtra("amenity_type");
+        int    amenityIcon     = getIntent().getIntExtra("amenity_icon", R.drawable.ic_pool);
+        String amenityType     = getIntent().getStringExtra("amenity_type");
 
+        if ("Pool".equals(amenityType))       { maxGuests = 20; isPool = true; }
+        else if ("Gym".equals(amenityType))     maxGuests = 15;
+        else                                    maxGuests = 10;
 
-        if ("Pool".equals(amenityType)) maxGuests = 20;
-        else if ("Gym".equals(amenityType)) maxGuests = 15;
-        else maxGuests = 10;
-
-        // ── Header ──
-        TextView tvTitle = findViewById(R.id.dialogTitle);
+        // Header
+        TextView tvTitle    = findViewById(R.id.dialogTitle);
         TextView tvSubtitle = findViewById(R.id.dialogSubtitle);
-        ImageView ivIcon = findViewById(R.id.dialogAmenityIcon);
-
-        if (tvTitle != null) tvTitle.setText(amenityTitle);
+        ImageView ivIcon    = findViewById(R.id.dialogAmenityIcon);
+        if (tvTitle    != null) tvTitle.setText(amenityTitle);
         if (tvSubtitle != null) tvSubtitle.setText(amenitySubtitle);
-        if (ivIcon != null) ivIcon.setImageResource(amenityIcon);
+        if (ivIcon     != null) ivIcon.setImageResource(amenityIcon);
 
-        // ── Close / back ──
+        // Close
         ImageView btnClose = findViewById(R.id.dialogBtnClose);
         if (btnClose != null) btnClose.setOnClickListener(v -> finish());
 
-        // ── Sections ──
-        setupDatePicker();
+        // Life jacket section — show only for Pool
+        layoutLifeJacket = findViewById(R.id.layoutLifeJacket);
+        checkLifeJacket  = findViewById(R.id.checkLifeJacket);
+        if (layoutLifeJacket != null && isPool) {
+            layoutLifeJacket.setVisibility(View.VISIBLE);
+        }
 
-        chipIds = new int[]{
-                R.id.chipTime1, R.id.chipTime2, R.id.chipTime3,
-        };
+        // Sections
+        setupDatePicker();
+        chipIds = new int[]{ R.id.chipTime1, R.id.chipTime2, R.id.chipTime3 };
         setupTimeChips();
         setupGuestCounter();
         setupActionButtons(amenityType);
     }
 
-
+    // ── Date Picker ──────────────────────────────
     private void setupDatePicker() {
         View layoutDate = findViewById(R.id.layoutSelectDate);
         TextView tvDate = findViewById(R.id.tvSelectedDate);
@@ -113,8 +98,7 @@ public class BookingActivity extends AppCompatActivity {
 
         layoutDate.setOnClickListener(v -> {
             Calendar cal = Calendar.getInstance();
-            DatePickerDialog picker = new DatePickerDialog(
-                    this,
+            new DatePickerDialog(this,
                     (view, year, month, day) -> {
                         String date = String.format("%02d/%02d/%04d", day, month + 1, year);
                         selectedDate[0] = date;
@@ -124,9 +108,7 @@ public class BookingActivity extends AppCompatActivity {
                     cal.get(Calendar.YEAR),
                     cal.get(Calendar.MONTH),
                     cal.get(Calendar.DAY_OF_MONTH)
-            );
-            picker.getDatePicker().setMinDate(cal.getTimeInMillis());
-            picker.show();
+            ).show();
         });
     }
 
@@ -136,23 +118,18 @@ public class BookingActivity extends AppCompatActivity {
             final int index = i;
             TextView chip = findViewById(chipIds[i]);
             if (chip == null) continue;
-
-            // ─ Default state ─
             chip.setBackgroundColor(Color.WHITE);
-            chip.setTextColor(Color.parseColor("#2F5F9B")); // Dark Blue
+            chip.setTextColor(Color.parseColor("#2F5F9B"));
 
             chip.setOnClickListener(v -> {
                 for (int id : chipIds) {
                     TextView c = findViewById(id);
                     if (c != null) {
-                        // Reset all chips to default
                         c.setBackgroundColor(Color.WHITE);
                         c.setTextColor(Color.parseColor("#2F5F9B"));
                     }
                 }
-
-                // Selected chip
-                chip.setBackgroundColor(Color.parseColor("#2F5F9B")); // Dark Blue
+                chip.setBackgroundColor(Color.parseColor("#2F5F9B"));
                 chip.setTextColor(Color.WHITE);
                 selectedChip[0] = index;
             });
@@ -161,26 +138,20 @@ public class BookingActivity extends AppCompatActivity {
 
     // ── Guest Counter ────────────────────────────
     private void setupGuestCounter() {
-        TextView tvGuests = findViewById(R.id.tvGuestCount);
+        TextView tvGuests  = findViewById(R.id.tvGuestCount);
         ImageView btnMinus = findViewById(R.id.btnGuestMinus);
-        ImageView btnPlus = findViewById(R.id.btnGuestPlus);
+        ImageView btnPlus  = findViewById(R.id.btnGuestPlus);
         if (tvGuests == null || btnMinus == null || btnPlus == null) return;
 
         updateGuestLabel(tvGuests);
 
         btnMinus.setOnClickListener(v -> {
-            if (guestCount[0] > 1) {
-                guestCount[0]--;
-                updateGuestLabel(tvGuests);
-            } else Toast.makeText(this, "Minimum 1 guest required", Toast.LENGTH_SHORT).show();
+            if (guestCount[0] > 1) { guestCount[0]--; updateGuestLabel(tvGuests); }
+            else Toast.makeText(this, "Minimum 1 guest required", Toast.LENGTH_SHORT).show();
         });
-
         btnPlus.setOnClickListener(v -> {
-            if (guestCount[0] < maxGuests) {
-                guestCount[0]++;
-                updateGuestLabel(tvGuests);
-            } else Toast.makeText(this,
-                    "Maximum capacity is " + maxGuests + " guests", Toast.LENGTH_SHORT).show();
+            if (guestCount[0] < maxGuests) { guestCount[0]++; updateGuestLabel(tvGuests); }
+            else Toast.makeText(this, "Maximum capacity is " + maxGuests + " guests", Toast.LENGTH_SHORT).show();
         });
     }
 
@@ -190,7 +161,7 @@ public class BookingActivity extends AppCompatActivity {
 
     // ── Action Buttons ───────────────────────────
     private void setupActionButtons(String amenityType) {
-        MaterialButton btnCancel = findViewById(R.id.dialogBtnCancel);
+        MaterialButton btnCancel  = findViewById(R.id.dialogBtnCancel);
         MaterialButton btnConfirm = findViewById(R.id.dialogBtnConfirm);
 
         if (btnCancel != null) btnCancel.setOnClickListener(v -> finish());
@@ -213,19 +184,23 @@ public class BookingActivity extends AppCompatActivity {
                 String specialRequest = etRequest != null
                         ? etRequest.getText().toString().trim() : "";
 
-                saveReservation(amenityType, selectedDate[0], timeSlot, guestCount[0], specialRequest);
-                Toast.makeText(this,
-                        "✔ " + amenityType + " booked on " + selectedDate[0] + " at " + timeSlot,
-                        Toast.LENGTH_LONG).show();
+                // Life jacket — only relevant for pool
+                boolean needsLifeJacket = isPool
+                        && checkLifeJacket != null
+                        && checkLifeJacket.isChecked();
 
+                saveReservation(amenityType, selectedDate[0], timeSlot,
+                        guestCount[0], specialRequest, needsLifeJacket);
             });
-
         }
-
     }
 
-    private void saveReservation(String type, String date, String time, int guests, String request) {
-        android.content.SharedPreferences prefs = getSharedPreferences("LoginPrefs", MODE_PRIVATE);
+    // ── Save to Supabase ─────────────────────────
+    private void saveReservation(String type, String date, String time,
+                                 int guests, String request, boolean lifeJacket) {
+
+        android.content.SharedPreferences prefs =
+                getSharedPreferences("LoginPrefs", MODE_PRIVATE);
         String currentUserId = prefs.getString("user_id", null);
 
         if (currentUserId == null) {
@@ -233,68 +208,56 @@ public class BookingActivity extends AppCompatActivity {
             return;
         }
 
+        // life_jacket_needed field — only include for Pool; null for others
+        String lifeJacketField = isPool
+                ? ",\"life_jacket_needed\":" + lifeJacket
+                : "";
 
         String jsonBody = "{"
-                + "\"user_id\":\"" + currentUserId + "\","
-                + "\"amenity_type\":\"" + type + "\","
-                + "\"selected_date\":\"" + date + "\","
-                + "\"time_slot\":\"" + time + "\","
-                + "\"guest_count\":" + guests + ","
-                + "\"special_request\":\"" + request.replace("\"", "\\\"") + "\""
+                + "\"user_id\":\""         + currentUserId                      + "\","
+                + "\"amenity_type\":\""    + type                                + "\","
+                + "\"selected_date\":\""   + date                                + "\","
+                + "\"time_slot\":\""       + time                                + "\","
+                + "\"guest_count\":"       + guests                              + ","
+                + "\"special_request\":\"" + request.replace("\"", "\\\"")      + "\""
+                + lifeJacketField
                 + "}";
 
         new Thread(() -> {
             try {
                 java.net.URL url = new java.net.URL(
-                        SupabaseClient.SUPABASE_URL + "/rest/v1/reservations"
-                );
-
-                java.net.HttpURLConnection conn = (java.net.HttpURLConnection) url.openConnection();
+                        SupabaseClient.SUPABASE_URL + "/rest/v1/reservations");
+                java.net.HttpURLConnection conn =
+                        (java.net.HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("POST");
                 conn.setDoOutput(true);
-                conn.setRequestProperty("Content-Type", "application/json");
-                conn.setRequestProperty("apikey", SupabaseClient.SUPABASE_ANON_KEY);
+                conn.setRequestProperty("Content-Type",  "application/json");
+                conn.setRequestProperty("apikey",        SupabaseClient.SUPABASE_ANON_KEY);
                 conn.setRequestProperty("Authorization", "Bearer " + SupabaseClient.SUPABASE_ANON_KEY);
-                conn.setRequestProperty("Prefer", "return=minimal");
-
+                conn.setRequestProperty("Prefer",        "return=minimal");
 
                 byte[] input = jsonBody.getBytes(java.nio.charset.StandardCharsets.UTF_8);
                 conn.getOutputStream().write(input, 0, input.length);
 
-                int responseCode = conn.getResponseCode();
-
-                if (responseCode == 200 || responseCode == 201) {
-
-                    runOnUiThread(() -> {
-                        Toast.makeText(this, "✅ Booking Saved!", Toast.LENGTH_SHORT).show();
-                        finish();
-                    });
-                } else {
-
-                    java.io.InputStream errorStream = conn.getErrorStream();
-                    String errorMsg = "";
-                    if (errorStream != null) {
-                        errorMsg = new java.util.Scanner(errorStream)
-                                .useDelimiter("\\A").next();
-                    }
-                    final String finalError = errorMsg;
-                    runOnUiThread(() -> {
-                        Toast.makeText(this,
-                                "❌ Error " + responseCode + ": " + finalError,
-                                Toast.LENGTH_LONG).show();
-                    });
-                }
-
+                int code = conn.getResponseCode();
                 conn.disconnect();
 
-            } catch (Exception e) {
                 runOnUiThread(() -> {
-                    Toast.makeText(this, "❌ " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    if (code == 200 || code == 201) {
+                        String jacketMsg = (isPool && lifeJacket) ? " 🦺 Life jacket requested." : "";
+                        Toast.makeText(this,
+                                "✅ " + type + " booked on " + date + " at " + time + jacketMsg,
+                                Toast.LENGTH_LONG).show();
+                        finish();
+                    } else {
+                        Toast.makeText(this, "❌ Error " + code, Toast.LENGTH_LONG).show();
+                    }
                 });
+
+            } catch (Exception e) {
+                runOnUiThread(() ->
+                        Toast.makeText(this, "❌ " + e.getMessage(), Toast.LENGTH_LONG).show());
             }
         }).start();
     }
-
-
-
 }
