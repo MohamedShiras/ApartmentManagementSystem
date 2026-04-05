@@ -117,7 +117,6 @@ public class PaymentActivity extends AppCompatActivity {
     }
 
     private void showUnifiedPaymentPopup() {
-        // Activity eke own content view use karanawa - AlertDialog naha
         EditText etCard  = findViewById(R.id.etCardNum);
         EditText etExp   = findViewById(R.id.etExp);
         EditText etCvc   = findViewById(R.id.etCvc);
@@ -169,7 +168,6 @@ public class PaymentActivity extends AppCompatActivity {
         btnCancel.setOnClickListener(v -> finish());
 
         btnPay.setOnClickListener(v -> {
-            // Input values gannawa
             String cardNum = etCard.getText().toString().trim();
             String expDate = etExp.getText().toString().trim();
             String cvc = etCvc.getText().toString().trim();
@@ -193,7 +191,6 @@ public class PaymentActivity extends AppCompatActivity {
                 int month = Integer.parseInt(parts[0]);
                 int year = Integer.parseInt(parts[1]);
 
-                // 1. Maase 1-12 athara thiyenna oni
                 if (month < 1 || month > 12) {
                     etExp.setError("Invalid month (01-12)");
                     etExp.requestFocus();
@@ -201,8 +198,8 @@ public class PaymentActivity extends AppCompatActivity {
                 }
 
 
-                int currentYearShort = 26; // 2026 nisa
-                int currentMonth = 4;    // April nisa
+                int currentYearShort = 26;
+                int currentMonth = 4;
 
                 if (year < currentYearShort) {
                     etExp.setError("Card has expired");
@@ -226,7 +223,6 @@ public class PaymentActivity extends AppCompatActivity {
                 return;
             }
 
-            // Okkoma hari nam witharak payment eka process karanawa
             showSuccessAndMail();
         });
     }
