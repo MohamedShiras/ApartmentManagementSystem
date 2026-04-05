@@ -111,7 +111,9 @@ public class LoginActivity extends AppCompatActivity {
             } catch (Exception e) {
                 runOnUiThread(() -> {
                     setLoading(false);
-                    Toast.makeText(this, "Network Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(this,
+                            "Network error: " + e.getMessage(),
+                            Toast.LENGTH_LONG).show();
                 });
             }
         }).start();

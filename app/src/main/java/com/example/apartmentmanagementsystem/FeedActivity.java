@@ -466,41 +466,6 @@ public class FeedActivity extends AppCompatActivity {
             inner.addView(imgCard);
         }
 
-        // ── Divider ──
-        android.view.View divider = new android.view.View(this);
-        LinearLayout.LayoutParams divLp = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, dp(1));
-        divLp.setMargins(0, 0, 0, dp(10));
-        divider.setLayoutParams(divLp);
-        divider.setBackgroundColor(Color.parseColor("#F1F5F9"));
-        inner.addView(divider);
-
-        // ── Footer ──
-        LinearLayout footer = new LinearLayout(this);
-        footer.setLayoutParams(new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        footer.setOrientation(LinearLayout.HORIZONTAL);
-        footer.setGravity(Gravity.CENTER_VERTICAL);
-
-        TextView likeTv = new TextView(this);
-        LinearLayout.LayoutParams likeLp = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        likeLp.setMargins(0, 0, dp(16), 0);
-        likeTv.setLayoutParams(likeLp);
-        likeTv.setText("👍  Like");
-        likeTv.setTextColor(Color.parseColor("#82A6CB"));
-        likeTv.setTextSize(12);
-        footer.addView(likeTv);
-
-        TextView commentTv = new TextView(this);
-        commentTv.setLayoutParams(new LinearLayout.LayoutParams(
-                0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
-        commentTv.setText("💬  Comment");
-        commentTv.setTextColor(Color.parseColor("#82A6CB"));
-        commentTv.setTextSize(12);
-        footer.addView(commentTv);
-
-        inner.addView(footer);
         card.addView(inner);
         feedContainer.addView(card);
     }
@@ -594,6 +559,11 @@ public class FeedActivity extends AppCompatActivity {
         if (serviceReservation != null)
             serviceReservation.setOnClickListener(v ->
                     startActivity(new Intent(this, ReservationsActivity.class)));
+
+        TextView sellAll = findViewById(R.id.seeAll);
+        if (sellAll != null)
+            sellAll.setOnClickListener(v ->
+                    startActivity(new Intent(this, ServicesActivity.class)));
     }
 
     private void setupPostButton() {

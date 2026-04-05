@@ -1,6 +1,7 @@
 package com.example.apartmentmanagementsystem;
 
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
@@ -24,7 +25,8 @@ import java.nio.charset.StandardCharsets;
 
 public class ComplaintDetailActivity extends AppCompatActivity {
 
-    private TextView detailStatus, detailCategory, detailSubject, detailDescription, detailDate, detailRequestId, textUserName;
+    private TextView detailStatus, detailCategory, detailSubject, detailDescription,
+            detailDate, detailRequestId, textUserName, detailPriority;
     private CardView btnConfirmResolve, btnWithdraw;
     private String complaintId;
 
@@ -33,9 +35,7 @@ public class ComplaintDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_complaint_detail);
 
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().hide();
-        }
+        if (getSupportActionBar() != null) getSupportActionBar().hide();
 
         View mainView = findViewById(R.id.main);
         if (mainView != null) {
@@ -52,7 +52,7 @@ public class ComplaintDetailActivity extends AppCompatActivity {
 
     private void initViews() {
         findViewById(R.id.btnBack).setOnClickListener(v -> finish());
-        
+
         detailStatus      = findViewById(R.id.detailStatus);
         detailCategory    = findViewById(R.id.detailCategory);
         detailSubject     = findViewById(R.id.detailSubject);
@@ -60,7 +60,8 @@ public class ComplaintDetailActivity extends AppCompatActivity {
         detailDate        = findViewById(R.id.detailDate);
         detailRequestId   = findViewById(R.id.detailRequestId);
         textUserName      = findViewById(R.id.textUserName);
-        
+        detailPriority    = findViewById(R.id.detailPriority); // NEW
+
         btnConfirmResolve = findViewById(R.id.btnConfirmResolve);
         btnWithdraw       = findViewById(R.id.btnWithdraw);
 
@@ -75,34 +76,48 @@ public class ComplaintDetailActivity extends AppCompatActivity {
         String date        = getIntent().getStringExtra("date");
         String description = getIntent().getStringExtra("description");
         String status      = getIntent().getStringExtra("status");
+        String priority    = getIntent().getStringExtra("priority"); // NEW
 
         SharedPreferences prefs = getSharedPreferences("LoginPrefs", MODE_PRIVATE);
         String currentName = prefs.getString("full_name", "Resident");
-        String apartment = prefs.getString("apartment", "");
+        String apartment   = prefs.getString("apartment", "");
 
-        if (textUserName != null) textUserName.setText(currentName + " · Unit " + apartment);
-        if (detailCategory != null) detailCategory.setText(category);
-        if (detailSubject != null) detailSubject.setText(subject);
-        if (detailDate != null) detailDate.setText("Submitted on " + date);
+        if (textUserName      != null) textUserName.setText(currentName + " · Unit " + apartment);
+        if (detailCategory    != null) detailCategory.setText(category);
+        if (detailSubject     != null) detailSubject.setText(subject);
+        if (detailDate        != null) detailDate.setText("Submitted on " + date);
         if (detailDescription != null) detailDescription.setText(description);
-        if (detailStatus != null) detailStatus.setText(status);
-        if (detailRequestId != null) detailRequestId.setText("Request #" + complaintId);
+        if (detailStatus      != null) detailStatus.setText(status);
+        if (detailRequestId   != null) detailRequestId.setText("Request #" + complaintId);
+
+        // NEW — priority badge
+        if (detailPriority != null && priority != null) {
+            detailPriority.setText(priority);
+            if ("High".equalsIgnoreCase(priority)) {
+                detailPriority.setTextColor(Color.parseColor("#EF4444"));
+                detailPriority.setBackgroundColor(Color.parseColor("#FEF2F2"));
+            } else if ("Medium".equalsIgnoreCase(priority)) {
+                detailPriority.setTextColor(Color.parseColor("#F59E0B"));
+                detailPriority.setBackgroundColor(Color.parseColor("#FFFBEB"));
+            } else {
+                detailPriority.setTextColor(Color.parseColor("#10B981"));
+                detailPriority.setBackgroundColor(Color.parseColor("#ECFDF5"));
+            }
+        }
 
         updateButtonsVisibility(status);
     }
 
     private void updateButtonsVisibility(String status) {
         if (status == null) return;
-        
+
         if ("Resolved".equalsIgnoreCase(status) || "Withdrawn".equalsIgnoreCase(status)) {
             btnConfirmResolve.setVisibility(View.GONE);
             btnWithdraw.setVisibility(View.GONE);
-        } 
-        else if ("In Progress".equalsIgnoreCase(status)) {
+        } else if ("In Progress".equalsIgnoreCase(status)) {
             btnConfirmResolve.setVisibility(View.VISIBLE);
             btnWithdraw.setVisibility(View.VISIBLE);
-        } 
-        else {
+        } else {
             btnConfirmResolve.setVisibility(View.GONE);
             btnWithdraw.setVisibility(View.VISIBLE);
         }
@@ -137,27 +152,25 @@ public class ComplaintDetailActivity extends AppCompatActivity {
                 SharedPreferences prefs = getSharedPreferences("LoginPrefs", MODE_PRIVATE);
                 String token = prefs.getString("access_token", "");
 
-                String urlStr = SupabaseClient.SUPABASE_URL + "/rest/v1/complaints?id=eq." + complaintId;
-                URL url = new URL(urlStr);
+                URL url = new URL(SupabaseClient.SUPABASE_URL + "/rest/v1/complaints?id=eq." + complaintId);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                
                 conn.setRequestMethod("DELETE");
-                conn.setRequestProperty("apikey", SupabaseClient.SUPABASE_ANON_KEY);
+                conn.setRequestProperty("apikey",        SupabaseClient.SUPABASE_ANON_KEY);
                 conn.setRequestProperty("Authorization", "Bearer " + token);
-                conn.setRequestProperty("Content-Type", "application/json");
+                conn.setRequestProperty("Content-Type",  "application/json");
 
                 int code = conn.getResponseCode();
                 if (code >= 200 && code < 300) {
                     runOnUiThread(() -> {
-                        Toast.makeText(ComplaintDetailActivity.this, "Complaint deleted successfully", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Complaint deleted successfully", Toast.LENGTH_SHORT).show();
                         finish();
                     });
                 } else {
-                    runOnUiThread(() -> Toast.makeText(ComplaintDetailActivity.this, "Delete Failed (Error " + code + ")", Toast.LENGTH_LONG).show());
+                    runOnUiThread(() -> Toast.makeText(this, "Delete Failed (Error " + code + ")", Toast.LENGTH_LONG).show());
                 }
                 conn.disconnect();
             } catch (Exception e) {
-                runOnUiThread(() -> Toast.makeText(ComplaintDetailActivity.this, "Network Error: " + e.getMessage(), Toast.LENGTH_LONG).show());
+                runOnUiThread(() -> Toast.makeText(this, "Network Error: " + e.getMessage(), Toast.LENGTH_LONG).show());
             }
         }).start();
     }
@@ -173,16 +186,14 @@ public class ComplaintDetailActivity extends AppCompatActivity {
                 SharedPreferences prefs = getSharedPreferences("LoginPrefs", MODE_PRIVATE);
                 String token = prefs.getString("access_token", "");
 
-                String urlStr = SupabaseClient.SUPABASE_URL + "/rest/v1/complaints?id=eq." + complaintId;
-                URL url = new URL(urlStr);
+                URL url = new URL(SupabaseClient.SUPABASE_URL + "/rest/v1/complaints?id=eq." + complaintId);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                
                 conn.setRequestMethod("POST");
                 conn.setRequestProperty("X-HTTP-Method-Override", "PATCH");
-                conn.setRequestProperty("apikey", SupabaseClient.SUPABASE_ANON_KEY);
+                conn.setRequestProperty("apikey",        SupabaseClient.SUPABASE_ANON_KEY);
                 conn.setRequestProperty("Authorization", "Bearer " + token);
-                conn.setRequestProperty("Content-Type", "application/json");
-                conn.setRequestProperty("Prefer", "return=minimal");
+                conn.setRequestProperty("Content-Type",  "application/json");
+                conn.setRequestProperty("Prefer",        "return=minimal");
                 conn.setDoOutput(true);
 
                 JSONObject body = new JSONObject();

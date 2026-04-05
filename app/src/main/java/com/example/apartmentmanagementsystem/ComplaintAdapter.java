@@ -41,19 +41,33 @@ public class ComplaintAdapter extends RecyclerView.Adapter<ComplaintAdapter.Comp
         holder.textDescription.setText(complaint.getDescription());
         holder.textStatus.setText(complaint.getStatus());
 
-        // Simple status color coding
+        // Status color coding
         if ("Resolved".equalsIgnoreCase(complaint.getStatus())) {
-            holder.textStatus.setTextColor(Color.parseColor("#10B981")); // Green
+            holder.textStatus.setTextColor(Color.parseColor("#10B981"));
         } else if ("In Progress".equalsIgnoreCase(complaint.getStatus())) {
-            holder.textStatus.setTextColor(Color.parseColor("#EAB308")); // Yellow/Amber
+            holder.textStatus.setTextColor(Color.parseColor("#EAB308"));
         } else {
-            holder.textStatus.setTextColor(Color.parseColor("#EF4444")); // Red for Pending
+            holder.textStatus.setTextColor(Color.parseColor("#EF4444"));
+        }
+
+        // Priority color coding
+        String priority = complaint.getPriority();
+        if (priority != null) {
+            holder.textPriority.setText(priority);
+            if ("High".equalsIgnoreCase(priority)) {
+                holder.textPriority.setTextColor(Color.parseColor("#EF4444"));
+                holder.textPriority.setBackgroundColor(Color.parseColor("#FEF2F2"));
+            } else if ("Medium".equalsIgnoreCase(priority)) {
+                holder.textPriority.setTextColor(Color.parseColor("#F59E0B"));
+                holder.textPriority.setBackgroundColor(Color.parseColor("#FFFBEB"));
+            } else {
+                holder.textPriority.setTextColor(Color.parseColor("#10B981"));
+                holder.textPriority.setBackgroundColor(Color.parseColor("#ECFDF5"));
+            }
         }
 
         holder.itemView.setOnClickListener(v -> {
-            if (listener != null) {
-                listener.onComplaintClick(complaint);
-            }
+            if (listener != null) listener.onComplaintClick(complaint);
         });
     }
 
@@ -63,15 +77,16 @@ public class ComplaintAdapter extends RecyclerView.Adapter<ComplaintAdapter.Comp
     }
 
     static class ComplaintViewHolder extends RecyclerView.ViewHolder {
-        TextView textCategory, textDate, textSubject, textDescription, textStatus;
+        TextView textCategory, textDate, textSubject, textDescription, textStatus, textPriority;
 
         public ComplaintViewHolder(@NonNull View itemView) {
             super(itemView);
-            textCategory = itemView.findViewById(R.id.textCategory);
-            textDate = itemView.findViewById(R.id.textDate);
-            textSubject = itemView.findViewById(R.id.textSubject);
+            textCategory    = itemView.findViewById(R.id.textCategory);
+            textDate        = itemView.findViewById(R.id.textDate);
+            textSubject     = itemView.findViewById(R.id.textSubject);
             textDescription = itemView.findViewById(R.id.textDescription);
-            textStatus = itemView.findViewById(R.id.textStatus);
+            textStatus      = itemView.findViewById(R.id.textStatus);
+            textPriority    = itemView.findViewById(R.id.textPriority);
         }
     }
 }

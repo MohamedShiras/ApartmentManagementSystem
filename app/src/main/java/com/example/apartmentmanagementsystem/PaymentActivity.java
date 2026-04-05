@@ -117,7 +117,6 @@ public class PaymentActivity extends AppCompatActivity {
     }
 
     private void showUnifiedPaymentPopup() {
-        // Activity eke own content view use karanawa - AlertDialog naha
         EditText etCard  = findViewById(R.id.etCardNum);
         EditText etExp   = findViewById(R.id.etExp);
         EditText etCvc   = findViewById(R.id.etCvc);
@@ -168,7 +167,6 @@ public class PaymentActivity extends AppCompatActivity {
         btnCancel.setOnClickListener(v -> finish());
 
         btnPay.setOnClickListener(v -> {
-
             String cardNum = etCard.getText().toString().trim();
             String expDate = etExp.getText().toString().trim();
             String cvc = etCvc.getText().toString().trim();
@@ -191,7 +189,6 @@ public class PaymentActivity extends AppCompatActivity {
             try {
                 int month = Integer.parseInt(parts[0]);
                 int year = Integer.parseInt(parts[1]);
-
 
                 if (month < 1 || month > 12) {
                     etExp.setError("Invalid month (01-12)");
