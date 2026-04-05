@@ -43,9 +43,7 @@ public class ComplaintActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_complaint);
 
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().hide();
-        }
+        if (getSupportActionBar() != null) getSupportActionBar().hide();
 
         View mainView = findViewById(R.id.main);
         if (mainView != null) {
@@ -78,7 +76,7 @@ public class ComplaintActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerViewComplaints);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        allComplaints = new ArrayList<>();
+        allComplaints      = new ArrayList<>();
         filteredComplaints = new ArrayList<>();
         adapter = new ComplaintAdapter(filteredComplaints, this::openDetail);
         recyclerView.setAdapter(adapter);
@@ -89,12 +87,12 @@ public class ComplaintActivity extends AppCompatActivity {
 
     private void fetchComplaints() {
         if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
-        
+
         new Thread(() -> {
             try {
                 SharedPreferences prefs = getSharedPreferences("LoginPrefs", MODE_PRIVATE);
                 String apartment = prefs.getString("apartment", "").trim();
-                String token = prefs.getString("access_token", "");
+                String token     = prefs.getString("access_token", "");
 
                 if (apartment.isEmpty()) {
                     runOnUiThread(() -> {
@@ -104,10 +102,7 @@ public class ComplaintActivity extends AppCompatActivity {
                     return;
                 }
 
-                // URL encode the apartment number to handle spaces (e.g., "Unit 4B" -> "Unit%204B")
                 String encodedApartment = Uri.encode(apartment);
-
-                // Use 'eq' for exact match. If you want partial, keep 'ilike' but encoded values are safer with 'eq'.
                 String queryUrl = SupabaseClient.SUPABASE_URL + "/rest/v1/complaints"
                         + "?apartment_number=eq." + encodedApartment
                         + "&select=*&order=id.desc";
@@ -115,7 +110,7 @@ public class ComplaintActivity extends AppCompatActivity {
                 URL url = new URL(queryUrl);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("GET");
-                conn.setRequestProperty("apikey", SupabaseClient.SUPABASE_ANON_KEY);
+                conn.setRequestProperty("apikey",        SupabaseClient.SUPABASE_ANON_KEY);
                 conn.setRequestProperty("Authorization", "Bearer " + token);
 
                 int responseCode = conn.getResponseCode();
@@ -131,14 +126,15 @@ public class ComplaintActivity extends AppCompatActivity {
                     for (int i = 0; i < arr.length(); i++) {
                         JSONObject obj = arr.getJSONObject(i);
                         String id = obj.optString("id", String.valueOf(obj.optInt("id", 0)));
-                        
+
                         allComplaints.add(new Complaint(
                                 id,
-                                obj.optString("category", "Other"),
-                                obj.optString("subject", "No Subject"),
+                                obj.optString("category",    "Other"),
+                                obj.optString("subject",     "No Subject"),
                                 obj.optString("description", ""),
-                                obj.optString("status", "Pending"),
-                                obj.optString("date", "")
+                                obj.optString("status",      "Pending"),
+                                obj.optString("date",        ""),
+                                obj.optString("priority",    "Medium")  // NEW
                         ));
                     }
 
@@ -172,15 +168,14 @@ public class ComplaintActivity extends AppCompatActivity {
         intent.putExtra("date",        complaint.getDate());
         intent.putExtra("description", complaint.getDescription());
         intent.putExtra("status",      complaint.getStatus());
+        intent.putExtra("priority",    complaint.getPriority()); // NEW
         startActivity(intent);
     }
 
     private void setupTabs() {
         TabLayout tabLayout = findViewById(R.id.tabLayoutStatus);
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override public void onTabSelected(TabLayout.Tab tab) {
-                applyFilter();
-            }
+            @Override public void onTabSelected(TabLayout.Tab tab)   { applyFilter(); }
             @Override public void onTabUnselected(TabLayout.Tab tab) {}
             @Override public void onTabReselected(TabLayout.Tab tab) {}
         });
@@ -190,12 +185,12 @@ public class ComplaintActivity extends AppCompatActivity {
         TabLayout tabLayout = findViewById(R.id.tabLayoutStatus);
         int position = tabLayout.getSelectedTabPosition();
         if (position < 0) return;
-        
+
         TabLayout.Tab tab = tabLayout.getTabAt(position);
         if (tab == null || tab.getText() == null) return;
-        
+
         String statusFilter = tab.getText().toString();
-        
+
         filteredComplaints.clear();
         if ("All".equalsIgnoreCase(statusFilter)) {
             filteredComplaints.addAll(allComplaints);
